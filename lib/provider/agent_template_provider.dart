@@ -11,10 +11,11 @@ class AgentTemplateProvider extends ChangeNotifier {
 
   Future<CatalogueResponseModel> Function()? onGetCatalogue;
   Future<FlowRawInfoResponse> Function(String flowId)? onGetFlowRawInfo;
-
+  Future<DateTimeResponseModel> Function()? onGetDateTime;
   ApiStatus _catalogueStatus = ApiStatus.loading;
   ApiStatus _flowRawInfoStatus = ApiStatus.loading;
-
+  ApiStatus _dateTimeStatus = ApiStatus.loading;
+  DateTimeResponseModel? _dateTimeResponse;
   ApiStatus get flowRawInfoStatus => _flowRawInfoStatus;
 
   set flowRawInfoStatus(ApiStatus status) {
@@ -26,6 +27,20 @@ class AgentTemplateProvider extends ChangeNotifier {
 
   set catalogueStatus(ApiStatus status) {
     _catalogueStatus = status;
+    notifyListeners();
+  }
+
+  ApiStatus get dateTimeStatus => _dateTimeStatus;
+
+  set dateTimeStatus(ApiStatus status) {
+    _dateTimeStatus = status;
+    notifyListeners();
+  }
+
+  DateTimeResponseModel? get dateTimeResponse => _dateTimeResponse;
+
+  set dateTimeResponse(DateTimeResponseModel? response) {
+    _dateTimeResponse = response;
     notifyListeners();
   }
 
@@ -93,6 +108,16 @@ class AgentTemplateProvider extends ChangeNotifier {
       flowRawInfoStatus = ApiStatus.success;
     } catch (e) {
       flowRawInfoStatus = ApiStatus.error;
+    }
+  }
+
+  void getDateTime() async {
+    try {
+      dateTimeStatus = ApiStatus.loading;
+      dateTimeResponse = await onGetDateTime?.call();
+      dateTimeStatus = ApiStatus.success;
+    } catch (e) {
+      dateTimeStatus = ApiStatus.error;
     }
   }
 

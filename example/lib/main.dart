@@ -593,6 +593,13 @@ class TemplateDetailPage extends StatelessWidget {
                   backgroundColor: Colors.blue.shade300,
                   predefinedAttributes: {"name": "John Doe"},
                   fileObject: item.fileObject,
+                  onGetDateTime: () async {
+                    await Future.delayed(const Duration(seconds: 1));
+                    return DateTimeResponseModel.fromJson({
+                      "dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28",
+                      //
+                    });
+                  },
 
                   onGetCatalogue: () async {
                     await Future.delayed(const Duration(seconds: 1));

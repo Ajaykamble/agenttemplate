@@ -325,9 +325,25 @@ class Component {
 
   ValueNotifier<ProductDetailsDatum?> selectedProduct = ValueNotifier<ProductDetailsDatum?>(null);
 
+  TextEditingController headerFileNameController = TextEditingController();
+  TextEditingController headerFileUrlController = TextEditingController();
+
+  // Limited time offer expiry
+  TextEditingController offerExpiryDateController = TextEditingController();
+  ValueNotifier<DateTime?> selectedOfferExpiryDateTime = ValueNotifier<DateTime?>(null);
+
   void setFileObject(FileObject? object) {
     selectedFileObject.value = null;
     selectedFileObject.value = object?.copyWith();
+
+    headerFileNameController.text = object?.fileName ?? '';
+    headerFileUrlController.text = object?.filePath ?? '';
+  }
+
+  void onManualSetFileUrl(String url) {
+    headerFileNameController.text = "";
+    selectedFileObject.value = null;
+    selectedFileObject.value = FileObject(filePath: url, fileName: "");
   }
 
   Component({required this.type, this.text, this.format, this.example, this.addSecurityRecommendation, this.buttons, this.cards, this.limitedTimeOffer, this.codeExpirationMinutes});
@@ -503,10 +519,22 @@ class TemplateObj {
           attribute.isSmartUrlEnabled.value = false;
         }
       }
+      if (component.type == 'CAROUSEL') {
+        //
+        for (final card in component.cards ?? []) {
+          for (final bodyComponent in card.components) {
+            if (bodyComponent.type == 'BODY') {
+              for (final attribute in bodyComponent.attributes) {
+                attribute.isSmartUrlEnabled.value = false;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
-  void onBodyTextChanged(String templateType) {
+  void onBodyTextChanged() {
     //
     //
     Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
@@ -552,6 +580,18 @@ class TemplateObj {
       if (component.type == 'BODY' && component.attributes.isNotEmpty) {
         templateObj.showSmartUrlCheckBox = ValueNotifier(true);
         break;
+      }
+      if (component.type == 'CAROUSEL') {
+        //
+        if (component.cards?.isNotEmpty ?? false) {
+          //
+          for (CarouselCard card in component.cards ?? []) {
+            if (card.components.firstWhereOrNull((element) => element.type == 'BODY')?.attributes.isNotEmpty ?? false) {
+              templateObj.showSmartUrlCheckBox = ValueNotifier(true);
+              break;
+            }
+          }
+        }
       }
     }
 

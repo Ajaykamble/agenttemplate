@@ -91,7 +91,9 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
               children: [
                 Text(attribute.title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 10),
-                Expanded(child: Text(attribute.placeholder, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600))),
+                Expanded(
+                  child: Text(attribute.placeholder, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600)),
+                ),
                 const SizedBox(width: 10),
               ],
             ),
@@ -249,11 +251,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                               Icon(Icons.insert_drive_file_outlined, color: Colors.grey.shade600, size: 20),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
-                                  widget.headerComponent.selectedFileObject.value?.fileName ?? "No file selected",
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                child: Text(widget.headerComponent.headerFileNameController.text, style: Theme.of(context).textTheme.bodyMedium, overflow: TextOverflow.ellipsis),
                               ),
                             ],
                           ),
@@ -280,8 +278,18 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
             const SizedBox(height: 12),
             // URL input field
             TextFormField(
-              controller: TextEditingController(text: value?.filePath),
+              controller: widget.headerComponent.headerFileUrlController, //TextEditingController(text: value?.filePath),
               decoration: InputDecoration(hintText: MediaHelper.mediaUrlHint(_mediaType)),
+              onChanged: (value) {
+                //
+                widget.headerComponent.onManualSetFileUrl(value);
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'This field is required';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 6),
             // Note about media type and size limit

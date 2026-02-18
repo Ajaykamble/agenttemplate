@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/models/file_object_model.dart';
 import 'package:agenttemplate/widget/forms/body_form.dart';
 import 'package:agenttemplate/widget/forms/buttons_form.dart';
 import 'package:agenttemplate/widget/forms/header_form.dart';
@@ -15,7 +19,17 @@ class CarouselForm extends StatefulWidget {
   final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
   final String templateType;
 
-  const CarouselForm({super.key, required this.carouselComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload, required this.templateType});
+  final ValueNotifier<bool> isSmartUrlEnabled;
+  const CarouselForm({
+    super.key,
+    required this.carouselComponent,
+    required this.backgroundColor,
+    required this.predefinedAttributes,
+    this.fileObject,
+    this.onFileUpload,
+    required this.templateType,
+    required this.isSmartUrlEnabled,
+  });
 
   @override
   State<CarouselForm> createState() => _CarouselFormState();
@@ -57,6 +71,19 @@ class _CarouselFormState extends State<CarouselForm> with SingleTickerProviderSt
     _tabController.dispose();
     _errorCards.dispose();
     super.dispose();
+  }
+
+  String? getFileObject(int index) {
+    if (widget.fileObject == null) return null;
+    final fileObjects = FileObjectHelper.parseFileObjects(widget.fileObject);
+
+    if (fileObjects.runtimeType == List<FileObject>) {
+      if (index < fileObjects.length) {
+        return jsonEncode(fileObjects[index].toJson());
+      }
+      return null;
+    }
+    return null;
   }
 
   @override
@@ -111,9 +138,10 @@ class _CarouselFormState extends State<CarouselForm> with SingleTickerProviderSt
                     card: _cards[index],
                     backgroundColor: widget.backgroundColor,
                     predefinedAttributes: widget.predefinedAttributes,
-                    fileObject: widget.fileObject,
+                    fileObject: getFileObject(index),
                     onFileUpload: widget.onFileUpload,
                     templateType: widget.templateType,
+                    isSmartUrlEnabled: widget.isSmartUrlEnabled,
                   ),
                 ),
               );
@@ -135,7 +163,34 @@ class _CarouselCardContent extends StatelessWidget {
   final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
   final String templateType;
 
-  const _CarouselCardContent({required this.card, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload, required this.templateType});
+  final ValueNotifier<bool> isSmartUrlEnabled;
+  const _CarouselCardContent({
+    required this.card,
+    required this.backgroundColor,
+    required this.predefinedAttributes,
+    this.fileObject,
+    this.onFileUpload,
+    required this.templateType,
+    required this.isSmartUrlEnabled,
+  });
+
+  void onBodyTextChanged() {
+    //
+    //
+    Component? bodyComponent = card.components.firstWhereOrNull((element) => element.type == 'BODY');
+    if (bodyComponent?.attributes.isNotEmpty ?? false) {
+      //
+      Component? buttonComponent = card.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+      if (buttonComponent != null) {
+        //
+        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
+        if (urlButton != null) {
+          //
+          urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,9 +212,9 @@ class _CarouselCardContent extends StatelessWidget {
               bodyComponent: bodyComponent,
               backgroundColor: backgroundColor,
               predefinedAttributes: predefinedAttributes,
-              isSmartUrlEnabled: ValueNotifier<bool>(false),
+              isSmartUrlEnabled: isSmartUrlEnabled,
               templateType: templateType,
-              onTextChanged: () {},
+              onTextChanged: onBodyTextChanged,
             ),
             const SizedBox(height: 10),
           ],

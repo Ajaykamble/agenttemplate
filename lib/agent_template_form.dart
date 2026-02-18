@@ -28,6 +28,7 @@ class AgentTemplateForm extends StatefulWidget {
   final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
   final Future<CatalogueResponseModel> Function() onGetCatalogue;
   final Future<FlowRawInfoResponse> Function(String flowId) onGetFlowRawInfo;
+  final Future<DateTimeResponseModel> Function() onGetDateTime;
   final String templateType;
   const AgentTemplateForm({
     super.key,
@@ -39,6 +40,7 @@ class AgentTemplateForm extends StatefulWidget {
     required this.onGetCatalogue,
     required this.onGetFlowRawInfo,
     required this.templateType,
+    required this.onGetDateTime,
   });
 
   @override
@@ -54,6 +56,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
     agentTemplateProvider.onGetCatalogue = widget.onGetCatalogue;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
+    agentTemplateProvider.onGetDateTime = widget.onGetDateTime;
   }
 
   @override
@@ -129,7 +132,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             templateType: widget.templateType,
             onTextChanged: () {
               //
-              widget.templateObj.onBodyTextChanged(widget.templateType);
+              widget.templateObj.onBodyTextChanged();
             },
           ),
           const SizedBox(height: 10),
@@ -144,6 +147,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             fileObject: widget.fileObject,
             onFileUpload: widget.onFileUpload,
             templateType: widget.templateType,
+            isSmartUrlEnabled: widget.templateObj.isSmartUrlEnabled,
           ),
           const SizedBox(height: 10),
         ],
