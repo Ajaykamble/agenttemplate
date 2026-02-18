@@ -1,4 +1,5 @@
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/widget/forms/form_styles.dart';
 import 'package:flutter/material.dart';
 
 class ButtonsForm extends StatefulWidget {
@@ -18,7 +19,9 @@ class _ButtonsFormState extends State<ButtonsForm> {
 
     List<TemplateButton> quickReplyButtonList = (widget.buttonsComponent.buttons ?? []).where((button) => button.type == "QUICK_REPLY").toList();
 
-    List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? []).where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty).toList();
+    List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? [])
+        .where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,31 +35,43 @@ class _ButtonsFormState extends State<ButtonsForm> {
           //
           Container(
             padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
             child: ListView.separated(
               itemBuilder: (context, index) {
-                return Row(
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(flex: 20, child: Text(otherButtons[index].text, style: Theme.of(context).textTheme.bodyMedium)),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      flex: 80,
-                      child: TextFormField(
-                        controller: otherButtons[index].buttonTextController,
-                        decoration: InputDecoration(
-                          hintText: "Enter Text",
-                          enabled: widget.templateType == "AUTHENTICATION" ? false : true,
-
-                          //
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 35,
+                          child: Text(otherButtons[index].text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'This field is required';
-                          }
-                          return null;
-                        },
-                      ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 65,
+                          child: TextFormField(
+                            controller: otherButtons[index].buttonTextController,
+                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                            enabled: widget.templateType == "AUTHENTICATION" ? false : true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'This field is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
+                    if (otherButtons[index].type == "URL") ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        "Note:During template creation, the URL is configured as a ShortURL.If you want to send parameters, you can use either:The URL, or The short link generated code",
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: const Color(0xFFE91E63), fontSize: 11), // Red/Pinkish color
+                      ),
+                    ],
                   ],
                 );
               },
@@ -72,46 +87,52 @@ class _ButtonsFormState extends State<ButtonsForm> {
         if (quickReplyButtonList.isNotEmpty) ...[
           const SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                //
-                Text("QUICK REPLY BUTTONS", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                //
-                ListView.separated(
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        Expanded(flex: 20, child: Text(quickReplyButtonList[index].text, style: Theme.of(context).textTheme.bodyMedium)),
-
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 80,
-                          child: TextFormField(
-                            controller: quickReplyButtonList[index].buttonTextController,
-                            decoration: InputDecoration(hintText: "Enter Text"),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'This field is required';
-                              }
-                              return null;
-                            },
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+            child: Theme(
+              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                title: Text("Quick to Reply Payload", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                tilePadding: EdgeInsets.zero,
+                children: [
+                  const SizedBox(height: 10),
+                  ListView.separated(
+                    itemBuilder: (context, index) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 35,
+                            child: Text(
+                              quickReplyButtonList[index].text,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
+                            ),
                           ),
-                        ),
-                        //
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
-                  itemCount: quickReplyButtonList.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                ),
-              ],
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 65,
+                            child: TextFormField(
+                              controller: quickReplyButtonList[index].buttonTextController,
+                              decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'This field is required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    itemCount: quickReplyButtonList.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ],

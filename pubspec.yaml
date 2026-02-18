@@ -10,6 +10,7 @@ environment:
 dependencies:
   collection: ^1.19.1
   cross_file: ^0.3.5+2
+  dropdown_button2: ^2.3.9
   file_picker: ^8.1.6
   flutter:
     sdk: flutter

@@ -1,5 +1,6 @@
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
+import 'package:agenttemplate/widget/forms/form_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,13 @@ class _LimitedTimeOfferFormState extends State<LimitedTimeOfferForm> {
   void _updateComponent() {
     final formatted = _formatDateTime();
     widget.limitedTimeOfferComponent.offerExpiryDateController.text = formatted;
-    widget.limitedTimeOfferComponent.selectedOfferExpiryDateTime.value = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedHour, _selectedMinute);
+    widget.limitedTimeOfferComponent.selectedOfferExpiryDateTime.value = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _selectedHour,
+      _selectedMinute,
+    );
   }
 
   Future<void> _showDateTimePicker() async {
@@ -43,7 +50,8 @@ class _LimitedTimeOfferFormState extends State<LimitedTimeOfferForm> {
 
     final result = await showDialog<DateTime>(
       context: context,
-      builder: (context) => _DateTimePickerDialog(initialDate: _selectedDate, initialHour: _selectedHour, initialMinute: _selectedMinute, minDateTime: minDateTime),
+      builder: (context) =>
+          _DateTimePickerDialog(initialDate: _selectedDate, initialHour: _selectedHour, initialMinute: _selectedMinute, minDateTime: minDateTime),
     );
 
     if (result != null) {
@@ -66,7 +74,7 @@ class _LimitedTimeOfferFormState extends State<LimitedTimeOfferForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Offer Expiry Date:", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700)),
+        Text("Offer Expiry Date:", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600)),
         const SizedBox(height: 8),
         Selector<AgentTemplateProvider, ApiStatus>(
           selector: (_, p) => p.dateTimeStatus,
@@ -83,12 +91,10 @@ class _LimitedTimeOfferFormState extends State<LimitedTimeOfferForm> {
               controller: widget.limitedTimeOfferComponent.offerExpiryDateController,
               readOnly: true,
               onTap: _showDateTimePicker,
-              decoration: InputDecoration(
+              decoration: FormStyles.buildInputDecoration(
+                context,
                 hintText: "(Required)",
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_month, color: Colors.grey.shade600),
-                  onPressed: _showDateTimePicker,
-                ),
+                suffixIcon: Icon(Icons.calendar_month, color: Colors.grey.shade600, size: 20),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -127,7 +133,8 @@ class _DateTimePickerDialogState extends State<_DateTimePickerDialog> {
 
   DateTime get _minDateOnly => DateTime(widget.minDateTime.year, widget.minDateTime.month, widget.minDateTime.day);
 
-  bool get _isSelectedDateMinDate => _selectedDate.year == _minDateOnly.year && _selectedDate.month == _minDateOnly.month && _selectedDate.day == _minDateOnly.day;
+  bool get _isSelectedDateMinDate =>
+      _selectedDate.year == _minDateOnly.year && _selectedDate.month == _minDateOnly.month && _selectedDate.day == _minDateOnly.day;
 
   int get _selectedTimeIndex => _selectedHour * 60 + _selectedMinute;
 

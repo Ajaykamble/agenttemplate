@@ -1,8 +1,4 @@
-import 'dart:developer';
-
 import 'package:agenttemplate/models/catalogue_response_model.dart';
-import 'package:agenttemplate/models/file_upload_response.dart';
-import 'package:agenttemplate/models/flow_raw_info_response_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
 import 'package:agenttemplate/widget/forms/MPM_form.dart';
 import 'package:agenttemplate/widget/forms/body_form.dart';
@@ -11,12 +7,14 @@ import 'package:agenttemplate/widget/forms/carousel_form.dart';
 import 'package:agenttemplate/widget/forms/catalog_form.dart';
 import 'package:agenttemplate/widget/forms/flow_form.dart';
 import 'package:agenttemplate/widget/forms/footer_form.dart';
+import 'package:agenttemplate/widget/forms/form_styles.dart';
 import 'package:agenttemplate/widget/forms/header_form.dart';
 import 'package:agenttemplate/widget/forms/limited_time_offer_form.dart';
 import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'agenttemplate.dart';
 import 'widget/template_checkbox.dart';
 
@@ -137,8 +135,14 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (FOOTER_COMPONENT != null) ...[FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
-        if (BUTTONS_COMPONENT != null) ...[ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType), const SizedBox(height: 10)],
+        if (FOOTER_COMPONENT != null) ...[
+          FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor),
+          const SizedBox(height: 10),
+        ],
+        if (BUTTONS_COMPONENT != null) ...[
+          ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType),
+          const SizedBox(height: 10),
+        ],
         if (CAROUSEL_COMPONENT != null) ...[
           CarouselForm(
             carouselComponent: CAROUSEL_COMPONENT,
@@ -151,8 +155,91 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (limited_time_offer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
+        if (limited_time_offer != null) ...[
+          LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor),
+          const SizedBox(height: 10),
+        ],
+        _buildAdditionalInfoSection(),
       ],
+    );
+  }
+
+  Widget _buildAdditionalInfoSection() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          tilePadding: EdgeInsets.zero,
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                height: 36,
+                child: ElevatedButton(
+                  onPressed: () {
+                    final newList = List<AdditionalInfo>.from(widget.templateObj.additionalInfoList.value);
+                    newList.add(AdditionalInfo());
+                    widget.templateObj.additionalInfoList.value = newList;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF007BFF),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            ValueListenableBuilder<List<AdditionalInfo>>(
+              valueListenable: widget.templateObj.additionalInfoList,
+              builder: (context, infoList, child) {
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: infoList.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final info = infoList[index];
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: info.keyController,
+                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextFormField(
+                            controller: info.valueController,
+                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          onPressed: () {
+                            final newList = List<AdditionalInfo>.from(widget.templateObj.additionalInfoList.value);
+                            newList.removeAt(index);
+                            widget.templateObj.additionalInfoList.value = newList;
+                          },
+                          icon: const Icon(Icons.close, color: Colors.black, size: 20),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
     );
   }
 }

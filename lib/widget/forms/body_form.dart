@@ -1,4 +1,6 @@
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
 class BodyForm extends StatefulWidget {
@@ -33,11 +35,24 @@ class _BodyFormState extends State<BodyForm> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("BODY ATTRIBUTES", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Body Attributes ",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              TextSpan(
+                text: "*",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 10),
         Container(
           padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
           child: ListView.separated(
             itemBuilder: (context, index) {
               AttributeClass attribute = widget.bodyComponent.attributes[index];
@@ -48,90 +63,121 @@ class _BodyFormState extends State<BodyForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: [
-                          Text(attribute.title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 10),
-                          Expanded(flex: 40, child: Text(attribute.placeholder, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600))),
-                        ],
-                      ),
-                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
-                            child: ValueListenableBuilder(
-                              valueListenable: attribute.isSmartUrlEnabled,
-                              builder: (context, _, child) {
-                                return TextFormField(
-                                  controller: attribute.textController,
-                                  decoration: InputDecoration(hintText: "Enter Text"),
-                                  validator: (value) {
-                                    if (attribute.selectedVariable.value == null) {
-                                      if (attribute.isSmartUrlEnabled.value) {
-                                        final urlPattern = r'^(https?:\/\/)([\w\-]+\.)+[a-zA-Z]{2,}(\/\S*)?$';
-                                        final regExp = RegExp(urlPattern);
-
-                                        if (value != null && value.isNotEmpty && !regExp.hasMatch(value)) {
-                                          return 'Enter a valid URL (must start with http or https)';
-                                        }
-                                      }
-                                      if (value == null || value.isEmpty) {
-                                        return 'This field is required';
-                                      }
-                                    }
-
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    attribute.selectedVariable.value = null;
-
-                                    if (value.isNotEmpty) {
-                                      attribute.selectedVariableValue.value = value;
-                                    } else {
-                                      attribute.selectedVariableValue.value = "";
-                                    }
-                                    widget.onTextChanged();
-                                    //
-                                  },
-                                );
-                              },
+                            flex: 35,
+                            child: Row(
+                              children: [
+                                Text("${attribute.title}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                                SizedBox(width: 10),
+                                Text(
+                                  "${attribute.placeholder}",
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
+                                ),
+                              ],
                             ),
                           ),
-                          // When isSmartUrlEnabled: show checkbox next to text field
-                          if (isSmartUrl) ...[
-                            const SizedBox(width: 10),
-                            ValueListenableBuilder<bool>(
-                              valueListenable: attribute.isSmartUrlEnabled,
-                              builder: (context, isChecked, child) {
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Checkbox(
-                                      value: isChecked,
-                                      onChanged: (value) {
-                                        attribute.isSmartUrlEnabled.value = value ?? false;
-                                      },
-                                    ),
-                                    Text("Smart URL", style: Theme.of(context).textTheme.bodyMedium),
-                                  ],
-                                );
-                              },
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 65,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ValueListenableBuilder(
+                                    valueListenable: attribute.isSmartUrlEnabled,
+                                    builder: (context, _, child) {
+                                      return TextFormField(
+                                        controller: attribute.textController,
+                                        decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                                        validator: (value) {
+                                          if (attribute.selectedVariable.value == null) {
+                                            if (attribute.isSmartUrlEnabled.value) {
+                                              const urlPattern = r'^(https?:\/\/)([\w\-]+\.)+[a-zA-Z]{2,}(\/\S*)?$';
+                                              final regExp = RegExp(urlPattern);
+
+                                              if (value != null && value.isNotEmpty && !regExp.hasMatch(value)) {
+                                                return 'Enter a valid URL (must start with http or https)';
+                                              }
+                                            }
+                                            if (value == null || value.isEmpty) {
+                                              return 'This field is required';
+                                            }
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          attribute.selectedVariable.value = null;
+
+                                          if (value.isNotEmpty) {
+                                            attribute.selectedVariableValue.value = value;
+                                          } else {
+                                            attribute.selectedVariableValue.value = "";
+                                          }
+                                          widget.onTextChanged();
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                                if (isSmartUrl) ...[
+                                  const SizedBox(width: 8),
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable: attribute.isSmartUrlEnabled,
+                                    builder: (context, isChecked, child) {
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 24,
+                                            width: 24,
+                                            child: Checkbox(
+                                              value: isChecked,
+                                              onChanged: (value) {
+                                                attribute.isSmartUrlEnabled.value = value ?? false;
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text("Smart URL", style: Theme.of(context).textTheme.bodySmall),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
+                          ),
                         ],
                       ),
                       if (widget.predefinedAttributes.isNotEmpty && widget.templateType != "AUTHENTICATION") ...[
-                        const SizedBox(height: 8),
-                        //
-                        Center(child: Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
-
-                        _buildDropdown(attribute),
-                        //
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Expanded(flex: 35, child: SizedBox.shrink()),
+                            //  const SizedBox(width: 10),
+                            // Expanded(
+                            //   flex: 65,
+                            //   child: Column(
+                            //     children: [
+                            //       Center(
+                            //         child: Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                            //       ),
+                            //       const SizedBox(height: 10),
+                            //       _buildDropdown(attribute),
+                            //     ],
+                            //   ),
+                            // ),
+                          ],
+                        ),
                       ],
                     ],
                   );
                 },
               );
             },
-            separatorBuilder: (context, index) => const SizedBox(height: 5),
+            separatorBuilder: (context, index) => const SizedBox(height: 10),
             itemCount: widget.bodyComponent.attributes.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -145,7 +191,7 @@ class _BodyFormState extends State<BodyForm> {
     return ValueListenableBuilder<String?>(
       valueListenable: attribute.selectedVariable,
       builder: (context, _, child) {
-        return DropdownButtonFormField<String>(
+        return DropdownButtonFormField2<String>(
           items: widget.predefinedAttributes.keys.map((e) => DropdownMenuItem<String>(value: e, child: Text(e))).toList(),
           onChanged: (value) {
             attribute.textController.text = "";
@@ -153,7 +199,9 @@ class _BodyFormState extends State<BodyForm> {
             attribute.selectedVariableValue.value = widget.predefinedAttributes[value];
           },
           value: attribute.selectedVariable.value,
-          decoration: InputDecoration(hintText: "Select Variable"),
+          decoration: FormStyles.buildInputDecoration(context, hintText: "Select Variable"),
+          dropdownStyleData: FormStyles.buildDropdownStyleData(context),
+          menuItemStyleData: FormStyles.buildMenuItemStyleData(context),
           validator: (value) {
             if (attribute.selectedVariableValue.value?.isEmpty ?? true) {
               return 'This field is required';
