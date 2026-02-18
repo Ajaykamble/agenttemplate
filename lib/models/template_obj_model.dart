@@ -394,7 +394,6 @@ class CarouselCard {
     Map<String, dynamic> headerObj = {};
     List<Map<String, dynamic>> buttonObjs = [];
     List<Map<String, dynamic>> bodyObjs = [];
-    //
 
     Component? BUTTONS_COMPONENT = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
     Component? HEADER_COMPONENT = components.firstWhereOrNull((element) => element.type == 'HEADER');
@@ -408,6 +407,19 @@ class CarouselCard {
         if (json.isNotEmpty) {
           buttonObjs.add(json);
         }
+      }
+    }
+    if (HEADER_COMPONENT != null) {
+      Map<String, dynamic> json = HEADER_COMPONENT.toServerHeaderJson();
+      if (json.isNotEmpty) {
+        headerObj = json;
+      }
+    }
+
+    if (BODY_COMPONENT != null) {
+      List<Map<String, dynamic>> json = BODY_COMPONENT.toServerBodyJson();
+      if (json.isNotEmpty) {
+        bodyObjs = json;
       }
     }
 
@@ -480,83 +492,6 @@ class Component {
   final int? codeExpirationMinutes;
 
   //
-
-  Map<String, dynamic> toServerHeaderJson() {
-    //
-    switch (format) {
-      case "TEXT":
-        if (attributes.isNotEmpty) {
-          return {
-            "type": "text",
-            "text": attributes.first.selectedVariableValue.value ?? "",
-            "link": "",
-            "media_id": "",
-            "fileName": "",
-            "valueType": "static",
-            "latitude": "",
-            "longitude": "",
-            "name": "",
-            "address": "",
-            "catalogId": "",
-            "productRetailerId": "",
-          };
-        }
-        break;
-      case "VIDEO":
-      case "IMAGE":
-      case "DOCUMENT":
-        return {
-          "type": format?.toLowerCase() ?? "",
-          "text": null,
-          "link": headerFileUrlController.text,
-          "media_id": selectedFileObject.value?.mediaId ?? "",
-          "fileName": headerFileNameController.text,
-          "valueType": "static",
-          "latitude": "",
-          "longitude": "",
-          "name": "",
-          "address": "",
-          "catalogId": "",
-          "productRetailerId": "",
-        };
-      case "LOCATION":
-        return {
-          "type": "location",
-          "text": null,
-          "link": "",
-          "media_id": "",
-          "fileName": "",
-          "valueType": "static",
-          "latitude": latitudeController.text,
-          "longitude": longitudeController.text,
-          "name": locationNameController.text,
-          "address": locationAddressController.text,
-          "catalogId": "",
-          "productRetailerId": "",
-        };
-
-      case "PRODUCT":
-        String? catalogId = catalogueResponse?.catalogueDetails?.data?.firstOrNull?.id;
-        return {
-          "type": "product",
-          "text": null,
-          "link": "",
-          "media_id": "",
-          "fileName": "",
-          "valueType": "static",
-          "latitude": "",
-          "longitude": "",
-          "name": "",
-          "address": "",
-          "catalogId": catalogId ?? "",
-          "productRetailerId": selectedProduct.value?.retailerId ?? "",
-        };
-
-      default:
-        return {};
-    }
-    return {};
-  }
 
   ValueNotifier<FileObject?> selectedFileObject = ValueNotifier<FileObject?>(null);
 
@@ -703,6 +638,106 @@ class Component {
     );
   }
 
+  Map<String, dynamic> toServerHeaderJson() {
+    //
+    switch (format) {
+      case "TEXT":
+        if (attributes.isNotEmpty) {
+          return {
+            "type": "text",
+            "text": attributes.first.selectedVariableValue.value ?? "",
+            "link": "",
+            "media_id": "",
+            "fileName": "",
+            "valueType": "static",
+            "latitude": "",
+            "longitude": "",
+            "name": "",
+            "address": "",
+            "catalogId": "",
+            "productRetailerId": "",
+          };
+        }
+        break;
+      case "VIDEO":
+      case "IMAGE":
+      case "DOCUMENT":
+        return {
+          "type": format?.toLowerCase() ?? "",
+          "text": null,
+          "link": headerFileUrlController.text,
+          "media_id": selectedFileObject.value?.mediaId ?? "",
+          "fileName": headerFileNameController.text,
+          "valueType": "static",
+          "latitude": "",
+          "longitude": "",
+          "name": "",
+          "address": "",
+          "catalogId": "",
+          "productRetailerId": "",
+        };
+      case "LOCATION":
+        return {
+          "type": "location",
+          "text": null,
+          "link": "",
+          "media_id": "",
+          "fileName": "",
+          "valueType": "static",
+          "latitude": latitudeController.text,
+          "longitude": longitudeController.text,
+          "name": locationNameController.text,
+          "address": locationAddressController.text,
+          "catalogId": "",
+          "productRetailerId": "",
+        };
+
+      case "PRODUCT":
+        String? catalogId = catalogueResponse?.catalogueDetails?.data?.firstOrNull?.id;
+        return {
+          "type": "product",
+          "text": null,
+          "link": "",
+          "media_id": "",
+          "fileName": "",
+          "valueType": "static",
+          "latitude": "",
+          "longitude": "",
+          "name": "",
+          "address": "",
+          "catalogId": catalogId ?? "",
+          "productRetailerId": selectedProduct.value?.retailerId ?? "",
+        };
+
+      default:
+        return {};
+    }
+    return {};
+  }
+
+  List<Map<String, dynamic>> toServerBodyJson() {
+    List<Map<String, dynamic>> bodyJson = [];
+    if (attributes.isNotEmpty) {
+      //
+      for (int i = 0; i < attributes.length; i++) {
+        AttributeClass attribute = attributes[i];
+        bool isUrl = attribute.isSmartUrlEnabled.value;
+
+        String text = "";
+        if (attribute.selectedVariable.value != null) {
+          text = attribute.selectedVariableValue.value!;
+          isUrl = false;
+        } else {
+          text = attribute.selectedVariableValue.value ?? "";
+        }
+
+        Map<String, dynamic> json = {"index": i, "type": "text", "text": text, "valueType": "static", "isUrl": isUrl ? 1 : 0};
+        bodyJson.add(json);
+      }
+    }
+    return bodyJson;
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -822,6 +857,13 @@ class TemplateObj {
   }
 
   String getBodyPhJson() {
+    Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
+    if (bodyComponent != null) {
+      List<Map<String, dynamic>> json = bodyComponent.toServerBodyJson();
+      if (json.isNotEmpty) {
+        return jsonEncode(json);
+      }
+    }
     return "";
   }
 
