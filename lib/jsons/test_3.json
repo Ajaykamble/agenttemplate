@@ -1,0 +1,431 @@
+[
+    {
+        "templateId": 4,
+        "customerId": 1,
+        "wabaAccountId": 1,
+        "templateName": "sample_cta",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Hi {{1}}",
+                    "example": {
+                        "header_text": [
+                            "name"
+                        ]
+                    },
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Hi this is sample message for testing and devlopment 🧐😃🥲😝🥳"
+                },
+                {
+                    "type": "FOOTER",
+                    "text": "Footer message"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "PHONE_NUMBER",
+                            "text": "Call Me",
+                            "phone_number": "+919949509471"
+                        },
+                        {
+                            "type": "URL",
+                            "text": "Visit",
+                            "url": "http://vectramind.com/%7B%7B1%7D%7D/{{1}}",
+                            "example": [
+                                "http://vectramind.com/123"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "name": "sample_cta",
+            "language": "en",
+            "id": "303528548800579",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0,
+            "parameter_format": "POSITIONAL"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "303528548800579",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2024-01-17 13:38:49",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-07-22 11:33:40",
+        "updatedBy": 1,
+        "templateUpdatedOn": "2025-07-22 11:32:49",
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 42,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "sample_multi_btn",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "example": {
+                        "header_handle": [
+                            "https://scontent.whatsapp.net/v/t61.29466-34/453584918_472186585441570_3163694886614741107_n.png?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=MDXROzgg87kQ7kNvgGggirV&_nc_zt=3&_nc_ht=scontent.whatsapp.net&edm=AIJs65cEAAAA&_nc_gid=AEm5REM0R8FUOguYV-QA0vr&oh=01_Q5AaIGCO6m3jWGr8v5fJs-IqLZeNRZGcDvNemLwJ21hT84O2&oe=674056B0"
+                        ]
+                    },
+                    "format": "IMAGE"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Dear {{1}}\nSample template message for checking multi buttons",
+                    "example": {
+                        "body_text": [
+                            [
+                                "Naveen"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "type": "FOOTER",
+                    "text": "Footer Message"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Nanajee"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Phani"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Dinesh"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Naveen"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Siva"
+                        }
+                    ]
+                }
+            ],
+            "name": "sample_multi_btn",
+            "language": "en_US",
+            "id": "397506606242902",
+            "category": "MARKETING",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "397506606242902",
+        "templateStatus": 1,
+        "language": "en_US",
+        "createdOn": "2024-04-16 06:57:52",
+        "createdBy": 1,
+        "reason": "NONE",
+        "fileObject": null,
+        "updatedOn": "2024-10-23 12:12:03",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 6,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "hello_world",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Hello World",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Welcome and congratulations!! This message demonstrates your ability to send a WhatsApp message notification from the Cloud API, hosted by Meta. Thank you for taking the time to test with us."
+                },
+                {
+                    "type": "FOOTER",
+                    "text": "WhatsApp Business Platform sample message"
+                }
+            ],
+            "name": "hello_world",
+            "language": "en_US",
+            "id": "129539856855823",
+            "category": "UTILITY",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "UTILITY",
+        "templateRefId": "129539856855823",
+        "templateStatus": 1,
+        "language": "en_US",
+        "createdOn": "2024-01-17 13:38:51",
+        "createdBy": 1,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2024-01-17 13:38:51",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 5,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "latest_btn_message",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Hi {{1}}",
+                    "example": {
+                        "header_text": [
+                            "name"
+                        ]
+                    },
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "THis is test message for latest button ```futurs```"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "URL",
+                            "text": "Vist",
+                            "url": "http://vectramind.com/"
+                        },
+                        {
+                            "type": "URL",
+                            "text": "VistMe",
+                            "url": "http://vectramind.com/"
+                        },
+                        {
+                            "type": "PHONE_NUMBER",
+                            "text": "Call Me",
+                            "phone_number": "+919949509471"
+                        },
+                        {
+                            "type": "COPY_CODE",
+                            "text": "Copy offer code",
+                            "example": [
+                                "123456"
+                            ]
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Save"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "No"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Test"
+                        }
+                    ]
+                }
+            ],
+            "name": "latest_btn_message",
+            "language": "en_US",
+            "id": "837903144652313",
+            "category": "MARKETING",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "837903144652313",
+        "templateStatus": 1,
+        "language": "en_US",
+        "createdOn": "2024-01-17 13:38:50",
+        "createdBy": 1,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2024-01-17 13:38:50",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 3,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "missing_info",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "Please enter your mission info data"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "FLOW",
+                            "text": "Continue",
+                            "flow_id": "885968622887375",
+                            "flow_action": "NAVIGATE",
+                            "navigate_screen": "PREFERENCES"
+                        }
+                    ]
+                }
+            ],
+            "name": "missing_info",
+            "language": "en",
+            "id": "1084190375927531",
+            "category": "MARKETING",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "1084190375927531",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2024-01-17 13:38:49",
+        "createdBy": 1,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2024-01-17 13:38:49",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "sample_text_msg",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Sample Header",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Sample Body message"
+                },
+                {
+                    "type": "FOOTER",
+                    "text": "Sample footer"
+                }
+            ],
+            "name": "sample_text_msg",
+            "language": "en",
+            "id": "949161156159345",
+            "category": "MARKETING",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "949161156159345",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2024-01-17 13:38:48",
+        "createdBy": 1,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2024-01-17 13:38:48",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 1,
+        "customerId": 0,
+        "wabaAccountId": 1,
+        "templateName": "sample_media_message",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "example": {
+                        "header_handle": [
+                            "https://scontent.whatsapp.net/v/t61.29466-34/328790270_610344567798099_3609679533863537875_n.png?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=cOQdoOu_spUAX-EKEFG&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&oh=01_AdRul5Gj2nXkpSBM1xJc7bn0k9xP8hSJ5kpEebeDQGj9jQ&oe=65CEF5CF"
+                        ]
+                    },
+                    "format": "IMAGE"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Sample message parameter {{1}} , *parameter* {{2}},  _parameter_ {{3}},~parameter~ {{4}}.This is sample message for devlopment",
+                    "example": {
+                        "body_text": [
+                            [
+                                "P1",
+                                "P2",
+                                "P3",
+                                "P4"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "type": "FOOTER",
+                    "text": "Not interested? Tap Stop promotions"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Yes"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "No"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Stop promotions"
+                        }
+                    ]
+                }
+            ],
+            "name": "sample_media_message",
+            "language": "en",
+            "id": "610344561131433",
+            "category": "MARKETING",
+            "status": "APPROVED"
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "610344561131433",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2024-01-17 13:38:47",
+        "createdBy": 1,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2024-01-17 13:38:47",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": null,
+        "parameterFormat": "POSITIONAL"
+    }
+]
