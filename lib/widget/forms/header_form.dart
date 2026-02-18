@@ -308,22 +308,25 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                   ),
                 ),
 
-                // File name display
-                const SizedBox(width: 10),
-                // Fetch button
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: setDefaultFileObject,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF007BFF),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                if ((widget.fileObject ?? "").isNotEmpty) ...[
+                  const SizedBox(width: 10),
+                  // Fetch button
+                  SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: setDefaultFileObject,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF007BFF),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text("Fetch"),
                     ),
-                    child: const Text("Fetch"),
                   ),
-                ),
+                ],
+
+                // File name display
               ],
             ),
             const SizedBox(height: 12),

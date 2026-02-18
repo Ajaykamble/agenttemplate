@@ -177,6 +177,124 @@ class TemplateButton {
     }
   }
 
+  Map<String, dynamic> toServerJson({required Component? HEADER_COMPONENT, required int index}) {
+    switch (type) {
+      case "QUICK_REPLY":
+        return {
+          "type": "QRA",
+          "index": index,
+          "text": buttonTextController.text,
+          "valueType": "static",
+          "sectionObjs": [
+            {"title": "", "productRetailerIds": []},
+          ],
+          "thumbnailRetailerId": "",
+          "flowActionData": [],
+        };
+        break;
+      case "COPY_CODE":
+        return {
+          "type": "COPY_CODE",
+          "index": index,
+          "text": buttonTextController.text,
+          "valueType": "static",
+          "sectionObjs": [
+            {"title": "", "productRetailerIds": []},
+          ],
+          "thumbnailRetailerId": "",
+          "flowActionData": [],
+        };
+        break;
+      case "FLOW":
+        List<Map<String, dynamic>> flowActionData = [];
+        FlowRawScreen? flowRawScreen = flowRawScreenData;
+        if (flowRawScreen != null) {
+          for (final action in flowRawScreen.attributes) {
+            flowActionData.add({"key": action.header, "value": action.textController.text, "actionType": "static"});
+          }
+        }
+        return {
+          "type": "FLOW",
+          "index": index,
+          "text": "",
+          "valueType": "static",
+          "sectionObjs": [
+            {"title": "", "productRetailerIds": []},
+          ],
+          "thumbnailRetailerId": "",
+          "flowActionData": flowActionData,
+        };
+      case "SPM":
+        if (HEADER_COMPONENT != null) {
+          ProductDetailsDatum? selectedProduct = HEADER_COMPONENT.selectedProduct.value;
+          if (selectedProduct != null) {
+            Map<String, dynamic> json = {
+              "type": "SPM",
+              "index": index,
+              "text": "",
+              "valueType": "static",
+              "sectionObjs": [
+                {"title": "", "productRetailerIds": []},
+              ],
+              "thumbnailRetailerId": selectedProduct.retailerId ?? "",
+              "flowActionData": [],
+            };
+            return json;
+          }
+        }
+        break;
+      case "CATALOG":
+        //
+        if (HEADER_COMPONENT != null) {
+          ProductDetailsDatum? selectedProduct = HEADER_COMPONENT.selectedProduct.value;
+          if (selectedProduct != null) {
+            Map<String, dynamic> json = {
+              "type": "CATALOG",
+              "index": index,
+              "text": "",
+              "valueType": "static",
+              "sectionObjs": [
+                {"title": "", "productRetailerIds": []},
+              ],
+              "thumbnailRetailerId": selectedProduct.retailerId ?? "",
+              "flowActionData": [],
+            };
+            return json;
+          }
+        }
+        break;
+      case "MPM":
+        List<Map<String, dynamic>> sectionObjs = [];
+
+        for (final attribute in mpmAttributes) {
+          sectionObjs.add({"title": attribute.categoryController.text, "productRetailerIds": attribute.selectedProductsNotifier.value.map((e) => e.retailerId ?? '').toList()});
+        }
+
+        Map<String, dynamic> json = {"type": "MPM", "index": index, "text": text, "valueType": "static", "sectionObjs": sectionObjs, "thumbnailRetailerId": "", "flowActionData": []};
+        return json;
+        break;
+      case "URL":
+        if (example?.isNotEmpty ?? false) {
+          Map<String, dynamic> json = {
+            "type": "URL",
+            "index": index,
+            "text": buttonTextController.text.trim(),
+            "valueType": "static",
+            "sectionObjs": [
+              {"title": "", "productRetailerIds": []},
+            ],
+            "thumbnailRetailerId": "",
+            "flowActionData": [],
+          };
+          return json;
+        }
+        break;
+      default:
+        return {};
+    }
+    return {};
+  }
+
   TemplateButton({required this.type, required this.text, this.url, this.phoneNumber, this.example, this.flowId, this.flowAction, this.navigateScreen, this.ttlMinutes});
   factory TemplateButton.fromJson(Map<String, dynamic> json) {
     return TemplateButton(
@@ -266,6 +384,37 @@ class CarouselCard {
 
   factory CarouselCard.fromJson(Map<String, dynamic> json, {bool isAddedExternally = false}) {
     return CarouselCard(components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList(), isAddedExternally: isAddedExternally);
+  }
+
+  Map<String, dynamic> toCarouselCardJson(int index) {
+    //
+    Map<String, dynamic> headerObj = {};
+    List<Map<String, dynamic>> buttonObjs = [];
+    List<Map<String, dynamic>> bodyObjs = [];
+    //
+
+    Component? BUTTONS_COMPONENT = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? HEADER_COMPONENT = components.firstWhereOrNull((element) => element.type == 'HEADER');
+    Component? BODY_COMPONENT = components.firstWhereOrNull((element) => element.type == 'BODY');
+
+    if (BUTTONS_COMPONENT != null) {
+      //
+      for (int i = 0; i < BUTTONS_COMPONENT.buttons!.length; i++) {
+        TemplateButton button = BUTTONS_COMPONENT.buttons![i];
+        Map<String, dynamic> json = button.toServerJson(HEADER_COMPONENT: HEADER_COMPONENT, index: i);
+        if (json.isNotEmpty) {
+          buttonObjs.add(json);
+        }
+      }
+    }
+
+    return {
+      "index": index,
+      "headerObj": headerObj,
+      "buttons": buttonObjs,
+      "body": bodyObjs,
+      //
+    };
   }
 
   Map<String, dynamic> toJson() {
@@ -578,74 +727,47 @@ class TemplateObj {
     required this.parameterFormat,
   });
 
-  String getButtonPhJson() {
+  String getHeaderPhJson() {
+    return "";
+  }
+
+  String getBodyPhJson() {
+    return "";
+  }
+
+  String getCarouselObjJson() {
     //
-
-    List<Map<String, dynamic>> buttonJson = [];
-    Component? buttonComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
-    if (buttonComponent != null) {
-      //
-
-      final List<TemplateButton>? buttons = buttonComponent.buttons;
-      if (buttons != null) {
-        for (int i = 0; i < buttons.length; i++) {
-          //
-          TemplateButton button = buttons[i];
-          switch (button.type) {
-            //
-            case "QUICK_REPLY":
-              buttonJson.add({
-                "type": "QRA",
-                "index": i,
-                "text": button.buttonTextController.text,
-                "valueType": "static",
-                "sectionObjs": [
-                  {"title": "", "productRetailerIds": []},
-                ],
-                "thumbnailRetailerId": "",
-                "flowActionData": [],
-              });
-              break;
-            case "COPY_CODE":
-              buttonJson.add({
-                "type": "COPY_CODE",
-                "index": 2,
-                "text": button.buttonTextController.text,
-                "valueType": "static",
-                "sectionObjs": [
-                  {"title": "", "productRetailerIds": []},
-                ],
-                "thumbnailRetailerId": "",
-                "flowActionData": [],
-              });
-              break;
-            case "FLOW":
-              //
-
-              List<Map<String, dynamic>> flowActionData = [];
-              FlowRawScreen? flowRawScreen = button.flowRawScreenData;
-              if (flowRawScreen != null) {
-                for (final action in flowRawScreen.attributes) {
-                  flowActionData.add({"key": action.header, "value": action.textController.text, "actionType": "static"});
-                }
-              }
-              buttonJson.add({
-                "type": "FLOW",
-                "index": i,
-                "text": "",
-                "valueType": "static",
-                "sectionObjs": [
-                  {"title": "", "productRetailerIds": []},
-                ],
-                "thumbnailRetailerId": "",
-                "flowActionData": flowActionData,
-              });
-              break;
+    List<Map<String, dynamic>> carouselJson = [];
+    for (final component in components) {
+      if (component.type == 'CAROUSEL') {
+        for (int i = 0; i < (component.cards?.length ?? 0); i++) {
+          CarouselCard? card = component.cards?[i];
+          if (card != null) {
+            carouselJson.add(card.toCarouselCardJson(i));
           }
         }
       }
     }
-    return buttonJson.isNotEmpty ? "" : jsonEncode(buttonJson);
+    return carouselJson.isEmpty ? "" : jsonEncode(carouselJson);
+  }
+
+  String getButtonPhJson() {
+    List<Map<String, dynamic>> buttonJson = [];
+    Component? buttonComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    if (buttonComponent != null) {
+      final List<TemplateButton>? buttons = buttonComponent.buttons;
+      if (buttons != null) {
+        for (int i = 0; i < buttons.length; i++) {
+          TemplateButton button = buttons[i];
+          Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
+          Map<String, dynamic> json = button.toServerJson(HEADER_COMPONENT: headerComponent, index: i);
+          if (json.isNotEmpty) {
+            buttonJson.add(json);
+          }
+        }
+      }
+    }
+    return buttonJson.isEmpty ? "" : jsonEncode(buttonJson);
   }
 
   String getLtoPhJson() {

@@ -650,7 +650,22 @@ class TemplateDetailPage extends StatelessWidget {
   }
 
   void _showTemplateJson(BuildContext context) {
-    final prettyJson = const JsonEncoder.withIndent('  ').convert(item.templateObj.toJson());
+    final encoder = const JsonEncoder.withIndent('  ');
+    final templateObjJson = encoder.convert(item.templateObj.toJson());
+    final headerPhJson = item.templateObj.getHeaderPhJson();
+    final bodyPhJson = item.templateObj.getBodyPhJson();
+    final buttonPhJson = item.templateObj.getButtonPhJson();
+    final ltoPhJson = item.templateObj.getLtoPhJson();
+    final carouselObjJson = item.templateObj.getCarouselObjJson();
+
+    final tabs = <MapEntry<String, String>>[
+      MapEntry('Header Ph', headerPhJson),
+      MapEntry('Body Ph', bodyPhJson),
+      MapEntry('Button Ph', buttonPhJson),
+      MapEntry('Template Obj', templateObjJson),
+      MapEntry('LTO Ph', ltoPhJson),
+      MapEntry('Carousel Obj', carouselObjJson),
+    ];
 
     showModalBottomSheet(
       context: context,
@@ -662,27 +677,49 @@ class TemplateDetailPage extends StatelessWidget {
           maxChildSize: 0.9,
           expand: false,
           builder: (context, scrollController) {
-            return Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Text('Template JSON', style: Theme.of(context).textTheme.titleMedium),
-                      const Spacer(),
-                      IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
-                    ],
+            return DefaultTabController(
+              length: tabs.length,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 16, right: 4, top: 8),
+                    child: Row(
+                      children: [
+                        Text('Template JSON', style: Theme.of(context).textTheme.titleMedium),
+                        const Spacer(),
+                        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+                      ],
+                    ),
                   ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.all(16),
-                    child: SelectableText(prettyJson, style: const TextStyle(fontFamily: 'monospace', fontSize: 13)),
+                  TabBar(
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    tabs: tabs.map((e) => Tab(text: e.key)).toList(),
                   ),
-                ),
-              ],
+                  const Divider(height: 1),
+                  Expanded(
+                    child: TabBarView(
+                      children: tabs.map((entry) {
+                        final raw = entry.value;
+                        String display;
+                        if (raw.isEmpty) {
+                          display = '(empty)';
+                        } else {
+                          try {
+                            display = encoder.convert(jsonDecode(raw));
+                          } catch (_) {
+                            display = raw;
+                          }
+                        }
+                        return SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: SelectableText(display, style: const TextStyle(fontFamily: 'monospace', fontSize: 13)),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         );
