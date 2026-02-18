@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_this
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:agenttemplate/models/catalogue_response_model.dart';
@@ -20,9 +21,7 @@ class AdditionalInfo {
   final TextEditingController keyController;
   final TextEditingController valueController;
 
-  AdditionalInfo({String key = "", String value = ""})
-    : keyController = TextEditingController(text: key),
-      valueController = TextEditingController(text: value);
+  AdditionalInfo({String key = "", String value = ""}) : keyController = TextEditingController(text: key), valueController = TextEditingController(text: value);
 
   void dispose() {
     keyController.dispose();
@@ -80,9 +79,7 @@ class ComponentExample {
 
   factory ComponentExample.fromJson(Map<String, dynamic> json) {
     return ComponentExample(
-      bodyText: json['body_text'] != null
-          ? (json['body_text'] as List<dynamic>).map((e) => (e as List<dynamic>).map((s) => s as String).toList()).toList()
-          : null,
+      bodyText: json['body_text'] != null ? (json['body_text'] as List<dynamic>).map((e) => (e as List<dynamic>).map((s) => s as String).toList()).toList() : null,
       headerHandle: json['header_handle'] != null ? (json['header_handle'] as List<dynamic>).map((e) => e as String).toList() : null,
       headerText: json['header_text'] != null ? (json['header_text'] as List<dynamic>).map((e) => e as String).toList() : null,
     );
@@ -180,17 +177,7 @@ class TemplateButton {
     }
   }
 
-  TemplateButton({
-    required this.type,
-    required this.text,
-    this.url,
-    this.phoneNumber,
-    this.example,
-    this.flowId,
-    this.flowAction,
-    this.navigateScreen,
-    this.ttlMinutes,
-  });
+  TemplateButton({required this.type, required this.text, this.url, this.phoneNumber, this.example, this.flowId, this.flowAction, this.navigateScreen, this.ttlMinutes});
   factory TemplateButton.fromJson(Map<String, dynamic> json) {
     return TemplateButton(
       type: json['type'] as String,
@@ -257,8 +244,7 @@ class TemplateButton {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(type, text, url, phoneNumber, example != null ? Object.hashAll(example!) : null, flowId, flowAction, navigateScreen, ttlMinutes);
+  int get hashCode => Object.hash(type, text, url, phoneNumber, example != null ? Object.hashAll(example!) : null, flowId, flowAction, navigateScreen, ttlMinutes);
 
   @override
   String toString() =>
@@ -273,12 +259,13 @@ class TemplateButton {
 
 /// A single card inside a CAROUSEL component.
 class CarouselCard {
+  final bool isAddedExternally;
   final List<Component> components;
 
-  const CarouselCard({required this.components});
+  const CarouselCard({required this.components, this.isAddedExternally = false});
 
-  factory CarouselCard.fromJson(Map<String, dynamic> json) {
-    return CarouselCard(components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList());
+  factory CarouselCard.fromJson(Map<String, dynamic> json, {bool isAddedExternally = false}) {
+    return CarouselCard(components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList(), isAddedExternally: isAddedExternally);
   }
 
   Map<String, dynamic> toJson() {
@@ -373,17 +360,7 @@ class Component {
     selectedFileObject.value = FileObject(filePath: url, fileName: "");
   }
 
-  Component({
-    required this.type,
-    this.text,
-    this.format,
-    this.example,
-    this.addSecurityRecommendation,
-    this.buttons,
-    this.cards,
-    this.limitedTimeOffer,
-    this.codeExpirationMinutes,
-  });
+  Component({required this.type, this.text, this.format, this.example, this.addSecurityRecommendation, this.buttons, this.cards, this.limitedTimeOffer, this.codeExpirationMinutes});
 
   factory Component.fromJson(Map<String, dynamic> json) {
     //
@@ -393,9 +370,7 @@ class Component {
       format: json['format'] as String?,
       example: json['example'] != null ? ComponentExample.fromJson(json['example'] as Map<String, dynamic>) : null,
       addSecurityRecommendation: json['add_security_recommendation'] as bool?,
-      buttons: json['buttons'] != null
-          ? (json['buttons'] as List<dynamic>).map((e) => TemplateButton.fromJson(e as Map<String, dynamic>)).toList()
-          : null,
+      buttons: json['buttons'] != null ? (json['buttons'] as List<dynamic>).map((e) => TemplateButton.fromJson(e as Map<String, dynamic>)).toList() : null,
       cards: json['cards'] != null ? (json['cards'] as List<dynamic>).map((e) => CarouselCard.fromJson(e as Map<String, dynamic>)).toList() : null,
       limitedTimeOffer: json['limited_time_offer'] != null ? LimitedTimeOffer.fromJson(json['limited_time_offer'] as Map<String, dynamic>) : null,
       codeExpirationMinutes: json['code_expiration_minutes'] as int?,
@@ -586,8 +561,7 @@ class TemplateObj {
         TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
         if (urlButton != null) {
           //
-          urlButton.buttonTextController.text =
-              bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
+          urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
         }
       }
     }
@@ -603,6 +577,87 @@ class TemplateObj {
     required this.messageSendTtlSeconds,
     required this.parameterFormat,
   });
+
+  String getButtonPhJson() {
+    //
+
+    List<Map<String, dynamic>> buttonJson = [];
+    Component? buttonComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    if (buttonComponent != null) {
+      //
+
+      final List<TemplateButton>? buttons = buttonComponent.buttons;
+      if (buttons != null) {
+        for (int i = 0; i < buttons.length; i++) {
+          //
+          TemplateButton button = buttons[i];
+          switch (button.type) {
+            //
+            case "QUICK_REPLY":
+              buttonJson.add({
+                "type": "QRA",
+                "index": i,
+                "text": button.buttonTextController.text,
+                "valueType": "static",
+                "sectionObjs": [
+                  {"title": "", "productRetailerIds": []},
+                ],
+                "thumbnailRetailerId": "",
+                "flowActionData": [],
+              });
+              break;
+            case "COPY_CODE":
+              buttonJson.add({
+                "type": "COPY_CODE",
+                "index": 2,
+                "text": button.buttonTextController.text,
+                "valueType": "static",
+                "sectionObjs": [
+                  {"title": "", "productRetailerIds": []},
+                ],
+                "thumbnailRetailerId": "",
+                "flowActionData": [],
+              });
+              break;
+            case "FLOW":
+              //
+
+              List<Map<String, dynamic>> flowActionData = [];
+              FlowRawScreen? flowRawScreen = button.flowRawScreenData;
+              if (flowRawScreen != null) {
+                for (final action in flowRawScreen.attributes) {
+                  flowActionData.add({"key": action.header, "value": action.textController.text, "actionType": "static"});
+                }
+              }
+              buttonJson.add({
+                "type": "FLOW",
+                "index": i,
+                "text": "",
+                "valueType": "static",
+                "sectionObjs": [
+                  {"title": "", "productRetailerIds": []},
+                ],
+                "thumbnailRetailerId": "",
+                "flowActionData": flowActionData,
+              });
+              break;
+          }
+        }
+      }
+    }
+    return buttonJson.isNotEmpty ? "" : jsonEncode(buttonJson);
+  }
+
+  String getLtoPhJson() {
+    //
+    Component? limitedTimeOffer = components.firstWhereOrNull((element) => element.type == 'limited_time_offer');
+
+    if (limitedTimeOffer != null) {
+      Map<String, dynamic> json = {'valueType': 'static', 'expirationTimeMs': limitedTimeOffer.selectedOfferExpiryDateTime.value?.millisecondsSinceEpoch ?? 0};
+      return jsonEncode(json);
+    }
+    return "";
+  }
 
   factory TemplateObj.fromJson(Map<String, dynamic> json) {
     TemplateObj templateObj = TemplateObj(
@@ -652,16 +707,7 @@ class TemplateObj {
     };
   }
 
-  TemplateObj copyWith({
-    List<Component>? components,
-    String? name,
-    String? language,
-    String? id,
-    String? category,
-    String? status,
-    int? messageSendTtlSeconds,
-    String? parameterFormat,
-  }) {
+  TemplateObj copyWith({List<Component>? components, String? name, String? language, String? id, String? category, String? status, int? messageSendTtlSeconds, String? parameterFormat}) {
     return TemplateObj(
       components: components ?? this.components,
       name: name ?? this.name,

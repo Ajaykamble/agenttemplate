@@ -35,7 +35,7 @@ class CarouselForm extends StatefulWidget {
   State<CarouselForm> createState() => _CarouselFormState();
 }
 
-class _CarouselFormState extends State<CarouselForm> with SingleTickerProviderStateMixin {
+class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMixin {
   late TabController _tabController;
   late List<GlobalKey<FormState>> _cardFormKeys;
   final ValueNotifier<Set<int>> _errorCards = ValueNotifier<Set<int>>({});
@@ -63,6 +63,45 @@ class _CarouselFormState extends State<CarouselForm> with SingleTickerProviderSt
       if (!isValid) errors.add(i);
     }
     _errorCards.value = errors;
+  }
+
+  bool get _isProductCardCarousel => widget.templateType == 'PRODUCTCARDCAROUSEL';
+
+  static const int _maxCards = 10;
+
+  void _addCard() {
+    if (_cards.isEmpty || _cards.length >= _maxCards) return;
+
+    final templateCard = _cards.first;
+
+    widget.carouselComponent.cards?.add(CarouselCard.fromJson(templateCard.toJson(), isAddedExternally: true));
+
+    _rebuildTabController(_cards.length - 1);
+  }
+
+  void _removeCard(int index) {
+    if (index < 0 || index >= _cards.length) return;
+    if (!_cards[index].isAddedExternally) return;
+
+    widget.carouselComponent.cards!.removeAt(index);
+    _cardFormKeys.removeAt(index);
+
+    final newIndex = index.clamp(0, _cards.length - 1);
+    _rebuildTabController(newIndex);
+  }
+
+  void _rebuildTabController(int newIndex) {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+
+    _tabController = TabController(length: _cards.length, vsync: this, initialIndex: newIndex);
+    _tabController.addListener(_onTabChanged);
+
+    if (_cardFormKeys.length < _cards.length) {
+      _cardFormKeys.add(GlobalKey<FormState>());
+    }
+
+    setState(() {});
   }
 
   @override
@@ -108,22 +147,46 @@ class _CarouselFormState extends State<CarouselForm> with SingleTickerProviderSt
             ValueListenableBuilder<Set<int>>(
               valueListenable: _errorCards,
               builder: (context, errorIndices, _) {
-                return TabBar(
+                final tabBar = TabBar(
                   controller: _tabController,
-                  isScrollable: _cards.length > 3,
-                  tabAlignment: _cards.length > 3 ? TabAlignment.start : TabAlignment.fill,
+                  isScrollable: _isProductCardCarousel || _cards.length > 3,
+                  tabAlignment: (_isProductCardCarousel || _cards.length > 3) ? TabAlignment.start : TabAlignment.fill,
                   labelColor: Theme.of(context).colorScheme.primary,
                   unselectedLabelColor: Colors.grey,
                   indicatorColor: Theme.of(context).colorScheme.primary,
                   tabs: List.generate(_cards.length, (index) {
                     final hasError = errorIndices.contains(index);
-                    return Tab(
-                      child: Text(
-                        "Card ${index + 1}",
-                        style: hasError ? const TextStyle(color: Colors.red, fontWeight: FontWeight.bold) : null,
-                      ),
-                    );
+                    final card = _cards[index];
+                    final textStyle = hasError ? const TextStyle(color: Colors.red, fontWeight: FontWeight.bold) : null;
+
+                    if (card.isAddedExternally) {
+                      return Tab(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Card ${index + 1}", style: textStyle),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () => _removeCard(index),
+                              child: const Icon(Icons.close, size: 16, color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Tab(child: Text("Card ${index + 1}", style: textStyle));
                   }),
+                );
+
+                if (!_isProductCardCarousel) return tabBar;
+
+                return Row(
+                  children: [
+                    Expanded(child: tabBar),
+
+                    if (_cards.length < _maxCards) ...[const SizedBox(width: 5), ElevatedButton(onPressed: _addCard, child: Text("Add Card"))],
+                  ],
                 );
               },
             ),

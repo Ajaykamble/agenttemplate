@@ -71,10 +71,7 @@ class _BodyFormState extends State<BodyForm> {
                               children: [
                                 Text("${attribute.title}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                                 SizedBox(width: 10),
-                                Text(
-                                  "${attribute.placeholder}",
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
-                                ),
+                                Text("${attribute.placeholder}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                               ],
                             ),
                           ),
@@ -156,19 +153,19 @@ class _BodyFormState extends State<BodyForm> {
                         Row(
                           children: [
                             const Expanded(flex: 35, child: SizedBox.shrink()),
-                            //  const SizedBox(width: 10),
-                            // Expanded(
-                            //   flex: 65,
-                            //   child: Column(
-                            //     children: [
-                            //       Center(
-                            //         child: Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                            //       ),
-                            //       const SizedBox(height: 10),
-                            //       _buildDropdown(attribute),
-                            //     ],
-                            //   ),
-                            // ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 65,
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildDropdown(attribute),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ],

@@ -78,6 +78,7 @@ class AgentTemplateProvider extends ChangeNotifier {
   // Catalogue
 
   void getCatalogue() async {
+    if (_catalogueResponse != null) return;
     try {
       catalogueStatus = ApiStatus.loading;
       catalogueResponse ??= await onGetCatalogue?.call();

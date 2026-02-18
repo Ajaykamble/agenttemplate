@@ -135,14 +135,8 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (FOOTER_COMPONENT != null) ...[
-          FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor),
-          const SizedBox(height: 10),
-        ],
-        if (BUTTONS_COMPONENT != null) ...[
-          ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType),
-          const SizedBox(height: 10),
-        ],
+        if (FOOTER_COMPONENT != null) ...[FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
+        if (BUTTONS_COMPONENT != null) ...[ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType), const SizedBox(height: 10)],
         if (CAROUSEL_COMPONENT != null) ...[
           CarouselForm(
             carouselComponent: CAROUSEL_COMPONENT,
@@ -155,10 +149,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (limited_time_offer != null) ...[
-          LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor),
-          const SizedBox(height: 10),
-        ],
+        if (limited_time_offer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
         _buildAdditionalInfoSection(),
       ],
     );
@@ -184,13 +175,6 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                     newList.add(AdditionalInfo());
                     widget.templateObj.additionalInfoList.value = newList;
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF007BFF),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
                   child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 ),
               ),

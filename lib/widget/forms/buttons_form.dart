@@ -19,9 +19,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
 
     List<TemplateButton> quickReplyButtonList = (widget.buttonsComponent.buttons ?? []).where((button) => button.type == "QUICK_REPLY").toList();
 
-    List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? [])
-        .where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty)
-        .toList();
+    List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? []).where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,10 +101,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
                         children: [
                           Expanded(
                             flex: 35,
-                            child: Text(
-                              quickReplyButtonList[index].text,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
-                            ),
+                            child: Text(quickReplyButtonList[index].text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                           ),
                           const SizedBox(width: 10),
                           Expanded(

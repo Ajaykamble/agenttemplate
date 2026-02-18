@@ -17,14 +17,7 @@ class HeaderForm extends StatefulWidget {
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
   final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
-  const HeaderForm({
-    super.key,
-    required this.headerComponent,
-    required this.backgroundColor,
-    required this.predefinedAttributes,
-    this.fileObject,
-    this.onFileUpload,
-  });
+  const HeaderForm({super.key, required this.headerComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload});
 
   @override
   State<HeaderForm> createState() => _HeaderFormState();
@@ -61,9 +54,7 @@ class _HeaderFormState extends State<HeaderForm> {
               if (widget.headerComponent.format == "TEXT") {
                 return _HeaderTextForm(headerComponent: widget.headerComponent, predefinedAttributes: widget.predefinedAttributes);
               }
-              if (widget.headerComponent.format == "IMAGE" ||
-                  widget.headerComponent.format == "VIDEO" ||
-                  widget.headerComponent.format == "DOCUMENT") {
+              if (widget.headerComponent.format == "IMAGE" || widget.headerComponent.format == "VIDEO" || widget.headerComponent.format == "DOCUMENT") {
                 return _HeaderMediaForm(headerComponent: widget.headerComponent, fileObject: widget.fileObject, onFileUpload: widget.onFileUpload);
               }
 
@@ -102,7 +93,16 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
               children: [
                 Expanded(
                   flex: 35,
-                  child: Text(attribute.title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                  child: Row(
+                    children: [
+                      Text(attribute.title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 35,
+                        child: Text(attribute.placeholder, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -216,10 +216,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
   Future<void> onUploadClick() async {
     final extensions = MediaHelper.allowedExtensions(_mediaType);
 
-    final result = await FilePicker.platform.pickFiles(
-      type: extensions.isNotEmpty ? FileType.custom : FileType.any,
-      allowedExtensions: extensions.isNotEmpty ? extensions : null,
-    );
+    final result = await FilePicker.platform.pickFiles(type: extensions.isNotEmpty ? FileType.custom : FileType.any, allowedExtensions: extensions.isNotEmpty ? extensions : null);
 
     if (result == null || result.files.isEmpty) return;
 
@@ -246,9 +243,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
       final response = await widget.onFileUpload!(xFile);
       final fileData = response.fileData?.firstOrNull;
       if (fileData != null) {
-        widget.headerComponent.setFileObject(
-          FileObject(fileName: fileData.fileName, filePath: fileData.filePath, localPath: fileData.localPath, mediaId: fileData.mediaId?.toString()),
-        );
+        widget.headerComponent.setFileObject(FileObject(fileName: fileData.fileName, filePath: fileData.filePath, localPath: fileData.localPath, mediaId: fileData.mediaId?.toString()));
       }
     }
   }
@@ -284,9 +279,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  widget.headerComponent.headerFileNameController.text.isEmpty
-                                      ? "No file selected"
-                                      : widget.headerComponent.headerFileNameController.text,
+                                  widget.headerComponent.headerFileNameController.text.isEmpty ? "No file selected" : widget.headerComponent.headerFileNameController.text,
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -360,10 +353,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
               "Note : Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
             ),
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 6),
-              Text(_errorMessage!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error)),
-            ],
+            if (_errorMessage != null) ...[const SizedBox(height: 6), Text(_errorMessage!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error))],
           ],
         );
       },
@@ -443,12 +433,7 @@ class __HeaderLocationFormState extends State<_HeaderLocationForm> {
     );
   }
 
-  Widget _buildField({
-    required String label,
-    required TextEditingController controller,
-    required String hintText,
-    String? Function(String?)? validator,
-  }) {
+  Widget _buildField({required String label, required TextEditingController controller, required String hintText, String? Function(String?)? validator}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -485,7 +470,9 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
   void initState() {
     super.initState();
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
-    agentTemplateProvider.getCatalogue();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      agentTemplateProvider.getCatalogue();
+    });
   }
 
   Widget build(BuildContext context) {
@@ -509,8 +496,7 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
         ),
         const SizedBox(height: 5),
         Selector<AgentTemplateProvider, Tuple2<ApiStatus, int>>(
-          selector: (_, agentTemplateProvider) =>
-              Tuple2(agentTemplateProvider.catalogueStatus, agentTemplateProvider.catalogueResponse?.productDetails?.data?.length ?? 0),
+          selector: (_, agentTemplateProvider) => Tuple2(agentTemplateProvider.catalogueStatus, agentTemplateProvider.catalogueResponse?.productDetails?.data?.length ?? 0),
           builder: (context, value, child) {
             if (agentTemplateProvider.catalogueStatus == ApiStatus.loading) {
               return const CircularProgressIndicator();
