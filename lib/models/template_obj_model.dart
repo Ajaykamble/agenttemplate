@@ -383,7 +383,10 @@ class CarouselCard {
   const CarouselCard({required this.components, this.isAddedExternally = false});
 
   factory CarouselCard.fromJson(Map<String, dynamic> json, {bool isAddedExternally = false}) {
-    return CarouselCard(components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList(), isAddedExternally: isAddedExternally);
+    return CarouselCard(
+      components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>, fromCarouselCard: true)).toList(),
+      isAddedExternally: isAddedExternally,
+    );
   }
 
   Map<String, dynamic> toCarouselCardJson(int index) {
@@ -476,6 +479,85 @@ class Component {
   final LimitedTimeOffer? limitedTimeOffer;
   final int? codeExpirationMinutes;
 
+  //
+
+  Map<String, dynamic> toServerHeaderJson() {
+    //
+    switch (format) {
+      case "TEXT":
+        if (attributes.isNotEmpty) {
+          return {
+            "type": "text",
+            "text": attributes.first.selectedVariableValue.value ?? "",
+            "link": "",
+            "media_id": "",
+            "fileName": "",
+            "valueType": "static",
+            "latitude": "",
+            "longitude": "",
+            "name": "",
+            "address": "",
+            "catalogId": "",
+            "productRetailerId": "",
+          };
+        }
+        break;
+      case "VIDEO":
+      case "IMAGE":
+      case "DOCUMENT":
+        return {
+          "type": format?.toLowerCase() ?? "",
+          "text": null,
+          "link": headerFileUrlController.text,
+          "media_id": selectedFileObject.value?.mediaId ?? "",
+          "fileName": headerFileNameController.text,
+          "valueType": "static",
+          "latitude": "",
+          "longitude": "",
+          "name": "",
+          "address": "",
+          "catalogId": "",
+          "productRetailerId": "",
+        };
+      case "LOCATION":
+        return {
+          "type": "location",
+          "text": null,
+          "link": "",
+          "media_id": "",
+          "fileName": "",
+          "valueType": "static",
+          "latitude": latitudeController.text,
+          "longitude": longitudeController.text,
+          "name": locationNameController.text,
+          "address": locationAddressController.text,
+          "catalogId": "",
+          "productRetailerId": "",
+        };
+
+      case "PRODUCT":
+        String? catalogId = catalogueResponse?.catalogueDetails?.data?.firstOrNull?.id;
+        return {
+          "type": "product",
+          "text": null,
+          "link": "",
+          "media_id": "",
+          "fileName": "",
+          "valueType": "static",
+          "latitude": "",
+          "longitude": "",
+          "name": "",
+          "address": "",
+          "catalogId": catalogId ?? "",
+          "productRetailerId": selectedProduct.value?.retailerId ?? "",
+        };
+
+      default:
+        return {};
+    }
+    return {};
+  }
+
   ValueNotifier<FileObject?> selectedFileObject = ValueNotifier<FileObject?>(null);
 
   List<AttributeClass> attributes = [];
@@ -486,6 +568,7 @@ class Component {
   TextEditingController locationNameController = TextEditingController();
   TextEditingController locationAddressController = TextEditingController();
 
+  CatalogueResponseModel? catalogueResponse;
   ValueNotifier<ProductDetailsDatum?> selectedProduct = ValueNotifier<ProductDetailsDatum?>(null);
 
   TextEditingController headerFileNameController = TextEditingController();
@@ -511,7 +594,7 @@ class Component {
 
   Component({required this.type, this.text, this.format, this.example, this.addSecurityRecommendation, this.buttons, this.cards, this.limitedTimeOffer, this.codeExpirationMinutes});
 
-  factory Component.fromJson(Map<String, dynamic> json) {
+  factory Component.fromJson(Map<String, dynamic> json, {bool fromCarouselCard = false}) {
     //
     Component component = Component(
       type: json['type'] as String,
@@ -564,7 +647,7 @@ class Component {
       int index = 1;
       for (TemplateButton button in component.buttons ?? []) {
         if (button.type == "QUICK_REPLY") {
-          button.buttonTextController = TextEditingController(text: "$index");
+          button.buttonTextController = TextEditingController(text: fromCarouselCard ? "${button.text}" : "$index");
           index++;
         }
       }
@@ -728,6 +811,13 @@ class TemplateObj {
   });
 
   String getHeaderPhJson() {
+    Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
+    if (headerComponent != null) {
+      Map<String, dynamic> json = headerComponent.toServerHeaderJson();
+      if (json.isNotEmpty) {
+        return jsonEncode(json);
+      }
+    }
     return "";
   }
 

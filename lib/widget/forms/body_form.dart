@@ -68,10 +68,14 @@ class _BodyFormState extends State<BodyForm> {
                           Expanded(
                             flex: 35,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("${attribute.title}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                                 SizedBox(width: 10),
-                                Text("${attribute.placeholder}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                                Expanded(
+                                  child: Text("${attribute.placeholder}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                                ),
                               ],
                             ),
                           ),

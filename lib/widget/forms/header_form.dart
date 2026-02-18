@@ -473,8 +473,9 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
   void initState() {
     super.initState();
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      agentTemplateProvider.getCatalogue();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await agentTemplateProvider.getCatalogue();
+      widget.headerComponent.catalogueResponse = agentTemplateProvider.catalogueResponse;
     });
   }
 
