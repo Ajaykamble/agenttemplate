@@ -18,6 +18,34 @@ class AgentTemplateProvider extends ChangeNotifier {
   DateTimeResponseModel? _dateTimeResponse;
   ApiStatus get flowRawInfoStatus => _flowRawInfoStatus;
 
+  bool _retryAttemptFailed = false;
+  bool get retryAttemptFailed => _retryAttemptFailed;
+  set retryAttemptFailed(bool value) {
+    _retryAttemptFailed = value;
+    retryAttemptController.text = "";
+    notifyListeners();
+  }
+
+  TextEditingController retryAttemptController = TextEditingController();
+
+  List<AdditionalDataModel> _additionalDataList = [];
+
+  List<AdditionalDataModel> get additionalDataList => _additionalDataList;
+  set additionalDataList(List<AdditionalDataModel> value) {
+    _additionalDataList = value;
+    notifyListeners();
+  }
+
+  void addAdditionalData() {
+    additionalDataList.add(AdditionalDataModel());
+    notifyListeners();
+  }
+
+  void removeAdditionalData(int index) {
+    additionalDataList.removeAt(index);
+    notifyListeners();
+  }
+
   set flowRawInfoStatus(ApiStatus status) {
     _flowRawInfoStatus = status;
     notifyListeners();
@@ -66,13 +94,18 @@ class AgentTemplateProvider extends ChangeNotifier {
 
   TemplateObj? get templateObj => _templateObj;
 
+  /// Other Params;
+
   set templateObj(TemplateObj? templateObj) {
     _templateObj = templateObj;
+    //
+    resetPageData();
     notifyListeners();
   }
 
-  void clearTemplate() {
-    _templateObj = null;
+  void resetPageData() {
+    retryAttemptFailed = false;
+    additionalDataList = [];
   }
 
   // Catalogue

@@ -13,6 +13,7 @@ import 'package:agenttemplate/widget/forms/limited_time_offer_form.dart';
 import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'agenttemplate.dart';
@@ -150,6 +151,46 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           const SizedBox(height: 10),
         ],
         if (limited_time_offer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
+        //
+        Selector<AgentTemplateProvider, bool>(
+          selector: (_, provider) => provider.retryAttemptFailed,
+          builder: (context, value, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TemplateCheckbox(
+                  text: "Retry Attempt For Failed Template Test",
+                  defaultValue: value,
+                  onChanged: (value) {
+                    agentTemplateProvider.retryAttemptFailed = value;
+                  },
+                ),
+                if (value) ...[
+                  Text("Retry Count", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: agentTemplateProvider.retryAttemptController,
+                    decoration: FormStyles.buildInputDecoration(context, hintText: "(Required)"),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+
+                //
+              ],
+            );
+          },
+          //
+        ),
+
         _buildAdditionalInfoSection(),
       ],
     );
@@ -158,71 +199,70 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
   Widget _buildAdditionalInfoSection() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-          tilePadding: EdgeInsets.zero,
-          children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: SizedBox(
-                height: 36,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final newList = List<AdditionalInfo>.from(widget.templateObj.additionalInfoList.value);
-                    newList.add(AdditionalInfo());
-                    widget.templateObj.additionalInfoList.value = newList;
-                  },
-                  child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
+      decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        tilePadding: EdgeInsets.zero,
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              height: 36,
+              child: ElevatedButton(
+                onPressed: () {
+                  agentTemplateProvider.addAdditionalData();
+                },
+                child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               ),
             ),
-            const SizedBox(height: 10),
-            ValueListenableBuilder<List<AdditionalInfo>>(
-              valueListenable: widget.templateObj.additionalInfoList,
-              builder: (context, infoList, child) {
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: infoList.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final info = infoList[index];
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: info.keyController,
-                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextFormField(
-                            controller: info.valueController,
-                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        IconButton(
-                          onPressed: () {
-                            final newList = List<AdditionalInfo>.from(widget.templateObj.additionalInfoList.value);
-                            newList.removeAt(index);
-                            widget.templateObj.additionalInfoList.value = newList;
+          ),
+          const SizedBox(height: 10),
+          Selector<AgentTemplateProvider, int>(
+            selector: (_, provider) => provider.additionalDataList.length,
+            builder: (context, _, __) {
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: agentTemplateProvider.additionalDataList.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final info = agentTemplateProvider.additionalDataList[index];
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: info.keyController,
+                          decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'This field is required';
+                            }
+                            return null;
                           },
-                          icon: const Icon(Icons.close, color: Colors.black, size: 20),
                         ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextFormField(
+                          controller: info.valueController,
+                          decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      IconButton(
+                        onPressed: () {
+                          agentTemplateProvider.removeAdditionalData(index);
+                        },
+                        icon: const Icon(Icons.close, color: Colors.black, size: 20),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

@@ -17,18 +17,6 @@ class _Undefined {
   const _Undefined();
 }
 
-class AdditionalInfo {
-  final TextEditingController keyController;
-  final TextEditingController valueController;
-
-  AdditionalInfo({String key = "", String value = ""}) : keyController = TextEditingController(text: key), valueController = TextEditingController(text: value);
-
-  void dispose() {
-    keyController.dispose();
-    valueController.dispose();
-  }
-}
-
 // ---------------------------------------------------------------------------
 // LimitedTimeOffer
 // ---------------------------------------------------------------------------
@@ -791,7 +779,6 @@ class TemplateObj {
 
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
-  ValueNotifier<List<AdditionalInfo>> additionalInfoList = ValueNotifier([]);
 
   resetSmartUrlAttributes() {
     //

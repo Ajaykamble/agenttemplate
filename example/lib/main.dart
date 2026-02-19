@@ -281,7 +281,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                       onTap: () {
                         // Update provider and navigate
                         final provider = context.read<AgentTemplateProvider>();
-                        provider.templateObj = item.templateObj;
+                        provider.templateObj = TemplateObj.fromJson(item.templateObj.toJson());
 
                         Navigator.push(context, MaterialPageRoute(builder: (_) => TemplateDetailPage(item: item)));
                       },
@@ -582,54 +582,61 @@ class TemplateDetailPage extends StatelessWidget {
 
           // Template form
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: AgentTemplateForm(
-                  key: ValueKey(item.templateId),
-                  templateObj: item.templateObj,
-                  templateType: item.templateType,
-                  backgroundColor: Colors.blue.shade300,
-                  predefinedAttributes: {"name": "John Doe"},
-                  fileObject: item.fileObject,
-                  onGetDateTime: () async {
-                    await Future.delayed(const Duration(seconds: 1));
-                    return DateTimeResponseModel.fromJson({
-                      "dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28",
-                      //
-                    });
-                  },
-
-                  onGetCatalogue: () async {
-                    await Future.delayed(const Duration(seconds: 1));
-                    return CatalogueResponseModel.fromJson(catalogueResponse);
-                  },
-                  onGetFlowRawInfo: (flowId) async {
-                    await Future.delayed(const Duration(seconds: 1));
-                    return FlowRawInfoResponse.fromJson(flowRawInfoResponse);
-                  },
-                  onFileUpload: (file) async {
-                    final response = FileUploadResponse.fromJson({
-                      "status": true,
-                      "statusCode": 0,
-                      "messages": "File Uploaded Successfully",
-                      "intentNames": null,
-                      "fileData": [
-                        {
-                          "docFileDataId": null,
-                          "fileName": "sample.pdf",
-                          "filePath": "https://qa.me.synapselive.com/images/1/wtestsms/597236199377.pdf",
-                          "localPath": "/var/www/html/images/1/wtestsms/597236199377.pdf",
-                          "fileHandler": null,
-                          "mediaId": null,
+            child: Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: AgentTemplateForm(
+                        key: ValueKey(item.templateId),
+                        templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                        templateType: item.templateType,
+                        backgroundColor: Colors.blue.shade300,
+                        predefinedAttributes: {"name": "John Doe"},
+                        fileObject: item.fileObject,
+                        onGetDateTime: () async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          return DateTimeResponseModel.fromJson({
+                            "dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28",
+                            //
+                          });
                         },
-                      ],
-                    });
-                    return response;
-                  },
+
+                        onGetCatalogue: () async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          return CatalogueResponseModel.fromJson(catalogueResponse);
+                        },
+                        onGetFlowRawInfo: (flowId) async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          return FlowRawInfoResponse.fromJson(flowRawInfoResponse);
+                        },
+                        onFileUpload: (file) async {
+                          final response = FileUploadResponse.fromJson({
+                            "status": true,
+                            "statusCode": 0,
+                            "messages": "File Uploaded Successfully",
+                            "intentNames": null,
+                            "fileData": [
+                              {
+                                "docFileDataId": null,
+                                "fileName": "sample.pdf",
+                                "filePath": "https://qa.me.synapselive.com/images/1/wtestsms/597236199377.pdf",
+                                "localPath": "/var/www/html/images/1/wtestsms/597236199377.pdf",
+                                "fileHandler": null,
+                                "mediaId": null,
+                              },
+                            ],
+                          });
+                          return response;
+                        },
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Container(width: 400, child: AgentTemplatePreview(templateObj: context.read<AgentTemplateProvider>().templateObj!)),
+              ],
             ),
           ),
           const SizedBox(height: 10),
