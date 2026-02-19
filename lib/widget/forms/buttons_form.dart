@@ -6,7 +6,8 @@ class ButtonsForm extends StatefulWidget {
   final Component buttonsComponent;
   final Color backgroundColor;
   final String templateType;
-  const ButtonsForm({super.key, required this.buttonsComponent, required this.backgroundColor, required this.templateType});
+  final String shortBaseUrl;
+  const ButtonsForm({super.key, required this.buttonsComponent, required this.backgroundColor, required this.templateType, required this.shortBaseUrl});
 
   @override
   State<ButtonsForm> createState() => _ButtonsFormState();
@@ -33,7 +34,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
           //
           Container(
             padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
             child: ListView.separated(
               itemBuilder: (context, index) {
                 return Column(
@@ -63,7 +64,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
                         ),
                       ],
                     ),
-                    if (otherButtons[index].type == "URL") ...[
+                    if (otherButtons[index].type == "URL" && (otherButtons[index].url ?? "").startsWith(widget.shortBaseUrl)) ...[
                       const SizedBox(height: 8),
                       Text(
                         "Note:During template creation, the URL is configured as a ShortURL.If you want to send parameters, you can use either:The URL, or The short link generated code",
@@ -86,7 +87,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
             child: Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(

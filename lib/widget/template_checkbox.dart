@@ -21,6 +21,14 @@ class _TemplateCheckboxState extends State<TemplateCheckbox> {
   }
 
   @override
+  void didUpdateWidget(covariant TemplateCheckbox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.defaultValue != widget.defaultValue) {
+      _isChecked = widget.defaultValue;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,

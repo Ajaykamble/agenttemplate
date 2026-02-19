@@ -16,8 +16,9 @@ class CarouselForm extends StatefulWidget {
   final Color backgroundColor;
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
-  final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
+  final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   final String templateType;
+  final String shortBaseUrl;
 
   final ValueNotifier<bool> isSmartUrlEnabled;
   const CarouselForm({
@@ -29,6 +30,7 @@ class CarouselForm extends StatefulWidget {
     this.onFileUpload,
     required this.templateType,
     required this.isSmartUrlEnabled,
+    required this.shortBaseUrl,
   });
 
   @override
@@ -184,7 +186,6 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                 return Row(
                   children: [
                     Expanded(child: tabBar),
-
                     if (_cards.length < _maxCards) ...[const SizedBox(width: 5), ElevatedButton(onPressed: _addCard, child: Text("Add Card"))],
                   ],
                 );
@@ -205,6 +206,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                     onFileUpload: widget.onFileUpload,
                     templateType: widget.templateType,
                     isSmartUrlEnabled: widget.isSmartUrlEnabled,
+                    shortBaseUrl: widget.shortBaseUrl,
                   ),
                 ),
               );
@@ -223,9 +225,9 @@ class _CarouselCardContent extends StatelessWidget {
   final Color backgroundColor;
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
-  final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
+  final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   final String templateType;
-
+  final String shortBaseUrl;
   final ValueNotifier<bool> isSmartUrlEnabled;
   const _CarouselCardContent({
     required this.card,
@@ -235,6 +237,7 @@ class _CarouselCardContent extends StatelessWidget {
     this.onFileUpload,
     required this.templateType,
     required this.isSmartUrlEnabled,
+    required this.shortBaseUrl,
   });
 
   void onBodyTextChanged() {
@@ -281,7 +284,7 @@ class _CarouselCardContent extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
-          if (buttonsComponent != null) ...[ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType)],
+          if (buttonsComponent != null) ...[ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType, shortBaseUrl: shortBaseUrl)],
         ],
       ),
     );

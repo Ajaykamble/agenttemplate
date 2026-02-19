@@ -15,6 +15,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'dart:developer';
 
 import 'agenttemplate.dart';
 import 'widget/template_checkbox.dart';
@@ -24,11 +25,12 @@ class AgentTemplateForm extends StatefulWidget {
   final Color backgroundColor;
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
-  final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
-  final Future<CatalogueResponseModel> Function() onGetCatalogue;
-  final Future<FlowRawInfoResponse> Function(String flowId) onGetFlowRawInfo;
-  final Future<DateTimeResponseModel> Function() onGetDateTime;
+  final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
+  final Future<CatalogueResponseModel?> Function() onGetCatalogue;
+  final Future<FlowRawInfoResponse?> Function(String flowId) onGetFlowRawInfo;
+  final Future<DateTimeResponseModel?> Function() onGetDateTime;
   final String templateType;
+  final String shortBaseUrl;
   const AgentTemplateForm({
     super.key,
     required this.templateObj,
@@ -40,6 +42,7 @@ class AgentTemplateForm extends StatefulWidget {
     required this.onGetFlowRawInfo,
     required this.templateType,
     required this.onGetDateTime,
+    required this.shortBaseUrl,
   });
 
   @override
@@ -52,20 +55,28 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
   @override
   void initState() {
     super.initState();
+    log("called tis");
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
     agentTemplateProvider.onGetCatalogue = widget.onGetCatalogue;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
     agentTemplateProvider.onGetDateTime = widget.onGetDateTime;
+    agentTemplateProvider.templateObj = widget.templateObj;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    log("called didChangeDependencies ${widget.templateType}");
   }
 
   @override
   Widget build(BuildContext context) {
-    Component? HEADER_COMPONENT = widget.templateObj.components.firstWhereOrNull((element) => element.type == 'HEADER');
-    Component? BODY_COMPONENT = widget.templateObj.components.firstWhereOrNull((element) => element.type == 'BODY');
-    Component? FOOTER_COMPONENT = widget.templateObj.components.firstWhereOrNull((element) => element.type == 'FOOTER');
-    Component? BUTTONS_COMPONENT = widget.templateObj.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
-    Component? CAROUSEL_COMPONENT = widget.templateObj.components.firstWhereOrNull((element) => element.type == 'CAROUSEL');
-    Component? limited_time_offer = widget.templateObj.components.firstWhereOrNull((element) => element.type == "limited_time_offer");
+    Component? HEADER_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'HEADER');
+    Component? BODY_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BODY');
+    Component? FOOTER_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'FOOTER');
+    Component? BUTTONS_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? CAROUSEL_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'CAROUSEL');
+    Component? limited_time_offer = widget.templateObj.components?.firstWhereOrNull((element) => element.type == "limited_time_offer");
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -137,7 +148,10 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           const SizedBox(height: 10),
         ],
         if (FOOTER_COMPONENT != null) ...[FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
-        if (BUTTONS_COMPONENT != null) ...[ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType), const SizedBox(height: 10)],
+        if (BUTTONS_COMPONENT != null) ...[
+          ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType, shortBaseUrl: widget.shortBaseUrl),
+          const SizedBox(height: 10)
+        ],
         if (CAROUSEL_COMPONENT != null) ...[
           CarouselForm(
             carouselComponent: CAROUSEL_COMPONENT,
@@ -147,6 +161,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             onFileUpload: widget.onFileUpload,
             templateType: widget.templateType,
             isSmartUrlEnabled: widget.templateObj.isSmartUrlEnabled,
+            shortBaseUrl: widget.shortBaseUrl,
           ),
           const SizedBox(height: 10),
         ],

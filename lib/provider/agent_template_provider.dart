@@ -9,9 +9,9 @@ enum ApiStatus { loading, success, error }
 class AgentTemplateProvider extends ChangeNotifier {
   //
 
-  Future<CatalogueResponseModel> Function()? onGetCatalogue;
-  Future<FlowRawInfoResponse> Function(String flowId)? onGetFlowRawInfo;
-  Future<DateTimeResponseModel> Function()? onGetDateTime;
+  Future<CatalogueResponseModel?> Function()? onGetCatalogue;
+  Future<FlowRawInfoResponse?> Function(String flowId)? onGetFlowRawInfo;
+  Future<DateTimeResponseModel?> Function()? onGetDateTime;
   ApiStatus _catalogueStatus = ApiStatus.loading;
   ApiStatus _flowRawInfoStatus = ApiStatus.loading;
   ApiStatus _dateTimeStatus = ApiStatus.loading;
@@ -98,7 +98,6 @@ class AgentTemplateProvider extends ChangeNotifier {
 
   set templateObj(TemplateObj? templateObj) {
     _templateObj = templateObj;
-    //
     resetPageData();
     notifyListeners();
   }
@@ -128,7 +127,7 @@ class AgentTemplateProvider extends ChangeNotifier {
 
       if (flowRawInfoResponse != null) {
         //
-        Component? BUTTONS_COMPONENT = templateObj?.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+        Component? BUTTONS_COMPONENT = templateObj?.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
         if (BUTTONS_COMPONENT != null) {
           //
           TemplateButton? flowButton = BUTTONS_COMPONENT.buttons?.firstWhereOrNull((element) => element.type == "FLOW");

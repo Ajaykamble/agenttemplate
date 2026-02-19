@@ -16,7 +16,7 @@ class HeaderForm extends StatefulWidget {
   final Color backgroundColor;
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
-  final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
+  final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   const HeaderForm({super.key, required this.headerComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload});
 
   @override
@@ -47,7 +47,7 @@ class _HeaderFormState extends State<HeaderForm> {
         //
         Container(
           padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
           child: Builder(
             builder: (context) {
               //
@@ -184,7 +184,7 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
 class _HeaderMediaForm extends StatefulWidget {
   final Component headerComponent;
   final String? fileObject;
-  final Future<FileUploadResponse> Function(XFile file)? onFileUpload;
+  final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   const _HeaderMediaForm({super.key, required this.headerComponent, this.fileObject, this.onFileUpload});
 
   @override
@@ -241,7 +241,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
     if (widget.onFileUpload != null && pickedFile.path != null) {
       final xFile = pickedFile.xFile;
       final response = await widget.onFileUpload!(xFile);
-      final fileData = response.fileData?.firstOrNull;
+      final fileData = response?.fileData?.firstOrNull;
       if (fileData != null) {
         widget.headerComponent.setFileObject(FileObject(fileName: fileData.fileName, filePath: fileData.filePath, localPath: fileData.localPath, mediaId: fileData.mediaId?.toString()));
       }

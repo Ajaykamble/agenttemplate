@@ -4,6 +4,7 @@ import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import 'dart:developer';
 
 class FlowForm extends StatefulWidget {
   final Component component;
@@ -26,6 +27,15 @@ class _FlowFormState extends State<FlowForm> {
   }
 
   @override
+  void didUpdateWidget(FlowForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
+    if (flowButton != null && flowButton.flowId != oldWidget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId) {
+      agentTemplateProvider.getFlowRawInfo(flowButton.flowId!);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Selector<AgentTemplateProvider, Tuple2<ApiStatus, FlowRawInfoResponse?>>(
       selector: (_, provider) => Tuple2(provider.flowRawInfoStatus, provider.flowRawInfoResponse),
@@ -36,7 +46,7 @@ class _FlowFormState extends State<FlowForm> {
           case ApiStatus.success:
             TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
 
-            if (flowButton?.flowRawScreenData != null) {
+            if (flowButton?.flowRawScreenData?.attributes.isNotEmpty ?? false) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +62,6 @@ class _FlowFormState extends State<FlowForm> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(flowButton?.flowRawScreenData?.attributes[index].header ?? "", style: Theme.of(context).textTheme.bodyMedium),
-
                           TextFormField(
                             controller: flowButton?.flowRawScreenData?.attributes[index].textController,
                             decoration: InputDecoration(hintText: "Enter value"),

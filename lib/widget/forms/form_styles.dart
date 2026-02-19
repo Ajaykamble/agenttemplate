@@ -54,6 +54,4 @@ class FormStyles {
       },
     );
   }
-
-  static const Color primaryBackgroundColor = Color(0xFFD7E1FE);
 }

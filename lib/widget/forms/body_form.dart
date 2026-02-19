@@ -52,7 +52,7 @@ class _BodyFormState extends State<BodyForm> {
         const SizedBox(height: 10),
         Container(
           padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(color: FormStyles.primaryBackgroundColor, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
           child: ListView.separated(
             itemBuilder: (context, index) {
               AttributeClass attribute = widget.bodyComponent.attributes[index];

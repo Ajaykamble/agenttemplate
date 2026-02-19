@@ -570,7 +570,7 @@ class TemplateDetailPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(color: item.templateObj.status == 'APPROVED' ? Colors.green.shade100 : Colors.orange.shade100, borderRadius: BorderRadius.circular(12)),
                   child: Text(
-                    item.templateObj.status,
+                    item.templateObj.status ?? '',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: item.templateObj.status == 'APPROVED' ? Colors.green.shade800 : Colors.orange.shade800),
                   ),
                 ),
@@ -590,6 +590,7 @@ class TemplateDetailPage extends StatelessWidget {
                     child: Form(
                       key: _formKey,
                       child: AgentTemplateForm(
+                        shortBaseUrl: "",
                         key: ValueKey(item.templateId),
                         templateObj: context.read<AgentTemplateProvider>().templateObj!,
                         templateType: item.templateType,

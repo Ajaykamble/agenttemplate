@@ -104,10 +104,10 @@ class ComponentExample {
 
   @override
   int get hashCode => Object.hash(
-    bodyText != null ? Object.hashAll(bodyText!.map(Object.hashAll)) : null,
-    headerHandle != null ? Object.hashAll(headerHandle!) : null,
-    headerText != null ? Object.hashAll(headerText!) : null,
-  );
+        bodyText != null ? Object.hashAll(bodyText!.map(Object.hashAll)) : null,
+        headerHandle != null ? Object.hashAll(headerHandle!) : null,
+        headerText != null ? Object.hashAll(headerText!) : null,
+      );
 
   @override
   String toString() => 'ComponentExample(bodyText: $bodyText, headerHandle: $headerHandle, headerText: $headerText)';
@@ -353,8 +353,7 @@ class TemplateButton {
   int get hashCode => Object.hash(type, text, url, phoneNumber, example != null ? Object.hashAll(example!) : null, flowId, flowAction, navigateScreen, ttlMinutes);
 
   @override
-  String toString() =>
-      'TemplateButton(type: $type, text: $text, url: $url, phoneNumber: $phoneNumber, '
+  String toString() => 'TemplateButton(type: $type, text: $text, url: $url, phoneNumber: $phoneNumber, '
       'example: $example, flowId: $flowId, flowAction: $flowAction, '
       'navigateScreen: $navigateScreen, ttlMinutes: $ttlMinutes)';
 }
@@ -743,20 +742,19 @@ class Component {
 
   @override
   int get hashCode => Object.hash(
-    type,
-    text,
-    format,
-    example,
-    addSecurityRecommendation,
-    buttons != null ? Object.hashAll(buttons!) : null,
-    cards != null ? Object.hashAll(cards!) : null,
-    limitedTimeOffer,
-    codeExpirationMinutes,
-  );
+        type,
+        text,
+        format,
+        example,
+        addSecurityRecommendation,
+        buttons != null ? Object.hashAll(buttons!) : null,
+        cards != null ? Object.hashAll(cards!) : null,
+        limitedTimeOffer,
+        codeExpirationMinutes,
+      );
 
   @override
-  String toString() =>
-      'Component(type: $type, text: $text, format: $format, example: $example, '
+  String toString() => 'Component(type: $type, text: $text, format: $format, example: $example, '
       'addSecurityRecommendation: $addSecurityRecommendation, buttons: $buttons, '
       'cards: $cards, limitedTimeOffer: $limitedTimeOffer, '
       'codeExpirationMinutes: $codeExpirationMinutes)';
@@ -768,21 +766,21 @@ class Component {
 
 /// Root model representing a WhatsApp message template object.
 class TemplateObj {
-  final List<Component> components;
-  final String name;
-  final String language;
-  final String id;
-  final String category;
-  final String status;
-  final int messageSendTtlSeconds;
-  final String parameterFormat;
+  final List<Component>? components;
+  final String? name;
+  final String? language;
+  final String? id;
+  final String? category;
+  final String? status;
+  final int? messageSendTtlSeconds;
+  final String? parameterFormat;
 
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
 
   resetSmartUrlAttributes() {
     //
-    for (final component in components) {
+    for (final component in components ?? []) {
       if (component.type == 'BODY') {
         for (final attribute in component.attributes) {
           attribute.isSmartUrlEnabled.value = false;
@@ -806,10 +804,10 @@ class TemplateObj {
   void onBodyTextChanged() {
     //
     //
-    Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
+    Component? bodyComponent = components?.firstWhereOrNull((element) => element.type == 'BODY');
     if (bodyComponent?.attributes.isNotEmpty ?? false) {
       //
-      Component? buttonComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+      Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
         //
         TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
@@ -833,7 +831,7 @@ class TemplateObj {
   });
 
   String getHeaderPhJson() {
-    Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
+    Component? headerComponent = components?.firstWhereOrNull((element) => element.type == 'HEADER');
     if (headerComponent != null) {
       Map<String, dynamic> json = headerComponent.toServerHeaderJson();
       if (json.isNotEmpty) {
@@ -844,7 +842,7 @@ class TemplateObj {
   }
 
   String getBodyPhJson() {
-    Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
+    Component? bodyComponent = components?.firstWhereOrNull((element) => element.type == 'BODY');
     if (bodyComponent != null) {
       List<Map<String, dynamic>> json = bodyComponent.toServerBodyJson();
       if (json.isNotEmpty) {
@@ -857,7 +855,7 @@ class TemplateObj {
   String getCarouselObjJson() {
     //
     List<Map<String, dynamic>> carouselJson = [];
-    for (final component in components) {
+    for (final component in components ?? []) {
       if (component.type == 'CAROUSEL') {
         for (int i = 0; i < (component.cards?.length ?? 0); i++) {
           CarouselCard? card = component.cards?[i];
@@ -872,13 +870,13 @@ class TemplateObj {
 
   String getButtonPhJson() {
     List<Map<String, dynamic>> buttonJson = [];
-    Component? buttonComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
     if (buttonComponent != null) {
       final List<TemplateButton>? buttons = buttonComponent.buttons;
       if (buttons != null) {
         for (int i = 0; i < buttons.length; i++) {
           TemplateButton button = buttons[i];
-          Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
+          Component? headerComponent = components?.firstWhereOrNull((element) => element.type == 'HEADER');
           Map<String, dynamic> json = button.toServerJson(HEADER_COMPONENT: headerComponent, index: i);
           if (json.isNotEmpty) {
             buttonJson.add(json);
@@ -891,7 +889,7 @@ class TemplateObj {
 
   String getLtoPhJson() {
     //
-    Component? limitedTimeOffer = components.firstWhereOrNull((element) => element.type == 'limited_time_offer');
+    Component? limitedTimeOffer = components?.firstWhereOrNull((element) => element.type == 'limited_time_offer');
 
     if (limitedTimeOffer != null) {
       Map<String, dynamic> json = {'valueType': 'static', 'expirationTimeMs': limitedTimeOffer.selectedOfferExpiryDateTime.value?.millisecondsSinceEpoch ?? 0};
@@ -902,18 +900,18 @@ class TemplateObj {
 
   factory TemplateObj.fromJson(Map<String, dynamic> json) {
     TemplateObj templateObj = TemplateObj(
-      components: (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList(),
-      name: json['name'] as String,
-      language: json['language'] as String,
-      id: json['id'] as String,
-      category: json['category'] as String,
-      status: json['status'] as String,
-      messageSendTtlSeconds: json['message_send_ttl_seconds'] as int,
-      parameterFormat: json['parameter_format'] as String,
+      components: json['components'] == null ? [] : (json['components'] as List<dynamic>).map((e) => Component.fromJson(e as Map<String, dynamic>)).toList(),
+      name: json['name'] == null ? null : json['name'] as String,
+      language: json['language'] == null ? null : json['language'] as String,
+      id: json['id'] == null ? null : json['id'] as String,
+      category: json['category'] == null ? null : json['category'] as String,
+      status: json['status'] == null ? null : json['status'] as String,
+      messageSendTtlSeconds: json['message_send_ttl_seconds'] == null ? null : json['message_send_ttl_seconds'] as int,
+      parameterFormat: json['parameter_format'] == null ? null : json['parameter_format'] as String,
     );
 
     // Check if any component is of type 'BODY' and has non-empty attributes
-    for (final component in templateObj.components) {
+    for (final component in templateObj.components ?? []) {
       if (component.type == 'BODY' && component.attributes.isNotEmpty) {
         templateObj.showSmartUrlCheckBox = ValueNotifier(true);
         break;
@@ -937,7 +935,7 @@ class TemplateObj {
 
   Map<String, dynamic> toJson() {
     return {
-      'components': components.map((e) => e.toJson()).toList(),
+      'components': components?.map((e) => e.toJson()).toList() ?? [],
       'name': name,
       'language': language,
       'id': id,
@@ -976,11 +974,10 @@ class TemplateObj {
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(components), name, language, id, category, status, messageSendTtlSeconds, parameterFormat);
+  int get hashCode => Object.hash(Object.hashAll(components ?? []), name, language, id, category, status, messageSendTtlSeconds, parameterFormat);
 
   @override
-  String toString() =>
-      'TemplateObj(name: $name, language: $language, id: $id, category: $category, '
+  String toString() => 'TemplateObj(name: $name, language: $language, id: $id, category: $category, '
       'status: $status, messageSendTtlSeconds: $messageSendTtlSeconds, '
       'parameterFormat: $parameterFormat, components: $components)';
 }
