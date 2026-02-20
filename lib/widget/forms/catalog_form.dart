@@ -51,8 +51,7 @@ class _CatalogFormState extends State<CatalogForm> {
         ),
         const SizedBox(height: 5),
         Selector<AgentTemplateProvider, Tuple2<ApiStatus, int>>(
-          selector: (_, agentTemplateProvider) =>
-              Tuple2(agentTemplateProvider.catalogueStatus, agentTemplateProvider.catalogueResponse?.productDetails?.data?.length ?? 0),
+          selector: (_, agentTemplateProvider) => Tuple2(agentTemplateProvider.catalogueStatus, agentTemplateProvider.catalogueResponse?.productDetails?.data?.length ?? 0),
           builder: (context, value, child) {
             if (agentTemplateProvider.catalogueStatus == ApiStatus.loading) {
               return const CircularProgressIndicator();
@@ -63,8 +62,6 @@ class _CatalogFormState extends State<CatalogForm> {
             if (value.item2 == 0) {
               return Text("No products found", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
             }
-
-            log("${widget.component.buttons?.firstWhereOrNull((element) => element.type == "CATALOG")?.type}");
 
             TemplateButton? catalogButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "CATALOG");
 

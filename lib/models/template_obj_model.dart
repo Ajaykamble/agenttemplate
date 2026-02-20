@@ -154,7 +154,6 @@ class TemplateButton {
 
   void addMPMAttributes() {
     mpmAttributes.add(MPMAttributes());
-    log("mpmAttributes: ${mpmAttributes.length}");
     mpmAttributesNotifier.value = mpmAttributes.length;
   }
 

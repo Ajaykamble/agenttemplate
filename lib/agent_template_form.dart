@@ -55,7 +55,6 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
   @override
   void initState() {
     super.initState();
-    log("called tis");
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
     agentTemplateProvider.onGetCatalogue = widget.onGetCatalogue;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
@@ -66,7 +65,6 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    log("called didChangeDependencies ${widget.templateType}");
   }
 
   @override

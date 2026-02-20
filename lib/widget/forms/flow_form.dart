@@ -21,6 +21,7 @@ class _FlowFormState extends State<FlowForm> {
     super.initState();
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
     TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
+
     if (flowButton != null) {
       agentTemplateProvider.getFlowRawInfo(flowButton.flowId!);
     }
@@ -29,6 +30,7 @@ class _FlowFormState extends State<FlowForm> {
   @override
   void didUpdateWidget(FlowForm oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
     if (flowButton != null && flowButton.flowId != oldWidget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId) {
       agentTemplateProvider.getFlowRawInfo(flowButton.flowId!);
