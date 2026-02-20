@@ -69,7 +69,7 @@ class _CatalogFormState extends State<CatalogForm> {
               return SizedBox();
             }
             return ValueListenableBuilder<ProductDetailsDatum?>(
-              valueListenable: catalogButton!.selectedProduct,
+              valueListenable: catalogButton.selectedProduct,
               builder: (context, selectedValue, child) {
                 return DropdownButtonFormField2<ProductDetailsDatum>(
                   value: selectedValue,

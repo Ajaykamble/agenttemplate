@@ -17,7 +17,8 @@ class HeaderForm extends StatefulWidget {
   final Map<String, dynamic> predefinedAttributes;
   final String? fileObject;
   final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
-  const HeaderForm({super.key, required this.headerComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload});
+  final VoidCallback onProductSelected;
+  const HeaderForm({super.key, required this.headerComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload, required this.onProductSelected});
 
   @override
   State<HeaderForm> createState() => _HeaderFormState();
@@ -36,7 +37,7 @@ class _HeaderFormState extends State<HeaderForm> {
     }
 
     if (widget.headerComponent.format == "PRODUCT") {
-      return _HeaderProductForm(headerComponent: widget.headerComponent);
+      return _HeaderProductForm(headerComponent: widget.headerComponent, onProductSelected: widget.onProductSelected);
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -460,7 +461,8 @@ class __HeaderLocationFormState extends State<_HeaderLocationForm> {
 
 class _HeaderProductForm extends StatefulWidget {
   final Component headerComponent;
-  const _HeaderProductForm({super.key, required this.headerComponent});
+  final VoidCallback onProductSelected;
+  const _HeaderProductForm({super.key, required this.headerComponent, required this.onProductSelected});
 
   @override
   State<_HeaderProductForm> createState() => __HeaderProductFormState();
@@ -522,6 +524,7 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
                       .toList(),
                   onChanged: (value) {
                     widget.headerComponent.selectedProduct.value = value;
+                    widget.onProductSelected();
                   },
                   dropdownStyleData: FormStyles.buildDropdownStyleData(context),
                   menuItemStyleData: FormStyles.buildMenuItemStyleData(context),

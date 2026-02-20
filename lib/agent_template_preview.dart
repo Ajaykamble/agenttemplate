@@ -8,7 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class AgentTemplatePreview extends StatefulWidget {
   final TemplateObj templateObj;
-  const AgentTemplatePreview({super.key, required this.templateObj});
+  final void Function(TemplateButton button)? onButtonTap;
+  final void Function(Component buttonsComponent)? onAllButtonsTap;
+  const AgentTemplatePreview({super.key, required this.templateObj, this.onButtonTap, this.onAllButtonsTap});
 
   @override
   State<AgentTemplatePreview> createState() => _AgentTemplatePreviewState();
@@ -82,7 +84,18 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
               ),
               if (buttonsComponent != null) ...[
                 const SizedBox(height: 7),
-                SizedBox(width: _cardWidth, child: ButtonPreviews(buttonsComponent: buttonsComponent)),
+                SizedBox(
+                  width: _cardWidth,
+                  child: ButtonPreviews(
+                    buttonsComponent: buttonsComponent,
+                    onButtonTap: (component) {
+                      widget.onButtonTap?.call(component);
+                    },
+                    onAllButtonsTap: (component) {
+                      widget.onAllButtonsTap?.call(component);
+                    },
+                  ),
+                ),
               ],
             ],
             if (carouselComponent != null) ...[

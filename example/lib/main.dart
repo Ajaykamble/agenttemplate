@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:agenttemplate/agent_template_form.dart';
@@ -89,6 +88,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
   bool _isLoading = false;
   String? _errorMessage;
   _TemplateListItem? _selectedTemplate;
+  final _showingPreview = ValueNotifier<bool>(false);
   final _formKey = GlobalKey<FormState>();
 
   // Default directory for the file picker – points to lib/jsons/ in the project.
@@ -156,18 +156,32 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_selectedFileName ?? 'AgentTemplate Example'),
-        backgroundColor: colorScheme.inversePrimary,
-        actions: [IconButton(icon: const Icon(Icons.folder_open), tooltip: 'Pick JSON file', onPressed: _isLoading ? null : _pickJsonFile)],
+    return ValueListenableBuilder<bool>(
+      valueListenable: _showingPreview,
+      builder: (context, showingPreview, child) {
+        return PopScope(
+          canPop: !showingPreview,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop && showingPreview) {
+              _showingPreview.value = false;
+            }
+          },
+          child: child!,
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_selectedFileName ?? 'AgentTemplate Example'),
+          backgroundColor: colorScheme.inversePrimary,
+          actions: [IconButton(icon: const Icon(Icons.folder_open), tooltip: 'Pick JSON file', onPressed: _isLoading ? null : _pickJsonFile)],
+        ),
+        body: _buildBody(context),
+        floatingActionButton: _selectedTemplate != null
+            ? FloatingActionButton.extended(onPressed: () => _showTemplateJson(context), icon: const Icon(Icons.code), label: const Text('View JSON'))
+            : _templates == null
+            ? FloatingActionButton.extended(onPressed: _isLoading ? null : _pickJsonFile, icon: const Icon(Icons.file_open), label: const Text('Choose JSON File'))
+            : null,
       ),
-      body: _buildBody(context),
-      floatingActionButton: _selectedTemplate != null
-          ? FloatingActionButton.extended(onPressed: () => _showTemplateJson(context), icon: const Icon(Icons.code), label: const Text('View JSON'))
-          : _templates == null
-          ? FloatingActionButton.extended(onPressed: _isLoading ? null : _pickJsonFile, icon: const Icon(Icons.file_open), label: const Text('Choose JSON File'))
-          : null,
     );
   }
 
@@ -319,77 +333,128 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
           ),
           const Divider(height: 1),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      key: _formKey,
-                      child: AgentTemplateForm(
-                        shortBaseUrl: "",
-                        key: ValueKey(_selectedTemplate!.templateId),
-                        templateObj: context.read<AgentTemplateProvider>().templateObj!,
-                        templateType: _selectedTemplate!.templateType,
-                        backgroundColor: Colors.blue.shade300,
-                        predefinedAttributes: {"name": "John Doe"},
-                        fileObject: _selectedTemplate!.fileObject,
-                        onGetDateTime: () async {
-                          await Future.delayed(const Duration(seconds: 1));
-                          return DateTimeResponseModel.fromJson({"dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28"});
-                        },
-                        onGetCatalogue: () async {
-                          await Future.delayed(const Duration(seconds: 1));
-                          return CatalogueResponseModel.fromJson(catalogueResponse);
-                        },
-                        onGetFlowRawInfo: (flowId) async {
-                          try {
-                            final response = await http.post(
-                              Uri.parse('https://qa.me.synapselive.com/vm-whatsapp/flowcontroller/503/flow/fetchrawinfo'),
-                              headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization':
-                                    'Bearer Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJ1c2VyTmFtZVwiOlwibWFzdFwiLFwiZmlyc3ROYW1lXCI6bnVsbCxcImxhc3ROYW1lXCI6bnVsbCxcInVzZXJJZFwiOjUwMyxcInVzZXJUeXBlXCI6bnVsbCxcInJvbGVzXCI6W3tcInJvbGVJZFwiOjk2LFwicm9sZVwiOlwiTUFTVEVSIEFETUlOXCIsXCJyb2xlQ29kZVwiOlwiTUFcIixcInJvbGVUeXBlXCI6XCJTWVNURU1cIn1dLFwiY3VzdG9tZXJJZFwiOjEsXCJjdXN0b21lck5hbWVcIjpcIlByYW1vZCBTYWtpbmFsYVwifSIsInJvbGVJZCI6OTYsInJvbGVDb2RlIjoiTUEiLCJ1c2VyaWQiOjUwMywiaWF0IjoxNzcxNTczNjQ5LCJoYXNoIjoiNjRiMTM0NzJjZWM3YWJmNzlmMTA4NzQ4NmI0NzEyY2YiLCJ1c2VybmFtZSI6Ik1BU1QifQ.gULZ5QQVUx9Gk5m2TPQWEcO8UNRhNEJi0lkiY_Rjo7XXyCQe8ohpwCpNbq9_2NwY2LgqGU9ZjcYvdDKBkdrKIw',
-                                'tranid': 'AGC12dl16kq',
-                              },
-                              body: jsonEncode({'accessKey': '', 'flowId': flowId, 'wabaId': '221933561006232'}),
-                            );
-                            if (response.statusCode == 200) {
-                              return FlowRawInfoResponse.fromJson(jsonDecode(response.body));
-                            }
-                          } catch (e) {
-                            log("onGetFlowRawInfo error: $e");
-                            debugPrint('onGetFlowRawInfo error: $e');
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = constraints.maxWidth >= 700;
+                final formWidget = SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
+                    child: AgentTemplateForm(
+                      shortBaseUrl: "",
+                      key: ValueKey(_selectedTemplate!.templateId),
+                      templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                      templateType: _selectedTemplate!.templateType,
+                      backgroundColor: Colors.blue.shade300,
+                      predefinedAttributes: {"name": "John Doe"},
+                      fileObject: _selectedTemplate!.fileObject,
+                      onGetDateTime: () async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        return DateTimeResponseModel.fromJson({"dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28"});
+                      },
+                      onGetCatalogue: () async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        return CatalogueResponseModel.fromJson(catalogueResponse);
+                      },
+                      onGetFlowRawInfo: (flowId) async {
+                        try {
+                          final response = await http.post(
+                            Uri.parse('https://qa.me.synapselive.com/vm-whatsapp/flowcontroller/503/flow/fetchrawinfo'),
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization':
+                                  'Bearer Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJ1c2VyTmFtZVwiOlwibWFzdFwiLFwiZmlyc3ROYW1lXCI6bnVsbCxcImxhc3ROYW1lXCI6bnVsbCxcInVzZXJJZFwiOjUwMyxcInVzZXJUeXBlXCI6bnVsbCxcInJvbGVzXCI6W3tcInJvbGVJZFwiOjk2LFwicm9sZVwiOlwiTUFTVEVSIEFETUlOXCIsXCJyb2xlQ29kZVwiOlwiTUFcIixcInJvbGVUeXBlXCI6XCJTWVNURU1cIn1dLFwiY3VzdG9tZXJJZFwiOjEsXCJjdXN0b21lck5hbWVcIjpcIlByYW1vZCBTYWtpbmFsYVwifSIsInJvbGVJZCI6OTYsInJvbGVDb2RlIjoiTUEiLCJ1c2VyaWQiOjUwMywiaWF0IjoxNzcxNTczNjQ5LCJoYXNoIjoiNjRiMTM0NzJjZWM3YWJmNzlmMTA4NzQ4NmI0NzEyY2YiLCJ1c2VybmFtZSI6Ik1BU1QifQ.gULZ5QQVUx9Gk5m2TPQWEcO8UNRhNEJi0lkiY_Rjo7XXyCQe8ohpwCpNbq9_2NwY2LgqGU9ZjcYvdDKBkdrKIw',
+                              'tranid': 'AGC12dl16kq',
+                            },
+                            body: jsonEncode({'accessKey': '', 'flowId': flowId, 'wabaId': '221933561006232'}),
+                          );
+                          if (response.statusCode == 200) {
+                            return FlowRawInfoResponse.fromJson(jsonDecode(response.body));
                           }
-                          return null;
-                        },
-                        onFileUpload: (file) async {
-                          final response = FileUploadResponse.fromJson({
-                            "status": true,
-                            "statusCode": 0,
-                            "messages": "File Uploaded Successfully",
-                            "intentNames": null,
-                            "fileData": [
-                              {
-                                "docFileDataId": null,
-                                "fileName": "sample.pdf",
-                                "filePath": "https://qa.me.synapselive.com/images/1/wtestsms/597236199377.pdf",
-                                "localPath": "/var/www/html/images/1/wtestsms/597236199377.pdf",
-                                "fileHandler": null,
-                                "mediaId": null,
-                              },
-                            ],
-                          });
-                          return response;
-                        },
-                      ),
+                        } catch (e) {
+                        }
+                        return null;
+                      },
+                      onFileUpload: (file) async {
+                        final response = FileUploadResponse.fromJson({
+                          "status": true,
+                          "statusCode": 0,
+                          "messages": "File Uploaded Successfully",
+                          "intentNames": null,
+                          "fileData": [
+                            {
+                              "docFileDataId": null,
+                              "fileName": "sample.pdf",
+                              "filePath": "https://qa.me.synapselive.com/images/1/wtestsms/597236199377.pdf",
+                              "localPath": "/var/www/html/images/1/wtestsms/597236199377.pdf",
+                              "fileHandler": null,
+                              "mediaId": null,
+                            },
+                          ],
+                        });
+                        return response;
+                      },
                     ),
                   ),
-                ),
-                Container(width: 400, child: AgentTemplatePreview(templateObj: context.read<AgentTemplateProvider>().templateObj!)),
-              ],
+                );
+
+                if (isDesktop) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: formWidget),
+                      SizedBox(
+                        width: 400,
+                        child: AgentTemplatePreview(
+                          templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                          onButtonTap: (button) => _showButtonProductSheet(context, button),
+                          onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return ValueListenableBuilder<bool>(
+                  valueListenable: _showingPreview,
+                  builder: (context, showingPreview, _) {
+                    if (showingPreview) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: FilledButton.tonalIcon(onPressed: () => _showingPreview.value = false, icon: const Icon(Icons.edit), label: const Text('Back to Form')),
+                            ),
+                          ),
+                          Expanded(
+                            child: AgentTemplatePreview(
+                              templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                              onButtonTap: (button) => _showButtonProductSheet(context, button),
+                              onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        Expanded(child: formWidget),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(onPressed: () => _showingPreview.value = true, icon: const Icon(Icons.visibility), label: const Text('Preview')),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ),
           const SizedBox(height: 10),
@@ -410,6 +475,228 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
     );
   }
 
+  void _showButtonProductSheet(BuildContext context, TemplateButton button) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 4, right: 4, top: 8),
+                  child: Row(
+                    children: [
+                      IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
+                      Expanded(
+                        child: Text('Header Content', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      ),
+                      IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Scrollbar(
+                    controller: scrollController,
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(16),
+                      child: switch (button.type) {
+                        "MPM" => _buildMPMContent(context, button),
+                        "CATALOG" => _buildCatalogContent(context),
+                        "SPM" => _buildSingleProductContent(context, button),
+                        _ => const SizedBox.shrink(),
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMPMContent(BuildContext context, TemplateButton button) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final attr in button.mpmAttributes) ...[
+          if (attr.categoryController.text.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(attr.categoryController.text, style: Theme.of(context).textTheme.bodyMedium),
+            ),
+          for (final product in attr.selectedProductsNotifier.value) _buildProductCard(context, product),
+
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSingleProductContent(BuildContext context, TemplateButton button) {
+    final product = button.selectedProduct.value;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [if (product != null) _buildProductCard(context, product)]);
+  }
+
+  Widget _buildCatalogContent(BuildContext context) {
+    final products = context.read<AgentTemplateProvider>().catalogueResponse?.productDetails?.data ?? [];
+    if (products.isEmpty) {
+      return const Center(child: Text('No products available'));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [for (final product in products) _buildProductCard(context, product)]);
+  }
+
+  Widget _buildProductCard(BuildContext context, ProductDetailsDatum product) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: product.imageUrl != null && product.imageUrl!.isNotEmpty
+                ? Image.network(
+                    product.imageUrl!,
+                    width: 140,
+                    height: 140,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(width: 140, height: 140, color: Colors.grey.shade200, child: const Icon(Icons.image, size: 40)),
+                  )
+                : Container(width: 140, height: 140, color: Colors.grey.shade200, child: const Icon(Icons.image, size: 40)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(product.name ?? '', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                if (product.description != null && product.description!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(product.description!, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700)),
+                  ),
+                if (product.price != null && product.price!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text('${product.price}', style: Theme.of(context).textTheme.bodyMedium),
+                  ),
+              ],
+            ),
+          ),
+          _buildAddButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddButton() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(8)),
+            child: const Icon(Icons.add, color: Colors.black87),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAllButtonsSheet(BuildContext context, Component buttonsComponent) {
+    final allButtons = buttonsComponent.buttons ?? [];
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (sheetContext) {
+        Widget content = Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(2)),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.of(context).maybePop();
+                    },
+                  ),
+                  Text("All Options", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                  SizedBox(width: 24),
+                ],
+              ),
+
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                separatorBuilder: (_, __) => const SizedBox(height: 5),
+                itemCount: allButtons.length,
+                itemBuilder: (_, index) {
+                  final button = allButtons[index];
+                  IconData icon = Icons.reply;
+                  switch (button.type) {
+                    case "URL":
+                      icon = Icons.link;
+                      break;
+                    case "PHONE_NUMBER":
+                      icon = Icons.phone;
+                      break;
+                    case "COPY_CODE":
+                      icon = Icons.copy;
+                      break;
+                  }
+
+                  return ListTile(
+                    leading: Icon(icon, color: Colors.blue),
+                    title: Text(button.text, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+
+        if (Platform.isAndroid || Platform.isIOS) {
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, _) {
+              if (!didPop) Navigator.of(sheetContext).pop();
+            },
+            child: content,
+          );
+        }
+        return content;
+      },
+    );
+  }
+
   void _showTemplateSearchDialog(BuildContext context, List<_TemplateListItem> templates) {
     showDialog(
       context: context,
@@ -419,6 +706,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
           onSelected: (item) {
             Navigator.pop(dialogContext);
             setState(() => _selectedTemplate = item);
+            _showingPreview.value = false;
             final provider = context.read<AgentTemplateProvider>();
             provider.templateObj = TemplateObj.fromJson(item.templateObj.toJson());
           },

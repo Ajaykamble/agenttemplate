@@ -103,8 +103,9 @@ class AgentTemplateProvider extends ChangeNotifier {
   }
 
   void resetPageData() {
-    retryAttemptFailed = false;
-    additionalDataList = [];
+    _retryAttemptFailed = false;
+    retryAttemptController.text = "";
+    _additionalDataList = [];
   }
 
   // Catalogue

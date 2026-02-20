@@ -260,6 +260,21 @@ class _CarouselCardContent extends StatelessWidget {
     }
   }
 
+  void onProductSelected() {
+    //
+    Component? headerComponent = card.components.firstWhereOrNull((element) => element.type == 'HEADER' && element.format == 'PRODUCT');
+    if (headerComponent != null) {
+      Component? buttonComponent = card.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+      if (buttonComponent != null) {
+        TemplateButton? SPMButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "SPM");
+        if (SPMButton != null) {
+          //
+          SPMButton.selectedProduct.value = headerComponent.selectedProduct.value;
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final headerComponent = card.components.firstWhereOrNull((c) => c.type == 'HEADER');
@@ -272,7 +287,14 @@ class _CarouselCardContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (headerComponent != null) ...[
-            HeaderForm(headerComponent: headerComponent, backgroundColor: backgroundColor, predefinedAttributes: predefinedAttributes, fileObject: fileObject, onFileUpload: onFileUpload),
+            HeaderForm(
+              headerComponent: headerComponent,
+              backgroundColor: backgroundColor,
+              predefinedAttributes: predefinedAttributes,
+              fileObject: fileObject,
+              onFileUpload: onFileUpload,
+              onProductSelected: onProductSelected,
+            ),
             const SizedBox(height: 10),
           ],
           if (bodyComponent != null) ...[

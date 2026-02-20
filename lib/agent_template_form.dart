@@ -128,6 +128,10 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             predefinedAttributes: widget.predefinedAttributes,
             fileObject: widget.fileObject,
             onFileUpload: widget.onFileUpload,
+            onProductSelected: () {
+              //
+              widget.templateObj.onProductSelected();
+            },
           ),
           const SizedBox(height: 10),
         ],

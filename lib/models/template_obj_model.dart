@@ -819,6 +819,21 @@ class TemplateObj {
     }
   }
 
+  void onProductSelected() {
+    //
+    Component? headerComponent = components?.firstWhereOrNull((element) => element.type == 'HEADER' && element.format == 'PRODUCT');
+    if (headerComponent != null) {
+      Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
+      if (buttonComponent != null) {
+        TemplateButton? SPMButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "SPM");
+        if (SPMButton != null) {
+          //
+          SPMButton.selectedProduct.value = headerComponent.selectedProduct.value;
+        }
+      }
+    }
+  }
+
   TemplateObj({
     required this.components,
     required this.name,
