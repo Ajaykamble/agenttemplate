@@ -1,3 +1,5 @@
 class AppAssets {
-  static const String logo = 'assets/logo.png';
+  static const String packageName = 'agenttemplate';
+  static const String wFooter = 'assets/w_templatefooter.svg';
+  static const String backgroundImage = 'assets/whatsapp-bg.svg';
 }

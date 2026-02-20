@@ -1,6 +1,6 @@
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
-import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -50,8 +50,7 @@ class _LimitedTimeOfferFormState extends State<LimitedTimeOfferForm> {
 
     final result = await showDialog<DateTime>(
       context: context,
-      builder: (context) =>
-          _DateTimePickerDialog(initialDate: _selectedDate, initialHour: _selectedHour, initialMinute: _selectedMinute, minDateTime: minDateTime),
+      builder: (context) => _DateTimePickerDialog(initialDate: _selectedDate, initialHour: _selectedHour, initialMinute: _selectedMinute, minDateTime: minDateTime),
     );
 
     if (result != null) {
@@ -133,8 +132,7 @@ class _DateTimePickerDialogState extends State<_DateTimePickerDialog> {
 
   DateTime get _minDateOnly => DateTime(widget.minDateTime.year, widget.minDateTime.month, widget.minDateTime.day);
 
-  bool get _isSelectedDateMinDate =>
-      _selectedDate.year == _minDateOnly.year && _selectedDate.month == _minDateOnly.month && _selectedDate.day == _minDateOnly.day;
+  bool get _isSelectedDateMinDate => _selectedDate.year == _minDateOnly.year && _selectedDate.month == _minDateOnly.month && _selectedDate.day == _minDateOnly.day;
 
   int get _selectedTimeIndex => _selectedHour * 60 + _selectedMinute;
 
@@ -199,13 +197,11 @@ class _DateTimePickerDialogState extends State<_DateTimePickerDialog> {
               },
             ),
             const Divider(height: 1),
-
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text("Time", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
             ),
             const Divider(height: 1),
-
             SizedBox(
               height: _kTimeListHeight,
               child: ListView.builder(
@@ -234,13 +230,13 @@ class _DateTimePickerDialogState extends State<_DateTimePickerDialog> {
                       child: Text(
                         timeStr,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: disabled
-                              ? Colors.grey.shade400
-                              : isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey.shade700,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
+                              color: disabled
+                                  ? Colors.grey.shade400
+                                  : isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Colors.grey.shade700,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
                       ),
                     ),
                   );
@@ -248,7 +244,6 @@ class _DateTimePickerDialogState extends State<_DateTimePickerDialog> {
               ),
             ),
             const Divider(height: 1),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(

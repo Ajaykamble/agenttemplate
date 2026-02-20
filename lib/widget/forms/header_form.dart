@@ -3,7 +3,7 @@ import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/file_object_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
 import 'package:agenttemplate/utils/media_helper.dart';
-import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -122,7 +122,7 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                       if (value.isNotEmpty) {
                         attribute.selectedVariableValue.value = value;
                       } else {
-                        attribute.selectedVariableValue.value = attribute.placeholder;
+                        attribute.selectedVariableValue.value = "";
                       }
                     },
                   ),

@@ -2,6 +2,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
 class FormStyles {
+  static const whatsappGreen = Color(0xFF075e54);
+
   static InputDecoration buildInputDecoration(BuildContext context, {String? hintText, Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hintText,

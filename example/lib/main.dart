@@ -320,6 +320,8 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
           const Divider(height: 1),
           Expanded(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: SingleChildScrollView(

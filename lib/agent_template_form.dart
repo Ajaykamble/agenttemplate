@@ -7,7 +7,7 @@ import 'package:agenttemplate/widget/forms/carousel_form.dart';
 import 'package:agenttemplate/widget/forms/catalog_form.dart';
 import 'package:agenttemplate/widget/forms/flow_form.dart';
 import 'package:agenttemplate/widget/forms/footer_form.dart';
-import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/forms/header_form.dart';
 import 'package:agenttemplate/widget/forms/limited_time_offer_form.dart';
 import 'package:collection/collection.dart';

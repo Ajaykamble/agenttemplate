@@ -458,7 +458,7 @@ class AttributeClass {
   String placeholder;
   String title;
   AttributeClass({required this.title, required this.placeholder}) {
-    selectedVariableValue = ValueNotifier<String?>(placeholder);
+    selectedVariableValue = ValueNotifier<String?>(null);
   }
   TextEditingController textController = TextEditingController();
   ValueNotifier<String?> selectedVariable = ValueNotifier<String?>(null);
@@ -809,7 +809,7 @@ class TemplateObj {
       Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
         //
-        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
+        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL" && category == "AUTHENTICATION");
         if (urlButton != null) {
           //
           urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';

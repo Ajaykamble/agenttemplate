@@ -1,5 +1,5 @@
 import 'package:agenttemplate/agenttemplate.dart';
-import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:flutter/material.dart';
 
 class ButtonsForm extends StatefulWidget {

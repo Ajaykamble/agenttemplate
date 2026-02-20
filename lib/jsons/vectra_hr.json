@@ -1,0 +1,729 @@
+[
+    {
+        "templateId": 2380,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "call_to_action",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "{{1}}{{2}}helo",
+                    "example": {
+                        "body_text": [
+                            [
+                                "abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnof",
+                                "abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnof"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "URL",
+                            "text": "callToaction",
+                            "url": "http://bugzilla1.vectramind.com:1142/show_bug.cgi?id=10157/{{1}}",
+                            "example": [
+                                "http://bugzilla1.vectramind.com:1142/show_bug.cgi?id=10157"
+                            ]
+                        },
+                        {
+                            "type": "VOICE_CALL",
+                            "text": "button"
+                        }
+                    ]
+                }
+            ],
+            "name": "call_to_action",
+            "language": "en",
+            "id": "1414448493311117",
+            "category": "MARKETING",
+            "status": "REJECTED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "PENDING",
+        "categoryType": "MARKETING",
+        "templateRefId": "1414448493311117",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-06-03 07:19:07",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-06-23 07:45:42",
+        "updatedBy": 1,
+        "templateUpdatedOn": "2025-06-23 07:45:42",
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2492,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "adadsfd",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "adadadsf{{1}}",
+                    "example": {
+                        "header_text": [
+                            "abcdefghijklmna"
+                        ]
+                    },
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz abcdefghijklmnopqurstuvwxyz"
+                }
+            ],
+            "name": "adadsfd",
+            "language": "en",
+            "id": "711182078187229",
+            "category": "MARKETING",
+            "status": "PENDING",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "PENDING",
+        "categoryType": "MARKETING",
+        "templateRefId": "711182078187229",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-06-23 07:32:36",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-06-23 07:42:45",
+        "updatedBy": 1,
+        "templateUpdatedOn": "2025-06-23 07:42:45",
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2410,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "newtemplatefortest",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "this is header object",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "this is body object"
+                }
+            ],
+            "name": "newtemplatefortest",
+            "language": "en",
+            "id": "1680703586146644",
+            "category": "MARKETING",
+            "status": "PENDING",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "PENDING",
+        "categoryType": "MARKETING",
+        "templateRefId": "1680703586146644",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-06-04 09:12:16",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-06-04 09:12:16",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2379,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "yduahidshalsdad",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "dfghjkmjhgjhgff"
+                }
+            ],
+            "name": "yduahidshalsdad",
+            "language": "en",
+            "id": "685026974440714",
+            "category": "MARKETING",
+            "status": "PENDING",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "PENDING",
+        "categoryType": "MARKETING",
+        "templateRefId": "685026974440714",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-06-03 06:31:30",
+        "createdBy": 18,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-06-03 06:31:46",
+        "updatedBy": 18,
+        "templateUpdatedOn": "2025-06-03 06:31:46",
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2360,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "lfffffff",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "this is the template testingbody"
+                },
+                {
+                    "type": "limited_time_offer",
+                    "limited_time_offer": {
+                        "text": "offer ended",
+                        "has_expiration": true
+                    }
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "URL",
+                            "text": "helo",
+                            "url": "https://www.google.com/"
+                        }
+                    ]
+                }
+            ],
+            "name": "lfffffff",
+            "language": "en",
+            "id": "712454967976805",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "712454967976805",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-15 13:06:20",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-15 13:06:41",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "limited_time_offer",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2330,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "hhdddhs",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "example": {
+                        "header_handle": [
+                            "https://scontent.whatsapp.net/v/t61.29466-34/491883024_9826407044106295_6759735066844746098_n.png?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=fuj44CilSBcQ7kNvwGs54rw&_nc_oc=AdmC6niZPA5GsyRlkU4o_UFAzWkuy7v-hKgoeTZUmx8a0IKRgqNX0ENeAZ86Trm9w8A&_nc_zt=3&_nc_ht=scontent.whatsapp.net&edm=AIJs65cEAAAA&_nc_gid=niEkjR7iiRBQ72Ffm_BcvA&oh=01_Q5Aa1gG6dkYao6q8bXys_PqFR2dDrzYd4j6sxiUlRYlkgXhDkA&oe=6848F2DC"
+                        ]
+                    },
+                    "format": "IMAGE"
+                },
+                {
+                    "type": "BODY",
+                    "text": "please find the summar offer .to click the below link"
+                },
+                {
+                    "type": "limited_time_offer",
+                    "limited_time_offer": {
+                        "text": "Offer No more.",
+                        "has_expiration": true
+                    }
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "COPY_CODE",
+                            "text": "Copy offer code",
+                            "example": [
+                                "META"
+                            ]
+                        },
+                        {
+                            "type": "URL",
+                            "text": "click",
+                            "url": "https://www.google.com/"
+                        }
+                    ]
+                }
+            ],
+            "name": "hhdddhs",
+            "language": "en",
+            "id": "9826407040772962",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "9826407040772962",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-12 06:40:37",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": {
+            "docFileDataId": null,
+            "fileName": "FSD_related_image (1).png",
+            "filePath": "https://dev.me.synapselive.com/images/677964435940.png",
+            "localPath": "/var/www/html/images/677964435940.png",
+            "fileHandler": "4:Njc3OTY0NDM1OTQwLnBuZw==:aW1hZ2UvcG5n:ARYwk1-FGOruIsXOoqRLem0JeU2jMjbm4UggFtPRRBoUmtxnkCQaGWknYx5SW-Vfz5IuoiRSmydW2iz-Y6BS61-0MQSnuq857nO4DxKYR3fhTg:e:1747377478:588241037119023:61569872595423:ARbeuXxXDlwICvBl2TU",
+            "mediaId": null
+        },
+        "updatedOn": "2025-05-12 06:40:53",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "limited_time_offer",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2326,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "conerchecktest",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "Hello, how are you doing today?\"or \"Good morning/afternoon/evening, how is everything?"
+                }
+            ],
+            "name": "conerchecktest",
+            "language": "en",
+            "id": "1315926569507059",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "1315926569507059",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-08 10:58:14",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-08 10:58:32",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2325,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "newcheckevery",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "This very important message",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "This message is not important"
+                }
+            ],
+            "name": "newcheckevery",
+            "language": "en",
+            "id": "2338107646590271",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "2338107646590271",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-08 10:53:01",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-08 10:55:08",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2315,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "lto_check_code",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "helloooo",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "haiii how r u"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "URL",
+                            "text": "button1",
+                            "url": "http://95.216.214.87/agentapp/#/"
+                        },
+                        {
+                            "type": "COPY_CODE",
+                            "text": "Copy offer code",
+                            "example": [
+                                "890890"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "name": "lto_check_code",
+            "language": "en",
+            "id": "1042391877771949",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "PENDING",
+        "categoryType": "MARKETING",
+        "templateRefId": "1042391877771949",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-05 10:07:40",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-06 12:29:57",
+        "updatedBy": 18,
+        "templateUpdatedOn": "2025-05-06 12:29:57",
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2322,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "tstc",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "jkhjkh"
+                }
+            ],
+            "name": "tstc",
+            "language": "en",
+            "id": "590671810061414",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "590671810061414",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-06 06:17:54",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-06 06:18:17",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2317,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "lto_purpose",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "vectramind"
+                },
+                {
+                    "type": "limited_time_offer",
+                    "limited_time_offer": {
+                        "text": "Limited",
+                        "has_expiration": true
+                    }
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "COPY_CODE",
+                            "text": "Copy offer code",
+                            "example": [
+                                "1232143124"
+                            ]
+                        },
+                        {
+                            "type": "URL",
+                            "text": "button",
+                            "url": "http://95.216.214.87/agentapp/#/"
+                        }
+                    ]
+                }
+            ],
+            "name": "lto_purpose",
+            "language": "en",
+            "id": "988936680083907",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "988936680083907",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-05-05 10:14:08",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-05-05 10:14:39",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "limited_time_offer",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2292,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "order_confirmation",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Order",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Hello, \nYour order has been confirmed! 🎉 \nExpected delivery date: [Date]. \nTrack your order here: [Tracking Link]. \nIf you have any questions, feel free to reply to this message. \n\nBest regards, \n[Your Business Name]"
+                }
+            ],
+            "name": "order_confirmation",
+            "language": "en",
+            "id": "3582710258690265",
+            "category": "UTILITY",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "UTILITY",
+        "templateRefId": "3582710258690265",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-04-21 08:55:40",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-04-21 08:56:13",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2223,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "rmlvmtemplate",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "hello {{1}},\nvectramind test message",
+                    "example": {
+                        "body_text": [
+                            [
+                                "phani"
+                            ]
+                        ]
+                    }
+                }
+            ],
+            "name": "rmlvmtemplate",
+            "language": "en",
+            "id": "929349086032672",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "929349086032672",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-02-14 04:23:29",
+        "createdBy": 1,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-02-14 04:23:47",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2222,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "temp_meta",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Header message",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Body message"
+                }
+            ],
+            "name": "temp_meta",
+            "language": "en",
+            "id": "1140035484518472",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "1140035484518472",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-02-14 04:16:07",
+        "createdBy": null,
+        "reason": null,
+        "fileObject": null,
+        "updatedOn": "2025-02-14 04:19:07",
+        "updatedBy": 1,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2204,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "test_btn_sample",
+        "template": {
+            "components": [
+                {
+                    "type": "HEADER",
+                    "text": "Header Message",
+                    "format": "TEXT"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Body Message"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Yes"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "No"
+                        }
+                    ]
+                }
+            ],
+            "name": "test_btn_sample",
+            "language": "en",
+            "id": "488069707375044",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "488069707375044",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-01-30 10:17:44",
+        "createdBy": 18,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-02-06 09:34:54",
+        "updatedBy": 18,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    },
+    {
+        "templateId": 2195,
+        "customerId": 11,
+        "wabaAccountId": 98,
+        "templateName": "hello_world_test",
+        "template": {
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "Sample message template"
+                }
+            ],
+            "name": "hello_world_test",
+            "language": "en",
+            "id": "1636766923594992",
+            "category": "MARKETING",
+            "status": "APPROVED",
+            "message_send_ttl_seconds": 0
+        },
+        "status": "APPROVED",
+        "categoryType": "MARKETING",
+        "templateRefId": "1636766923594992",
+        "templateStatus": 1,
+        "language": "en",
+        "createdOn": "2025-01-21 11:39:18",
+        "createdBy": 18,
+        "reason": "",
+        "fileObject": "",
+        "updatedOn": "2025-02-06 09:34:53",
+        "updatedBy": 18,
+        "templateUpdatedOn": null,
+        "templateType": "Normal",
+        "parameterFormat": "POSITIONAL"
+    }
+]

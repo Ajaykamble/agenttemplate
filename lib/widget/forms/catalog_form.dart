@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
-import 'package:agenttemplate/widget/forms/form_styles.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
