@@ -23,7 +23,7 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
     List<Component> components = widget.components;
     Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
     Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
-    Component? limitedTimeOfferComponent = components.firstWhereOrNull((element) => element.type == 'LIMITED_TIME_OFFER');
+    Component? limitedTimeOfferComponent = components.firstWhereOrNull((element) => element.type == 'limited_time_offer');
     Component? footerComponent = components.firstWhereOrNull((element) => element.type == 'FOOTER');
 
     return CardComponent(

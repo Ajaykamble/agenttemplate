@@ -387,8 +387,7 @@ class _TextHeaderPreview extends StatefulWidget {
 }
 
 class _TextHeaderPreviewState extends State<_TextHeaderPreview> {
-  //
-  late final List<ValueNotifier<String?>> _notifiers;
+  late List<ValueNotifier<String?>> _notifiers;
 
   @override
   void initState() {
@@ -396,6 +395,20 @@ class _TextHeaderPreviewState extends State<_TextHeaderPreview> {
     _notifiers = widget.headerComponent.attributes.map((a) => a.selectedVariableValue).toList();
     for (final notifier in _notifiers) {
       notifier.addListener(_onChanged);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _TextHeaderPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.headerComponent != widget.headerComponent) {
+      for (final notifier in _notifiers) {
+        notifier.removeListener(_onChanged);
+      }
+      _notifiers = widget.headerComponent.attributes.map((a) => a.selectedVariableValue).toList();
+      for (final notifier in _notifiers) {
+        notifier.addListener(_onChanged);
+      }
     }
   }
 
