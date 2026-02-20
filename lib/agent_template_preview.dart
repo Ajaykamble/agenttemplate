@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/app_assets.dart';
 import 'package:agenttemplate/widget/preview/button_preview.dart';
@@ -66,7 +64,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
   Widget _buildCard() {
     List<Component> components = widget.templateObj.components ?? [];
     List<Component> otherComponents = components.where((element) => element.type != 'CAROUSEL').toList();
-    List<CarouselCard> carouselCards = components.firstWhereOrNull((element) => element.type == 'CAROUSEL')?.cards ?? [];
+    Component? carouselComponent = components.firstWhereOrNull((element) => element.type == 'CAROUSEL');
     Component? buttonsComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
 
     return LayoutBuilder(
@@ -87,17 +85,25 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                 SizedBox(width: _cardWidth, child: ButtonPreviews(buttonsComponent: buttonsComponent)),
               ],
             ],
-            if (carouselCards.isNotEmpty) ...[
+            if (carouselComponent != null) ...[
               if (otherComponents.isNotEmpty) ...[
                 const SizedBox(height: 7),
               ],
               SizedBox(
                 width: _cardWidth,
-                child: Builder(
-                  builder: (_) {
-                    _totalCards = carouselCards.length;
+                child: ValueListenableBuilder<int>(
+                  valueListenable: carouselComponent.totalCardsNotifier,
+                  builder: (_, totalCards, __) {
+                    final carouselCards = carouselComponent.cards ?? [];
+                    if (carouselCards.isEmpty) return const SizedBox.shrink();
+                    _totalCards = totalCards;
                     _carouselScrollController.removeListener(_onCarouselScroll);
                     _carouselScrollController.addListener(_onCarouselScroll);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_currentPage.value >= totalCards && totalCards > 0) {
+                        _currentPage.value = totalCards - 1;
+                      }
+                    });
                     return ValueListenableBuilder<int>(
                       valueListenable: _currentPage,
                       builder: (context, currentPage, child) {
@@ -137,7 +143,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                                 ),
                               ),
                             ),
-                            if (_totalCards > 1) ...[
+                            if (totalCards > 1) ...[
                               if (_cardHeight > 0 && currentPage > 0)
                                 Positioned(
                                   left: 0,
@@ -150,7 +156,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                                     ),
                                   ),
                                 ),
-                              if (_cardHeight > 0 && currentPage < _totalCards - 1)
+                              if (_cardHeight > 0 && currentPage < totalCards - 1)
                                 Positioned(
                                   right: 0,
                                   top: 0,

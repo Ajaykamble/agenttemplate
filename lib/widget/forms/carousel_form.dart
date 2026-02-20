@@ -77,6 +77,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
     final templateCard = _cards.first;
 
     widget.carouselComponent.cards?.add(CarouselCard.fromJson(templateCard.toJson(), isAddedExternally: true));
+    widget.carouselComponent.totalCardsNotifier.value = widget.carouselComponent.cards?.length ?? 0;
 
     _rebuildTabController(_cards.length - 1);
   }
@@ -86,6 +87,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
     if (!_cards[index].isAddedExternally) return;
 
     widget.carouselComponent.cards!.removeAt(index);
+    widget.carouselComponent.totalCardsNotifier.value = widget.carouselComponent.cards?.length ?? 0;
     _cardFormKeys.removeAt(index);
 
     final newIndex = index.clamp(0, _cards.length - 1);

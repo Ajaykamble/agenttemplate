@@ -5,6 +5,7 @@ import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/file_downloader.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -455,13 +456,26 @@ class _ImageHeaderPreview extends StatelessWidget {
     required this.headerComponent,
   });
 
+  static final _cacheManager = CacheManager(
+    Config(
+      'imageHeaderCache',
+      stalePeriod: const Duration(days: 7),
+      maxNrOfCacheObjects: 100,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: headerComponent.headerFileUrlController,
       builder: (context, url, child) {
+        final imageUrl = url.text.trim();
+        if (imageUrl.isEmpty) {
+          return Icon(CupertinoIcons.photo, size: 50, color: Colors.white);
+        }
         return CachedNetworkImage(
-          imageUrl: url.text,
+          cacheManager: _cacheManager,
+          imageUrl: imageUrl,
           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
           fit: BoxFit.cover,
           errorWidget: (context, url, error) => Icon(

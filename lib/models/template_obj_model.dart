@@ -478,6 +478,7 @@ class Component {
   final int? codeExpirationMinutes;
 
   //
+  ValueNotifier<int> totalCardsNotifier = ValueNotifier<int>(0);
 
   ValueNotifier<FileObject?> selectedFileObject = ValueNotifier<FileObject?>(null);
 
@@ -529,7 +530,7 @@ class Component {
       codeExpirationMinutes: json['code_expiration_minutes'] as int?,
     );
     RegExp positionalParamRegExp = RegExp(r'\{\{\s*(\d+)\s*\}\}');
-
+    component.totalCardsNotifier = ValueNotifier<int>(component.cards?.length ?? 0);
     if (component.type == 'HEADER' && component.format == "TEXT") {
       //
       String text = component.text ?? '';
