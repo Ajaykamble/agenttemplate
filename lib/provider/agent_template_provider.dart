@@ -9,6 +9,14 @@ enum ApiStatus { loading, success, error }
 class AgentTemplateProvider extends ChangeNotifier {
   //
 
+  AgentTemplateProvider._();
+
+  static final AgentTemplateProvider _instance = AgentTemplateProvider._();
+
+  factory AgentTemplateProvider() {
+    return _instance;
+  }
+
   Future<CatalogueResponseModel?> Function()? onGetCatalogue;
   Future<FlowRawInfoResponse?> Function(String flowId)? onGetFlowRawInfo;
   Future<DateTimeResponseModel?> Function()? onGetDateTime;
@@ -106,6 +114,18 @@ class AgentTemplateProvider extends ChangeNotifier {
     _retryAttemptFailed = false;
     retryAttemptController.text = "";
     _additionalDataList = [];
+  }
+
+  /// Resets all provider data: API statuses, responses, template, and page data.
+  void resetAllData() {
+    _catalogueStatus = ApiStatus.loading;
+    _flowRawInfoStatus = ApiStatus.loading;
+    _dateTimeStatus = ApiStatus.loading;
+    _dateTimeResponse = null;
+    _flowRawInfoResponse = null;
+    _catalogueResponse = null;
+    _templateObj = null;
+    resetPageData();
   }
 
   // Catalogue
