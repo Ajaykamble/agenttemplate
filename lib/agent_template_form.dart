@@ -214,73 +214,103 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
   }
 
   Widget _buildAdditionalInfoSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
-        title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-        tilePadding: EdgeInsets.zero,
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              height: 36,
-              child: ElevatedButton(
-                onPressed: () {
-                  agentTemplateProvider.addAdditionalData();
-                },
-                child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+    return FormField<void>(
+      validator: (_) {
+        for (final info in agentTemplateProvider.additionalDataList) {
+          if (info.keyController.text.trim().isEmpty) {
+            return ' ';
+          }
+        }
+        return null;
+      },
+      builder: (FormFieldState<void> state) {
+        final hasError = state.hasError;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: widget.backgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                border: hasError ? Border.all(color: Theme.of(context).colorScheme.error, width: 2) : null,
+              ),
+              child: ExpansionTile(
+                title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                tilePadding: EdgeInsets.zero,
+                maintainState: true,
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          agentTemplateProvider.addAdditionalData();
+                        },
+                        child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Selector<AgentTemplateProvider, int>(
+                    selector: (_, provider) => provider.additionalDataList.length,
+                    builder: (context, _, __) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: agentTemplateProvider.additionalDataList.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final info = agentTemplateProvider.additionalDataList[index];
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: info.keyController,
+                                  decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'This field is required';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: info.valueController,
+                                  decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              IconButton(
+                                onPressed: () {
+                                  agentTemplateProvider.removeAdditionalData(index);
+                                },
+                                icon: const Icon(Icons.close, color: Colors.black, size: 20),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Selector<AgentTemplateProvider, int>(
-            selector: (_, provider) => provider.additionalDataList.length,
-            builder: (context, _, __) {
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: agentTemplateProvider.additionalDataList.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final info = agentTemplateProvider.additionalDataList[index];
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: info.keyController,
-                          decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'This field is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextFormField(
-                          controller: info.valueController,
-                          decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      IconButton(
-                        onPressed: () {
-                          agentTemplateProvider.removeAdditionalData(index);
-                        },
-                        icon: const Icon(Icons.close, color: Colors.black, size: 20),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
+            if (hasError) ...[
+              const SizedBox(height: 10),
+              Text("Fill all the fields", style: Theme.of(context).inputDecorationTheme.errorStyle ?? Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.error)),
+            ],
+          ],
+        );
+      },
     );
   }
 }

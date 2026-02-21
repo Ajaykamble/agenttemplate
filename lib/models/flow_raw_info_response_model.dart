@@ -3,6 +3,7 @@
 //     final flowRawInfoResponse = flowRawInfoResponseFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -18,10 +19,10 @@ class FlowRawInfoResponse {
   FlowRawInfoResponse({this.status, this.flows, this.rawInfo});
 
   factory FlowRawInfoResponse.fromJson(Map<String, dynamic> json) => FlowRawInfoResponse(
-    status: json["status"],
-    flows: json["flows"] == null ? null : Flows.fromJson(json["flows"]),
-    rawInfo: json["rawInfo"] == null ? null : RawInfoModel.fromJson(jsonDecode(json["rawInfo"])),
-  );
+        status: json["status"],
+        flows: json["flows"] == null ? null : Flows.fromJson(json["flows"]),
+        rawInfo: json["rawInfo"] == null ? null : RawInfoModel.fromJson(jsonDecode(json["rawInfo"])),
+      );
 
   Map<String, dynamic> toJson() => {"status": status, "flows": flows?.toJson(), "rawInfo": rawInfo?.toJson()};
 }
@@ -50,14 +51,14 @@ class Datum {
   Datum({this.name, this.assetType, this.downloadUrl, this.status, this.id, this.categories, this.validationErrors});
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    name: json["name"],
-    assetType: json["asset_type"],
-    downloadUrl: json["download_url"],
-    status: json["status"],
-    id: json["id"],
-    categories: json["categories"],
-    validationErrors: json["validation_errors"],
-  );
+        name: json["name"],
+        assetType: json["asset_type"],
+        downloadUrl: json["download_url"],
+        status: json["status"],
+        id: json["id"],
+        categories: json["categories"],
+        validationErrors: json["validation_errors"],
+      );
 
   Map<String, dynamic> toJson() => {"name": name, "asset_type": assetType, "download_url": downloadUrl, "status": status, "id": id, "categories": categories, "validation_errors": validationErrors};
 }
@@ -89,7 +90,48 @@ class RawInfoModel {
 
   RawInfoModel({required this.version, required this.screens});
 
-  factory RawInfoModel.fromJson(Map<String, dynamic> json) => RawInfoModel(version: json["version"], screens: List<FlowRawScreen>.from(json["screens"].map((x) => FlowRawScreen.fromJson(x))));
+  factory RawInfoModel.fromJson(Map<String, dynamic> json) {
+    RawInfoModel model = RawInfoModel(
+      version: json["version"],
+      screens: List<FlowRawScreen>.from(json["screens"].map((x) => FlowRawScreen.fromJson(x))),
+    );
+    model._filterAttributesByInitValues();
+
+    return model;
+  }
+
+  /// Scans all screens' form init-values for ${data.xxx} references,
+  /// then removes attributes that are never used in any init-values
+  /// (i.e. only passed through in footer payloads).
+  void _filterAttributesByInitValues() {
+    Set<String> referencedKeys = {};
+    for (final screen in screens) {
+      _collectInitValueDataKeys(screen.layout, referencedKeys);
+    }
+    for (final screen in screens) {
+      screen.attributes = screen.attributes.where((attr) => referencedKeys.contains(attr.header)).toList();
+    }
+  }
+
+  static void _collectInitValueDataKeys(Map<String, dynamic>? node, Set<String> keys) {
+    if (node == null) return;
+    if (node.containsKey("init-values") && node["init-values"] is Map<String, dynamic>) {
+      (node["init-values"] as Map<String, dynamic>).forEach((_, value) {
+        if (value is String) {
+          for (final match in RegExp(r'\$\{data\.(\w+)\}').allMatches(value)) {
+            keys.add(match.group(1)!);
+          }
+        }
+      });
+    }
+    if (node.containsKey("children") && node["children"] is List) {
+      for (final child in node["children"]) {
+        if (child is Map<String, dynamic>) {
+          _collectInitValueDataKeys(child, keys);
+        }
+      }
+    }
+  }
 
   Map<String, dynamic> toJson() => {"version": version, "screens": List<dynamic>.from(screens.map((x) => x.toJson()))};
 }
@@ -111,7 +153,7 @@ class FlowRawScreen {
 
     screen.data?.forEach((key, value) {
       if (value is Map<String, dynamic>) {
-        if (value["type"] == "string") at.add(FlawRawScreenAttributes(header: key, type: value["type"]));
+        at.add(FlawRawScreenAttributes(header: key, type: value["type"]));
       }
     });
 
