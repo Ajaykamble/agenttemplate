@@ -371,8 +371,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                           if (response.statusCode == 200) {
                             return FlowRawInfoResponse.fromJson(jsonDecode(response.body));
                           }
-                        } catch (e) {
-                        }
+                        } catch (e) {}
                         return null;
                       },
                       onFileUpload: (file) async {
@@ -410,6 +409,11 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                           templateObj: context.read<AgentTemplateProvider>().templateObj!,
                           onButtonTap: (button) => _showButtonProductSheet(context, button),
                           onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
+                          accountImage: "https://t4.ftcdn.net/jpg/01/43/42/83/360_F_143428338_gcxw3Jcd0tJpkvvb53pfEztwtU9sxsgT.jpg",
+                          accountIsVerified: true,
+                          accountName: "John Doe",
+                          accountPhone: "XXXXXXXXXX",
+                          onBackPressed: () => _showingPreview.value = false,
                         ),
                       ),
                     ],
@@ -434,6 +438,11 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                               templateObj: context.read<AgentTemplateProvider>().templateObj!,
                               onButtonTap: (button) => _showButtonProductSheet(context, button),
                               onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
+                              accountImage: "https://t4.ftcdn.net/jpg/01/43/42/83/360_F_143428338_gcxw3Jcd0tJpkvvb53pfEztwtU9sxsgT.jpg",
+                              accountIsVerified: true,
+                              accountName: "John Doe",
+                              accountPhone: "XXXXXXXXXX",
+                              onBackPressed: () => _showingPreview.value = false,
                             ),
                           ),
                         ],

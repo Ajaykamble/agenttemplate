@@ -1,5 +1,6 @@
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/app_assets.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/preview/button_preview.dart';
 import 'package:agenttemplate/widget/preview/card_preview_widget.dart';
 import 'package:collection/collection.dart';
@@ -7,10 +8,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AgentTemplatePreview extends StatefulWidget {
+  final String accountName;
+  final String accountImage;
+  final String accountPhone;
+  final bool accountIsVerified;
   final TemplateObj templateObj;
   final void Function(TemplateButton button)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
-  const AgentTemplatePreview({super.key, required this.templateObj, this.onButtonTap, this.onAllButtonsTap});
+  final VoidCallback onBackPressed;
+  const AgentTemplatePreview(
+      {super.key,
+      required this.templateObj,
+      required this.accountName,
+      required this.accountImage,
+      required this.accountPhone,
+      required this.accountIsVerified,
+      this.onButtonTap,
+      this.onAllButtonsTap,
+      required this.onBackPressed});
 
   @override
   State<AgentTemplatePreview> createState() => _AgentTemplatePreviewState();
@@ -196,21 +211,101 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
     );
   }
 
+  Widget _buildAccountInfo() {
+    return Container(
+      height: kToolbarHeight,
+      color: FormStyles.whatsappGreen,
+      child: Row(
+        children: [
+          BackButton(
+            onPressed: widget.onBackPressed,
+            color: Colors.white,
+            style: ButtonStyle(
+              iconSize: WidgetStateProperty.all(24),
+              padding: WidgetStateProperty.all(EdgeInsets.zero),
+              minimumSize: WidgetStateProperty.all(const Size(40, 40)),
+            ),
+          ),
+          const SizedBox(width: 4),
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white,
+            backgroundImage: widget.accountImage.isNotEmpty ? NetworkImage(widget.accountImage) : null,
+            child: widget.accountImage.isEmpty ? Icon(Icons.person, color: FormStyles.whatsappGreen, size: 28) : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        widget.accountName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (widget.accountIsVerified) ...[
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(
+                        AppAssets.verificationBadge,
+                        package: AppAssets.packageName,
+                        width: 20,
+                        height: 20,
+                      ),
+                    ]
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  widget.accountPhone,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 13,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_vert, color: Colors.white, size: 24),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       child: Column(
         children: [
-          Container(height: 70, color: Colors.green),
+          _buildAccountInfo(),
           Expanded(
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: SvgPicture.asset(
-                    AppAssets.backgroundImage,
-                    package: AppAssets.packageName,
-                    fit: BoxFit.fill,
+                  child: SizedBox(
+                    child: Image.asset(
+                      AppAssets.backgroundImage,
+                      package: AppAssets.packageName,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
                 Padding(
