@@ -1,6 +1,5 @@
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
-import 'package:agenttemplate/models/flow_raw_info_response_model.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 

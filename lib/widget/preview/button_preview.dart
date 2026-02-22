@@ -1,12 +1,12 @@
-import 'dart:developer';
-
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
+import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ButtonPreviews extends StatefulWidget {
   final Component? buttonsComponent;
-  final void Function(TemplateButton Component)? onButtonTap;
+  final void Function(TemplateButton component)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
   const ButtonPreviews({super.key, required this.buttonsComponent, this.onButtonTap, this.onAllButtonsTap});
 
@@ -69,7 +69,7 @@ class _ButtonPreviewsState extends State<ButtonPreviews> {
           if (totalButtons > 2) ...[
             const SizedBox(height: 5),
             _ButtonWidget(
-              title: "See all options",
+              title: AppLocalizations.of(context)?.seeAllOptions ?? "See all options",
               icon: CupertinoIcons.list_bullet,
               onTap: () {
                 widget.onAllButtonsTap?.call(widget.buttonsComponent!);
@@ -83,12 +83,12 @@ class _ButtonPreviewsState extends State<ButtonPreviews> {
 }
 
 class _ButtonWidget extends StatelessWidget {
-  String title;
-  IconData icon;
-  VoidCallback? onTap;
-  _ButtonWidget({super.key, required this.title, required this.icon, this.onTap});
+  final String title;
+  final IconData icon;
+  final VoidCallback? onTap;
+  const _ButtonWidget({super.key, required this.title, required this.icon, this.onTap});
 
-  Color buttonColor = Colors.blue;
+  final Color buttonColor = Colors.blue;
 
   @override
   Widget build(BuildContext context) {

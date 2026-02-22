@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/file_object_model.dart';
 import 'package:agenttemplate/widget/forms/body_form.dart';
 import 'package:agenttemplate/widget/forms/buttons_form.dart';
 import 'package:agenttemplate/widget/forms/header_form.dart';
-import 'package:agenttemplate/models/file_upload_response.dart';
 import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
@@ -136,8 +135,6 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Hidden FormField that hooks into the parent Form.validate()
-        // to trigger per-card validation and update error tabs.
         FormField<bool>(
           builder: (_) => const SizedBox.shrink(),
           validator: (_) {
@@ -145,7 +142,6 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
             return _errorCards.value.isNotEmpty ? '' : null;
           },
         ),
-
         Column(
           children: [
             ValueListenableBuilder<Set<int>>(
@@ -168,7 +164,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("Card ${index + 1}", style: textStyle),
+                            Text(AppLocalizations.of(context)?.card(index + 1) ?? "Card ${index + 1}", style: textStyle),
                             const SizedBox(width: 4),
                             GestureDetector(
                               onTap: () => _removeCard(index),
@@ -179,7 +175,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                       );
                     }
 
-                    return Tab(child: Text("Card ${index + 1}", style: textStyle));
+                    return Tab(child: Text(AppLocalizations.of(context)?.card(index + 1) ?? "Card ${index + 1}", style: textStyle));
                   }),
                 );
 
@@ -188,13 +184,14 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                 return Row(
                   children: [
                     Expanded(child: tabBar),
-                    if (_cards.length < _maxCards) ...[const SizedBox(width: 5), ElevatedButton(onPressed: _addCard, child: Text("Add Card"))],
+                    if (_cards.length < _maxCards) ...[
+                      const SizedBox(width: 5),
+                      ElevatedButton(onPressed: _addCard, child: Text(AppLocalizations.of(context)?.addCard ?? "Add Card"))
+                    ],
                   ],
                 );
               },
             ),
-            // All cards stay in the tree via Offstage so their fields
-            // participate in per-card Form.validate().
             ...List.generate(_cards.length, (index) {
               return Offstage(
                 offstage: index != _tabController.index,
@@ -220,8 +217,6 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
   }
 }
 
-// ---------------------------------------------------------------------------
-
 class _CarouselCardContent extends StatelessWidget {
   final CarouselCard card;
   final Color backgroundColor;
@@ -243,32 +238,26 @@ class _CarouselCardContent extends StatelessWidget {
   });
 
   void onBodyTextChanged() {
-    //
-    //
     Component? bodyComponent = card.components.firstWhereOrNull((element) => element.type == 'BODY');
     if (bodyComponent?.attributes.isNotEmpty ?? false) {
-      //
       Component? buttonComponent = card.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
-        //
         TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
         if (urlButton != null) {
-          //
-          urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
+          urlButton.buttonTextController.text =
+              bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
         }
       }
     }
   }
 
   void onProductSelected() {
-    //
     Component? headerComponent = card.components.firstWhereOrNull((element) => element.type == 'HEADER' && element.format == 'PRODUCT');
     if (headerComponent != null) {
       Component? buttonComponent = card.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
         TemplateButton? SPMButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "SPM");
         if (SPMButton != null) {
-          //
           SPMButton.selectedProduct.value = headerComponent.selectedProduct.value;
         }
       }
@@ -308,7 +297,9 @@ class _CarouselCardContent extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
-          if (buttonsComponent != null) ...[ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType, shortBaseUrl: shortBaseUrl)],
+          if (buttonsComponent != null) ...[
+            ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType, shortBaseUrl: shortBaseUrl)
+          ],
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class _BodyFormState extends State<BodyForm> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "Body Attributes ",
+                text: "${AppLocalizations.of(context)?.bodyAttribute ?? "Body Attributes"} ",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),
               ),
               TextSpan(
@@ -90,7 +91,7 @@ class _BodyFormState extends State<BodyForm> {
                                     builder: (context, _, child) {
                                       return TextFormField(
                                         controller: attribute.textController,
-                                        decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                                        decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterText ?? "Enter Text"),
                                         validator: (value) {
                                           if (attribute.selectedVariable.value == null) {
                                             if (attribute.isSmartUrlEnabled.value) {
@@ -98,11 +99,11 @@ class _BodyFormState extends State<BodyForm> {
                                               final regExp = RegExp(urlPattern);
 
                                               if (value != null && value.isNotEmpty && !regExp.hasMatch(value)) {
-                                                return 'Enter a valid URL (must start with http or https)';
+                                                return AppLocalizations.of(context)?.invalidUrl ?? 'Enter a valid URL (must start with http or https)';
                                               }
                                             }
                                             if (value == null || value.isEmpty) {
-                                              return 'This field is required';
+                                              return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                                             }
                                           }
 
@@ -141,7 +142,7 @@ class _BodyFormState extends State<BodyForm> {
                                             ),
                                           ),
                                           const SizedBox(width: 4),
-                                          Text("Smart URL", style: Theme.of(context).textTheme.bodySmall),
+                                          Text(AppLocalizations.of(context)?.smartUrl ?? "Smart URL", style: Theme.of(context).textTheme.bodySmall),
                                         ],
                                       );
                                     },
@@ -163,7 +164,7 @@ class _BodyFormState extends State<BodyForm> {
                               child: Column(
                                 children: [
                                   Center(
-                                    child: Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                                    child: Text(AppLocalizations.of(context)?.or ?? "OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                                   ),
                                   const SizedBox(height: 10),
                                   _buildDropdown(attribute),
@@ -200,12 +201,12 @@ class _BodyFormState extends State<BodyForm> {
             attribute.selectedVariableValue.value = widget.predefinedAttributes[value];
           },
           value: attribute.selectedVariable.value,
-          decoration: FormStyles.buildInputDecoration(context, hintText: "Select Variable"),
+          decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.selectVariable ?? "Select Variable"),
           dropdownStyleData: FormStyles.buildDropdownStyleData(context),
           menuItemStyleData: FormStyles.buildMenuItemStyleData(context),
           validator: (value) {
             if (attribute.selectedVariableValue.value?.isEmpty ?? true) {
-              return 'This field is required';
+              return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
             }
             return null;
           },

@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -77,19 +76,21 @@ class LimitedOfferPreview extends StatelessWidget {
     final daysRemaining = expiryDate.difference(today).inDays;
 
     if (daysRemaining < 0 || (daysRemaining == 0 && expiry.isBefore(now))) {
-      return 'Offer ended';
+      return AppLocalizations.of(context)?.offerEnded ?? 'Offer ended';
     }
 
     if (daysRemaining == 0) {
-      return 'Ends today at ${TimeOfDay.fromDateTime(expiry).format(context)}';
+      final time = TimeOfDay.fromDateTime(expiry).format(context);
+      return AppLocalizations.of(context)?.endsTodayAt(time) ?? 'Ends today at $time';
     }
 
-    if (daysRemaining == 1) return 'Ends in 1 day';
+    if (daysRemaining == 1) return AppLocalizations.of(context)?.endsIn1Day ?? 'Ends in 1 day';
 
     if (daysRemaining <= _maxDaysForRelativeLabel) {
-      return 'Ends in $daysRemaining days';
+      return AppLocalizations.of(context)?.endsInDays(daysRemaining) ?? 'Ends in $daysRemaining days';
     }
 
-    return 'Ends on ${_dateFormat.format(expiry)}';
+    final date = _dateFormat.format(expiry);
+    return AppLocalizations.of(context)?.endsOnDate(date) ?? 'Ends on $date';
   }
 }

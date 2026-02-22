@@ -1,9 +1,10 @@
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/file_object_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
-import 'package:agenttemplate/utils/media_helper.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
+import 'package:agenttemplate/utils/media_helper.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -26,11 +27,6 @@ class HeaderForm extends StatefulWidget {
 
 class _HeaderFormState extends State<HeaderForm> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (widget.headerComponent.format == "TEXT" && widget.headerComponent.attributes.isEmpty) {
       return SizedBox.shrink();
@@ -43,7 +39,7 @@ class _HeaderFormState extends State<HeaderForm> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Header Attributes", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(AppLocalizations.of(context)?.headerAttributes ?? "Header Attributes", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 10),
         //
         Container(
@@ -84,6 +80,7 @@ class _HeaderTextForm extends StatefulWidget {
 class _HeaderTextFormState extends State<_HeaderTextForm> {
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AgentTemplateProvider>(context);
     return ListView.separated(
       itemBuilder: (context, index) {
         AttributeClass attribute = widget.headerComponent.attributes[index];
@@ -110,10 +107,10 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                   flex: 65,
                   child: TextFormField(
                     controller: attribute.textController,
-                    decoration: FormStyles.buildInputDecoration(context, hintText: attribute.placeholder),
+                    decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterText ?? "Enter Text"),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'This field is required';
+                        return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                       }
                       return null;
                     },
@@ -140,7 +137,7 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                     flex: 65,
                     child: Column(
                       children: [
-                        Text("OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(AppLocalizations.of(context)?.or ?? "OR", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
                         ValueListenableBuilder(
                           valueListenable: attribute.selectedVariable,
@@ -153,12 +150,12 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                                 attribute.selectedVariableValue.value = widget.predefinedAttributes[value];
                               },
                               value: attribute.selectedVariable.value,
-                              decoration: FormStyles.buildInputDecoration(context, hintText: "Select Variable"),
+                              decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.selectVariable ?? "Select Variable"),
                               dropdownStyleData: FormStyles.buildDropdownStyleData(context),
                               menuItemStyleData: FormStyles.buildMenuItemStyleData(context),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'This field is required';
+                                  return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                                 }
                                 return null;
                               },
@@ -209,11 +206,6 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
 
   String get _mediaType => widget.headerComponent.format ?? 'FILE';
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> onUploadClick() async {
     final extensions = MediaHelper.allowedExtensions(_mediaType);
 
@@ -223,15 +215,17 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
 
     final pickedFile = result.files.first;
 
+    if (!mounted) return;
+
     // Check file size limit
     if (pickedFile.size > MediaHelper.maxFileSizeInBytes(_mediaType)) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.';
+        _errorMessage = AppLocalizations.of(context)?.mediaTypeNote(MediaHelper.maxFileSize(_mediaType), _mediaType) ??
+            'Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.';
       });
       return;
     }
-    //
 
     // Clear error on valid file
     setState(() {
@@ -258,7 +252,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // "Upload File" label
-            Text("Upload File", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
+            Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
             const SizedBox(height: 8),
             // File picker row: file name + Upload File button + Fetch button
             Row(
@@ -280,7 +274,9 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  widget.headerComponent.headerFileNameController.text.isEmpty ? "No file selected" : widget.headerComponent.headerFileNameController.text,
+                                  widget.headerComponent.headerFileNameController.text.isEmpty
+                                      ? (AppLocalizations.of(context)?.noFileSelected ?? "No file selected")
+                                      : widget.headerComponent.headerFileNameController.text,
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -302,13 +298,12 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                               borderRadius: BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
                             ),
                           ),
-                          child: const Text("Upload File"),
+                          child: Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File"),
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 if ((widget.fileObject ?? "").isNotEmpty) ...[
                   const SizedBox(width: 10),
                   // Fetch button
@@ -322,31 +317,28 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: const Text("Fetch"),
+                      child: Text(AppLocalizations.of(context)?.fetch ?? "Fetch"),
                     ),
                   ),
                 ],
-
-                // File name display
               ],
             ),
             const SizedBox(height: 12),
             // "Or" separator
             Center(
-              child: Text("Or", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              child: Text(AppLocalizations.of(context)?.or ?? "Or", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 12),
             // URL input field
             TextFormField(
-              controller: widget.headerComponent.headerFileUrlController, //TextEditingController(text: value?.filePath),
+              controller: widget.headerComponent.headerFileUrlController,
               decoration: FormStyles.buildInputDecoration(context, hintText: MediaHelper.mediaUrlHint(_mediaType)),
               onChanged: (value) {
-                //
                 widget.headerComponent.onManualSetFileUrl(value);
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'This field is required';
+                  return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                 }
                 return null;
               },
@@ -354,7 +346,8 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
             const SizedBox(height: 6),
             // Note about media type and size limit
             Text(
-              "Note : Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.",
+              AppLocalizations.of(context)?.mediaTypeNote(MediaHelper.maxFileSize(_mediaType), _mediaType) ??
+                  "Note : Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
             ),
             if (_errorMessage != null) ...[const SizedBox(height: 6), Text(_errorMessage!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error))],
@@ -381,54 +374,54 @@ class __HeaderLocationFormState extends State<_HeaderLocationForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildField(
-          label: "Latitude",
+          label: AppLocalizations.of(context)?.latitude ?? "Latitude",
           controller: widget.headerComponent.latitudeController,
-          hintText: "Latitude",
+          hintText: AppLocalizations.of(context)?.latitude ?? "Latitude",
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Latitude is required';
+              return AppLocalizations.of(context)?.latitudeRequired ?? 'Latitude is required';
             }
             if (double.tryParse(value) == null) {
-              return 'Enter a valid latitude';
+              return AppLocalizations.of(context)?.invalidLatitude ?? 'Enter a valid latitude';
             }
             return null;
           },
         ),
         const SizedBox(height: 12),
         _buildField(
-          label: "Longitude",
+          label: AppLocalizations.of(context)?.longitude ?? "Longitude",
           controller: widget.headerComponent.longitudeController,
-          hintText: "Longitude",
+          hintText: AppLocalizations.of(context)?.longitude ?? "Longitude",
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Longitude is required';
+              return AppLocalizations.of(context)?.longitudeRequired ?? 'Longitude is required';
             }
             if (double.tryParse(value) == null) {
-              return 'Enter a valid longitude';
+              return AppLocalizations.of(context)?.invalidLongitude ?? 'Enter a valid longitude';
             }
             return null;
           },
         ),
         const SizedBox(height: 12),
         _buildField(
-          label: "Name",
+          label: AppLocalizations.of(context)?.name ?? "Name",
           controller: widget.headerComponent.locationNameController,
-          hintText: "Name",
+          hintText: AppLocalizations.of(context)?.name ?? "Name",
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Name is required';
+              return AppLocalizations.of(context)?.nameRequired ?? 'Name is required';
             }
             return null;
           },
         ),
         const SizedBox(height: 12),
         _buildField(
-          label: "Address",
+          label: AppLocalizations.of(context)?.address ?? "Address",
           controller: widget.headerComponent.locationAddressController,
-          hintText: "Address",
+          hintText: AppLocalizations.of(context)?.address ?? "Address",
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Address is required';
+              return AppLocalizations.of(context)?.addressRequired ?? 'Address is required';
             }
             return null;
           },
@@ -481,7 +474,9 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AgentTemplateProvider>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -490,8 +485,8 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "Select Thumbnail Product ",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: const Color(0xFF64748B)), // Light blue/grey
+                text: AppLocalizations.of(context)?.selectThumbnailProduct ?? "Select Thumbnail Product ",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: const Color(0xFF64748B)),
               ),
               TextSpan(
                 text: "*",
@@ -508,17 +503,17 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
               return const CircularProgressIndicator();
             }
             if (agentTemplateProvider.catalogueStatus == ApiStatus.error) {
-              return Text("Error loading catalogue", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
+              return Text(AppLocalizations.of(context)?.errorLoadingCatalogue ?? "Error loading catalogue", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
             }
             if (value.item2 == 0) {
-              return Text("No products found", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
+              return Text(AppLocalizations.of(context)?.noProductsFound ?? "No products found", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
             }
             return ValueListenableBuilder<ProductDetailsDatum?>(
               valueListenable: widget.headerComponent.selectedProduct,
               builder: (context, selectedValue, child) {
                 return DropdownButtonFormField2<ProductDetailsDatum>(
                   value: selectedValue,
-                  decoration: FormStyles.buildInputDecoration(context, hintText: 'Select'),
+                  decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.select ?? 'Select'),
                   items: (agentTemplateProvider.catalogueResponse?.productDetails?.data ?? [])
                       .map((product) => DropdownMenuItem<ProductDetailsDatum>(value: product, child: Text(product.name ?? product.id ?? '')))
                       .toList(),
@@ -530,7 +525,7 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
                   menuItemStyleData: FormStyles.buildMenuItemStyleData(context),
                   validator: (value) {
                     if (value == null) {
-                      return 'Please select a thumbnail product';
+                      return AppLocalizations.of(context)?.pleaseSelectThumbnailProduct ?? "Please select a thumbnail product";
                     }
                     return null;
                   },

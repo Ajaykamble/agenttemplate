@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class CardPreviewWidget extends StatefulWidget {
   final List<Component> components;
-  CardPreviewWidget({
+  const CardPreviewWidget({
     super.key,
     required this.components,
   });
@@ -50,7 +50,7 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
 
 class CardComponent extends StatelessWidget {
   final Widget child;
-  CardComponent({super.key, required this.child});
+  const CardComponent({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

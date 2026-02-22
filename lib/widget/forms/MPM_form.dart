@@ -1,9 +1,9 @@
+import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
-import 'package:agenttemplate/widget/common/multi_select_dropdown.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:agenttemplate/agenttemplate.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -37,10 +37,10 @@ class _MPMFormState extends State<MPMForm> {
           return const CircularProgressIndicator();
         }
         if (agentTemplateProvider.catalogueStatus == ApiStatus.error) {
-          return Text("Error loading catalogue", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
+          return Text(AppLocalizations.of(context)?.errorLoadingCatalogue ?? "Error loading catalogue", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
         }
         if (value.item2 == 0) {
-          return Text("No products found", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
+          return Text(AppLocalizations.of(context)?.noProductsFound ?? "No products found", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red));
         }
 
         final products = agentTemplateProvider.catalogueResponse?.productDetails?.data ?? [];
@@ -55,7 +55,7 @@ class _MPMFormState extends State<MPMForm> {
                 onPressed: () {
                   mpmButton?.addMPMAttributes();
                 },
-                label: Text("Add Category"),
+                label: Text(AppLocalizations.of(context)?.addCategory ?? "Add Category"),
                 icon: Icon(Icons.add),
               ),
             ),
@@ -131,7 +131,7 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
       initialValue: widget.attr.selectedProductsNotifier.value,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please select at least one product';
+          return AppLocalizations.of(context)?.selectAtLeastOneProduct ?? 'Please select at least one product';
         }
         return null;
       },
@@ -159,7 +159,7 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.attr.categoryController,
-                        decoration: const InputDecoration(hintText: 'Category Name'),
+                        decoration: InputDecoration(hintText: AppLocalizations.of(context)?.categoryName ?? 'Category Name'),
                       ),
                     ),
                     if (widget.onRemove != null)
@@ -168,7 +168,7 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                         child: IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.red),
                           onPressed: widget.onRemove,
-                          tooltip: 'Remove category',
+                          tooltip: AppLocalizations.of(context)?.removeCategory ?? 'Remove category',
                         ),
                       ),
                   ],
@@ -186,7 +186,7 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                         // ── Multi-select products dropdown ──
                         Row(
                           children: [
-                            Text("Products", style: theme.textTheme.bodyMedium),
+                            Text(AppLocalizations.of(context)?.products ?? "Products", style: theme.textTheme.bodyMedium),
                             const SizedBox(width: 16),
                             Expanded(
                               child: ValueListenableBuilder<List<ProductDetailsDatum>>(
@@ -195,7 +195,7 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                                   return MultiSelectDropdown<String>(
                                     items: widget.products.map((p) => MultiSelectItem(value: p.id ?? '', label: p.name ?? p.id ?? '')).toList(),
                                     initialValues: widget.attr.selectedProductsNotifier.value.map((p) => p.id ?? '').toList(),
-                                    hintText: 'Select Product',
+                                    hintText: AppLocalizations.of(context)?.selectProduct ?? 'Select Product',
                                     isSearchEnabled: true,
                                     onChanged: (selectedIds) {
                                       final selected = widget.products.where((p) => selectedIds.contains(p.id)).toList();
@@ -228,18 +228,18 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                                   columnSpacing: 24,
                                   horizontalMargin: 16,
                                   dataRowHeight: 100,
-                                  columns: const [
+                                  columns: [
                                     DataColumn(
                                       label: Text(
-                                        'product Name',
+                                        AppLocalizations.of(context)?.productName ?? 'product Name',
                                         style: TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
                                       ),
                                     ),
                                     DataColumn(
-                                      label: Text('Description', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      label: Text(AppLocalizations.of(context)?.description ?? 'Description', style: TextStyle(fontWeight: FontWeight.bold)),
                                     ),
                                     DataColumn(
-                                      label: Text('Availability', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      label: Text(AppLocalizations.of(context)?.availability ?? 'Availability', style: TextStyle(fontWeight: FontWeight.bold)),
                                     ),
                                   ],
                                   rows: selectedProducts.map((product) {

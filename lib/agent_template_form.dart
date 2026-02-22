@@ -1,23 +1,23 @@
+import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
-import 'package:agenttemplate/widget/forms/MPM_form.dart';
+import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/forms/body_form.dart';
 import 'package:agenttemplate/widget/forms/buttons_form.dart';
 import 'package:agenttemplate/widget/forms/carousel_form.dart';
 import 'package:agenttemplate/widget/forms/catalog_form.dart';
 import 'package:agenttemplate/widget/forms/flow_form.dart';
 import 'package:agenttemplate/widget/forms/footer_form.dart';
-import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/forms/header_form.dart';
 import 'package:agenttemplate/widget/forms/limited_time_offer_form.dart';
+import 'package:agenttemplate/widget/forms/mpm_form.dart';
 import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'dart:developer';
 
-import 'agenttemplate.dart';
 import 'widget/template_checkbox.dart';
 
 class AgentTemplateForm extends StatefulWidget {
@@ -59,7 +59,9 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
     agentTemplateProvider.onGetCatalogue = widget.onGetCatalogue;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
     agentTemplateProvider.onGetDateTime = widget.onGetDateTime;
-    agentTemplateProvider.templateObj = widget.templateObj;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      agentTemplateProvider.templateObj = widget.templateObj;
+    });
   }
 
   @override
@@ -69,12 +71,13 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
 
   @override
   Widget build(BuildContext context) {
-    Component? HEADER_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'HEADER');
-    Component? BODY_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BODY');
-    Component? FOOTER_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'FOOTER');
-    Component? BUTTONS_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
-    Component? CAROUSEL_COMPONENT = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'CAROUSEL');
-    Component? limited_time_offer = widget.templateObj.components?.firstWhereOrNull((element) => element.type == "limited_time_offer");
+    final provider = Provider.of<AgentTemplateProvider>(context);
+    Component? headerComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'HEADER');
+    Component? bodyComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BODY');
+    Component? footerComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'FOOTER');
+    Component? buttonsComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? carouselComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'CAROUSEL');
+    Component? limitedTimeOffer = widget.templateObj.components?.firstWhereOrNull((element) => element.type == "limited_time_offer");
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -90,7 +93,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                         valueListenable: widget.templateObj.isSmartUrlEnabled,
                         builder: (context, value, child) {
                           return TemplateCheckbox(
-                            text: "Smart URL Converstion",
+                            text: AppLocalizations.of(context)?.smartUrlConversion ?? "Smart URL Conversion",
                             defaultValue: value,
                             onChanged: (value) {
                               widget.templateObj.isSmartUrlEnabled.value = value;
@@ -106,24 +109,24 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           },
         ),
 
-        if (widget.templateType == "CATALOG" && BUTTONS_COMPONENT != null) ...[
+        if (widget.templateType == "CATALOG" && buttonsComponent != null) ...[
           CatalogForm(
-            component: BUTTONS_COMPONENT,
+            component: buttonsComponent,
             //
           ),
           const SizedBox(height: 10),
         ],
 
-        if (widget.templateType == "FLOW" && BUTTONS_COMPONENT != null) ...[FlowForm(component: BUTTONS_COMPONENT), const SizedBox(height: 10)],
+        if (widget.templateType == "FLOW" && buttonsComponent != null) ...[FlowForm(component: buttonsComponent), const SizedBox(height: 10)],
 
-        if (widget.templateType == "MPM" && BUTTONS_COMPONENT != null) ...[
-          MPMForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType),
+        if (widget.templateType == "MPM" && buttonsComponent != null) ...[
+          MPMForm(buttonsComponent: buttonsComponent, backgroundColor: widget.backgroundColor, templateType: widget.templateType),
           const SizedBox(height: 10),
         ],
 
-        if (HEADER_COMPONENT != null) ...[
+        if (headerComponent != null) ...[
           HeaderForm(
-            headerComponent: HEADER_COMPONENT,
+            headerComponent: headerComponent,
             backgroundColor: widget.backgroundColor,
             predefinedAttributes: widget.predefinedAttributes,
             fileObject: widget.fileObject,
@@ -135,9 +138,9 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (BODY_COMPONENT != null) ...[
+        if (bodyComponent != null) ...[
           BodyForm(
-            bodyComponent: BODY_COMPONENT,
+            bodyComponent: bodyComponent,
             backgroundColor: widget.backgroundColor,
             predefinedAttributes: widget.predefinedAttributes,
             isSmartUrlEnabled: widget.templateObj.isSmartUrlEnabled,
@@ -149,14 +152,14 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (FOOTER_COMPONENT != null) ...[FooterForm(footerComponent: FOOTER_COMPONENT, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
-        if (BUTTONS_COMPONENT != null) ...[
-          ButtonsForm(buttonsComponent: BUTTONS_COMPONENT, backgroundColor: widget.backgroundColor, templateType: widget.templateType, shortBaseUrl: widget.shortBaseUrl),
+        if (footerComponent != null) ...[FooterForm(footerComponent: footerComponent, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
+        if (buttonsComponent != null) ...[
+          ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: widget.backgroundColor, templateType: widget.templateType, shortBaseUrl: widget.shortBaseUrl),
           const SizedBox(height: 10)
         ],
-        if (CAROUSEL_COMPONENT != null) ...[
+        if (carouselComponent != null) ...[
           CarouselForm(
-            carouselComponent: CAROUSEL_COMPONENT,
+            carouselComponent: carouselComponent,
             backgroundColor: widget.backgroundColor,
             predefinedAttributes: widget.predefinedAttributes,
             fileObject: widget.fileObject,
@@ -167,7 +170,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           ),
           const SizedBox(height: 10),
         ],
-        if (limited_time_offer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limited_time_offer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
+        if (limitedTimeOffer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limitedTimeOffer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
         //
         Selector<AgentTemplateProvider, bool>(
           selector: (_, provider) => provider.retryAttemptFailed,
@@ -177,22 +180,22 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TemplateCheckbox(
-                  text: "Retry Attempt For Failed Template Test",
+                  text: AppLocalizations.of(context)?.retryAttemptFailedForTestTemplate ?? "Retry Attempt For Failed Template Test",
                   defaultValue: value,
                   onChanged: (value) {
                     agentTemplateProvider.retryAttemptFailed = value;
                   },
                 ),
                 if (value) ...[
-                  Text("Retry Count", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                  Text(AppLocalizations.of(context)?.retryCount ?? "Retry Count", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: agentTemplateProvider.retryAttemptController,
-                    decoration: FormStyles.buildInputDecoration(context, hintText: "(Required)"),
+                    decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.fieldRequired ?? "This field is required"),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'This field is required';
+                        return AppLocalizations.of(context)?.fieldRequired ?? 'This field is required';
                       }
                       return null;
                     },
@@ -237,7 +240,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                 border: hasError ? Border.all(color: Theme.of(context).colorScheme.error, width: 2) : null,
               ),
               child: ExpansionTile(
-                title: Text("Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                title: Text(AppLocalizations.of(context)?.additionalInformation ?? "Additional Information", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                 tilePadding: EdgeInsets.zero,
                 maintainState: true,
                 children: [
@@ -249,7 +252,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                         onPressed: () {
                           agentTemplateProvider.addAdditionalData();
                         },
-                        child: const Text("+ ADD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                        child: Text("+ ${AppLocalizations.of(context)?.add ?? "ADD"}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       ),
                     ),
                   ),
@@ -271,10 +274,10 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                               Expanded(
                                 child: TextFormField(
                                   controller: info.keyController,
-                                  decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Key"),
+                                  decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterKey ?? "Enter Key"),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'This field is required';
+                                      return AppLocalizations.of(context)?.fieldRequired ?? 'This field is required';
                                     }
                                     return null;
                                   },
@@ -284,7 +287,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
                               Expanded(
                                 child: TextFormField(
                                   controller: info.valueController,
-                                  decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Value"),
+                                  decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterValue ?? "Enter Value"),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -306,7 +309,8 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             ),
             if (hasError) ...[
               const SizedBox(height: 10),
-              Text("Fill all the fields", style: Theme.of(context).inputDecorationTheme.errorStyle ?? Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.error)),
+              Text(AppLocalizations.of(context)?.fillAllFields ?? "Fill all the fields",
+                  style: Theme.of(context).inputDecorationTheme.errorStyle ?? Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.error)),
             ],
           ],
         );

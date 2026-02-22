@@ -1,13 +1,13 @@
-import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/file_downloader.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeaderPreview extends StatefulWidget {
@@ -24,35 +24,35 @@ class _HeaderPreviewState extends State<HeaderPreview> {
   Widget build(BuildContext context) {
     switch (widget.headerComponent.format) {
       case "IMAGE":
-        return _commonCard(
+        return _CommonCard(
           cardHeight: cardHeight,
           child: _ImageHeaderPreview(
             headerComponent: widget.headerComponent,
           ),
         );
       case "VIDEO":
-        return _commonCard(
+        return _CommonCard(
           cardHeight: cardHeight,
           child: _VideoHeaderPreview(
             headerComponent: widget.headerComponent,
           ),
         );
       case "DOCUMENT":
-        return _commonCard(
+        return _CommonCard(
           cardHeight: cardHeight,
           child: _DocumentHeaderPreview(
             headerComponent: widget.headerComponent,
           ),
         );
       case "LOCATION":
-        return _commonCard(
+        return _CommonCard(
           cardHeight: cardHeight,
           child: _LocationHeaderPreview(
             headerComponent: widget.headerComponent,
           ),
         );
       case "PRODUCT":
-        return _commonCard(
+        return _CommonCard(
           cardHeight: cardHeight,
           child: _ProductHeaderPreview(
             headerComponent: widget.headerComponent,
@@ -68,10 +68,10 @@ class _HeaderPreviewState extends State<HeaderPreview> {
   }
 }
 
-class _commonCard extends StatelessWidget {
-  Widget child;
+class _CommonCard extends StatelessWidget {
+  final Widget child;
   final double cardHeight;
-  _commonCard({super.key, required this.child, required this.cardHeight});
+  const _CommonCard({super.key, required this.child, required this.cardHeight});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,7 @@ class _VideoHeaderPreviewState extends State<_VideoHeaderPreview> {
 
     if (path == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Download failed')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.downloadFailed ?? 'Download failed')),
       );
     }
   }
@@ -153,7 +153,7 @@ class _VideoHeaderPreviewState extends State<_VideoHeaderPreview> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        _progress > 0 ? '${(_progress * 100).toInt()}%' : 'Downloading…',
+                        _progress > 0 ? '${(_progress * 100).toInt()}%' : (AppLocalizations.of(context)?.downloading ?? 'Downloading…'),
                         style: const TextStyle(color: FormStyles.whatsappGreen, fontSize: 12),
                       ),
                     ],
@@ -200,7 +200,7 @@ class _DocumentHeaderPreviewState extends State<_DocumentHeaderPreview> {
 
     if (path == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Download failed')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.downloadFailed ?? 'Download failed')),
       );
     }
   }
@@ -233,7 +233,7 @@ class _DocumentHeaderPreviewState extends State<_DocumentHeaderPreview> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        _progress > 0 ? '${(_progress * 100).toInt()}%' : 'Downloading…',
+                        _progress > 0 ? '${(_progress * 100).toInt()}%' : (AppLocalizations.of(context)?.downloading ?? 'Downloading…'),
                         style: const TextStyle(color: FormStyles.whatsappGreen, fontSize: 12),
                       ),
                     ],

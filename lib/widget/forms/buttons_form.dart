@@ -1,4 +1,5 @@
 import 'package:agenttemplate/agenttemplate.dart';
+import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +17,6 @@ class ButtonsForm extends StatefulWidget {
 class _ButtonsFormState extends State<ButtonsForm> {
   @override
   Widget build(BuildContext context) {
-    //
-
     List<TemplateButton> quickReplyButtonList = (widget.buttonsComponent.buttons ?? []).where((button) => button.type == "QUICK_REPLY").toList();
 
     List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? []).where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty).toList();
@@ -26,12 +25,9 @@ class _ButtonsFormState extends State<ButtonsForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        //
         if (otherButtons.isNotEmpty) ...[
-          //
-          Text("Call To Action Configuration", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)?.callToActionConfiguration ?? "Call To Action Configuration", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          //
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(10)),
@@ -52,11 +48,11 @@ class _ButtonsFormState extends State<ButtonsForm> {
                           flex: 65,
                           child: TextFormField(
                             controller: otherButtons[index].buttonTextController,
-                            decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                            decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterText ?? "Enter Text"),
                             enabled: widget.templateType == "AUTHENTICATION" ? false : true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'This field is required';
+                                return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                               }
                               return null;
                             },
@@ -67,8 +63,9 @@ class _ButtonsFormState extends State<ButtonsForm> {
                     if (otherButtons[index].type == "URL" && (otherButtons[index].url ?? "").startsWith(widget.shortBaseUrl)) ...[
                       const SizedBox(height: 8),
                       Text(
-                        "Note:During template creation, the URL is configured as a ShortURL.If you want to send parameters, you can use either:The URL, or The short link generated code",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: const Color(0xFFE91E63), fontSize: 11), // Red/Pinkish color
+                        AppLocalizations.of(context)?.shortUrlNote ??
+                            "Note:During template creation, the URL is configured as a ShortURL.If you want to send parameters, you can use either:The URL, or The short link generated code",
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: const Color(0xFFE91E63), fontSize: 11),
                       ),
                     ],
                   ],
@@ -81,8 +78,6 @@ class _ButtonsFormState extends State<ButtonsForm> {
             ),
           ),
         ],
-
-        // QUICK REPLY BUTTONS
         if (quickReplyButtonList.isNotEmpty) ...[
           const SizedBox(height: 10),
           Container(
@@ -91,7 +86,7 @@ class _ButtonsFormState extends State<ButtonsForm> {
             child: Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
-                title: Text("Quick to Reply Payload", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                title: Text(AppLocalizations.of(context)?.quickToReplyPayload ?? "Quick to Reply Payload", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                 tilePadding: EdgeInsets.zero,
                 children: [
                   const SizedBox(height: 10),
@@ -109,10 +104,10 @@ class _ButtonsFormState extends State<ButtonsForm> {
                             flex: 65,
                             child: TextFormField(
                               controller: quickReplyButtonList[index].buttonTextController,
-                              decoration: FormStyles.buildInputDecoration(context, hintText: "Enter Text"),
+                              decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterText ?? "Enter Text"),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'This field is required';
+                                  return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                                 }
                                 return null;
                               },

@@ -16,16 +16,17 @@ class AgentTemplatePreview extends StatefulWidget {
   final void Function(TemplateButton button)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
   final VoidCallback onBackPressed;
-  const AgentTemplatePreview(
-      {super.key,
-      required this.templateObj,
-      required this.accountName,
-      required this.accountImage,
-      required this.accountPhone,
-      required this.accountIsVerified,
-      this.onButtonTap,
-      this.onAllButtonsTap,
-      required this.onBackPressed});
+  const AgentTemplatePreview({
+    super.key,
+    required this.templateObj,
+    required this.accountName,
+    required this.accountImage,
+    required this.accountPhone,
+    required this.accountIsVerified,
+    this.onButtonTap,
+    this.onAllButtonsTap,
+    required this.onBackPressed,
+  });
 
   @override
   State<AgentTemplatePreview> createState() => _AgentTemplatePreviewState();
@@ -87,6 +88,33 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
     return LayoutBuilder(
       builder: (context, constraints) {
         _cardWidth = constraints.maxWidth * .85;
+        // Fallback: if no components, show placeholder with min height
+        if (components.isEmpty) {
+          return Container(
+            width: _cardWidth,
+            height: 220,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Text(
+              'No preview available',
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +297,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                 Text(
                   widget.accountPhone,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 13,
                   ),
                   maxLines: 1,
@@ -291,7 +319,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         children: [
@@ -312,15 +340,12 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: SingleChildScrollView(
-                            child: _buildCard(),
-                          ),
+                      const SizedBox(height: 10),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          //shrinkWrap: true,
+                          child: _buildCard(),
                         ),
                       ),
                       SizedBox(
@@ -357,7 +382,7 @@ class _CarouselArrowButton extends StatelessWidget {
         height: 28,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.grey.shade700.withOpacity(0.3),
+          color: Colors.grey.shade700.withValues(alpha: 0.3),
         ),
         child: Icon(icon, color: Colors.white, size: 18),
       ),
