@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:agenttemplate/agent_template_form.dart';
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
+import 'package:agenttemplate/models/interactive_template_list_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,13 @@ class MyApp extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Wrapper model for a template entry from the JSON array
+// Template load type: normal (catalogue) vs interactive
+// ---------------------------------------------------------------------------
+
+enum _TemplateLoadType { normal, interactive }
+
+// ---------------------------------------------------------------------------
+// Wrapper model for a template entry from the JSON array (normal format)
 // ---------------------------------------------------------------------------
 
 class _TemplateListItem {
@@ -72,6 +80,59 @@ class _TemplateListItem {
 }
 
 // ---------------------------------------------------------------------------
+// Unified item for list/selection (from normal or interactive JSON)
+// ---------------------------------------------------------------------------
+
+class _LoadedTemplateItem {
+  final int templateId;
+  final String templateName;
+  final String status;
+  final String categoryType;
+  final String language;
+  final String? fileObject;
+  final TemplateObj templateObj;
+  final String templateType;
+
+  _LoadedTemplateItem({
+    required this.templateId,
+    required this.templateName,
+    required this.status,
+    required this.categoryType,
+    required this.language,
+    this.fileObject,
+    required this.templateObj,
+    required this.templateType,
+  });
+
+  factory _LoadedTemplateItem.fromNormal(_TemplateListItem t) {
+    return _LoadedTemplateItem(
+      templateId: t.templateId,
+      templateName: t.templateName,
+      status: t.status,
+      categoryType: t.categoryType,
+      language: t.language,
+      fileObject: t.fileObject,
+      templateObj: t.templateObj,
+      templateType: t.templateType,
+    );
+  }
+
+  factory _LoadedTemplateItem.fromInteractive(InteractiveTemplateListModel i) {
+    final obj = i.toTemplateObj();
+    return _LoadedTemplateItem(
+      templateId: i.customerInteractiveTemplateId ?? 0,
+      templateName: i.templateName ?? '',
+      status: (i.status ?? 0) == 1 ? 'APPROVED' : 'REJECTED',
+      categoryType: obj.category ?? '',
+      language: obj.language ?? i.language ?? '',
+      fileObject: i.fileObject,
+      templateObj: obj,
+      templateType: i.templateType ?? '',
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Home Page: Pick a JSON file
 // ---------------------------------------------------------------------------
 
@@ -84,10 +145,11 @@ class FilePickerHomePage extends StatefulWidget {
 
 class _FilePickerHomePageState extends State<FilePickerHomePage> {
   String? _selectedFileName;
-  List<_TemplateListItem>? _templates;
+  List<_LoadedTemplateItem>? _templates;
   bool _isLoading = false;
   String? _errorMessage;
-  _TemplateListItem? _selectedTemplate;
+  _LoadedTemplateItem? _selectedTemplate;
+  _TemplateLoadType? _templateLoadType;
   final _showingPreview = ValueNotifier<bool>(false);
   final _formKey = GlobalKey<FormState>();
 
@@ -95,8 +157,30 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
   // Change this path to match your machine if needed.
   static const String _defaultJsonDir = '/Volumes/myspace/projects/agenttemplate/lib/jsons';
 
+  Future<_TemplateLoadType?> _showTemplateTypeDialog(BuildContext context) async {
+    return showDialog<_TemplateLoadType>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Template type'),
+          content: const Text('Which type of template are you loading?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, _TemplateLoadType.normal), child: const Text('Normal')),
+            TextButton(onPressed: () => Navigator.pop(ctx, _TemplateLoadType.interactive), child: const Text('Interactive')),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _pickJsonFile() async {
     try {
+      if (_templateLoadType == null) {
+        final type = await _showTemplateTypeDialog(context);
+        if (type == null || !mounted) return;
+        setState(() => _templateLoadType = type);
+      }
+
       final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json'], allowMultiple: false, initialDirectory: _defaultJsonDir);
 
       if (result == null || result.files.isEmpty) return;
@@ -121,30 +205,40 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
         throw Exception('Unable to read file content.');
       }
 
-      final decoded = jsonDecode(jsonString);
-      final List<dynamic> jsonList;
+      final templates = <_LoadedTemplateItem>[];
 
-      if (decoded is List) {
-        jsonList = decoded;
+      if (_templateLoadType == _TemplateLoadType.normal) {
+        final decoded = jsonDecode(jsonString);
+        final List<dynamic> jsonList = decoded is List ? decoded : (throw FormatException('Expected a JSON array at the root of the file.'));
+        for (final item in jsonList) {
+          try {
+            templates.add(_LoadedTemplateItem.fromNormal(_TemplateListItem.fromJson(item as Map<String, dynamic>)));
+          } catch (_) {
+            // Skip entries that fail to parse
+          }
+        }
       } else {
-        throw FormatException('Expected a JSON array at the root of the file.');
-      }
-
-      final templates = <_TemplateListItem>[];
-      for (final item in jsonList) {
-        try {
-          templates.add(_TemplateListItem.fromJson(item as Map<String, dynamic>));
-        } catch (_) {
-          // Skip entries that fail to parse
+        final list = interactiveTemplateListModelFromJson(jsonString);
+        for (final i in list) {
+          try {
+            templates.add(_LoadedTemplateItem.fromInteractive(i));
+          } catch (error) {
+            log(error.toString());
+            // Skip entries that fail to parse
+          }
         }
       }
 
+      if (!mounted) return;
       setState(() {
         _selectedFileName = pickedFile.name;
         _templates = templates;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log(e.toString());
+      log(stackTrace.toString());
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _errorMessage = e.toString();
@@ -708,7 +802,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
     );
   }
 
-  void _showTemplateSearchDialog(BuildContext context, List<_TemplateListItem> templates) {
+  void _showTemplateSearchDialog(BuildContext context, List<_LoadedTemplateItem> templates) {
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -812,8 +906,8 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
 // ---------------------------------------------------------------------------
 
 class _TemplateSearchDialog extends StatefulWidget {
-  final List<_TemplateListItem> templates;
-  final ValueChanged<_TemplateListItem> onSelected;
+  final List<_LoadedTemplateItem> templates;
+  final ValueChanged<_LoadedTemplateItem> onSelected;
 
   const _TemplateSearchDialog({required this.templates, required this.onSelected});
 

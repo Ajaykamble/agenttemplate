@@ -3,6 +3,7 @@
 //     final interactiveTemplateListModel = interactiveTemplateListModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:agenttemplate/models/flow_raw_info_response_model.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
@@ -51,7 +52,7 @@ class InteractiveTemplateListModel {
     }
     if (template?.button != null) {
       Component bodyComponent = Component(
-        type: "BUTTON",
+        type: "BUTTONS",
         buttons: template?.button
                 ?.map(
                   (e) => TemplateButton(
@@ -69,6 +70,7 @@ class InteractiveTemplateListModel {
                 .toList() ??
             [],
       );
+      log("${bodyComponent.toJson()}");
       components.add(bodyComponent);
     }
 
@@ -109,10 +111,10 @@ class InteractiveTemplateListModel {
       language: json["language"],
       waAccountId: json["waAccountId"],
       customerId: json["customerId"],
-      template: json["template"] != null ? interactiveParaseTemplateFromJson(json["template"]) : null,
+      template: json["template"] != null ? InteractiveParaseTemplate.fromJson(json["template"]) : null,
       status: json["status"],
       templateRefId: json["templateRefId"],
-      fileObject: json["fileObject"],
+      fileObject: json["fileObject"] == null ? null : jsonEncode(json["fileObject"]),
       templateType: json["templateType"],
       createdBy: json["createdBy"],
       updatedBy: json["updatedBy"],
@@ -184,14 +186,20 @@ class InteractiveParaseTemplate {
     this.extras,
   });
 
-  factory InteractiveParaseTemplate.fromJson(Map<String, dynamic> json) => InteractiveParaseTemplate(
-        headerObj: json["headerObj"] == null ? null : HeaderObj.fromJson(json["headerObj"]),
-        body: json["body"] == null ? null : Body.fromJson(json["body"]),
-        button: json["button"] == null ? [] : List<Button>.from(json["button"]!.map((x) => Button.fromJson(x))),
-        listObj: json["listObj"] == null ? null : ListObj.fromJson(json["listObj"]),
-        footerText: json["footerText"],
-        extras: json["extras"],
-      );
+  factory InteractiveParaseTemplate.fromJson(Map<String, dynamic> json) {
+    return InteractiveParaseTemplate(
+      headerObj: json["headerObj"] == null ? null : HeaderObj.fromJson(json["headerObj"]),
+      body: json["body"] == null ? null : Body.fromJson(json["body"]),
+      button: json["button"] == null
+          ? []
+          : json["button"].runtimeType == List
+              ? List<Button>.from(json["button"]!.map((x) => Button.fromJson(x)))
+              : [Button.fromJson(json["button"])],
+      listObj: json["listObj"] == null ? null : ListObj.fromJson(json["listObj"]),
+      footerText: json["footerText"],
+      extras: json["extras"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "headerObj": headerObj?.toJson(),
