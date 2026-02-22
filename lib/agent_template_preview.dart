@@ -325,41 +325,50 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
         children: [
           _buildAccountInfo(),
           Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: SizedBox(
-                    child: Image.asset(
-                      AppAssets.backgroundImage,
-                      package: AppAssets.packageName,
-                      fit: BoxFit.fill,
+            child: SizedBox(
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Image.asset(
+                        AppAssets.backgroundImage,
+                        package: AppAssets.packageName,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Flexible(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          //shrinkWrap: true,
-                          child: _buildCard(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            //shrinkWrap: true,
+                            child: _buildCard(),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 70,
-                        child: SvgPicture.asset(
-                          AppAssets.wFooter,
-                          package: AppAssets.packageName,
-                          fit: BoxFit.contain,
+                        SizedBox(
+                          height: 70,
+                          width: double.infinity,
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: SvgPicture.asset(
+                                AppAssets.wFooter,
+                                package: AppAssets.packageName,
+                                fit: BoxFit.contain,
+                              )),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

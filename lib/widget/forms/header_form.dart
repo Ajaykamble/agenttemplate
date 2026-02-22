@@ -476,7 +476,6 @@ class __HeaderProductFormState extends State<_HeaderProductForm> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AgentTemplateProvider>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

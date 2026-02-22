@@ -271,6 +271,8 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
     }
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),

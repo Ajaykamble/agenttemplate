@@ -71,7 +71,6 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AgentTemplateProvider>(context);
     Component? headerComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'HEADER');
     Component? bodyComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'BODY');
     Component? footerComponent = widget.templateObj.components?.firstWhereOrNull((element) => element.type == 'FOOTER');
@@ -88,6 +87,8 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           builder: (context, value, child) {
             return value
                 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ValueListenableBuilder(
                         valueListenable: widget.templateObj.isSmartUrlEnabled,
