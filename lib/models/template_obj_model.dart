@@ -476,6 +476,7 @@ class Component {
   final List<CarouselCard>? cards;
   final LimitedTimeOffer? limitedTimeOffer;
   final int? codeExpirationMinutes;
+  final ListObj? listObj;
 
   //
   ValueNotifier<int> totalCardsNotifier = ValueNotifier<int>(0);
@@ -514,7 +515,7 @@ class Component {
     selectedFileObject.value = FileObject(filePath: url, fileName: "");
   }
 
-  Component({required this.type, this.text, this.format, this.example, this.addSecurityRecommendation, this.buttons, this.cards, this.limitedTimeOffer, this.codeExpirationMinutes});
+  Component({required this.type, this.text, this.format, this.example, this.addSecurityRecommendation, this.buttons, this.cards, this.limitedTimeOffer, this.codeExpirationMinutes, this.listObj});
 
   factory Component.fromJson(Map<String, dynamic> json, {bool fromCarouselCard = false}) {
     //
@@ -528,6 +529,7 @@ class Component {
       cards: json['cards'] != null ? (json['cards'] as List<dynamic>).map((e) => CarouselCard.fromJson(e as Map<String, dynamic>)).toList() : null,
       limitedTimeOffer: json['limited_time_offer'] != null ? LimitedTimeOffer.fromJson(json['limited_time_offer'] as Map<String, dynamic>) : null,
       codeExpirationMinutes: json['code_expiration_minutes'] as int?,
+      listObj: json['listObj'] != null ? ListObj.fromJson(json['listObj'] as Map<String, dynamic>) : null,
     );
     RegExp positionalParamRegExp = RegExp(r'\{\{\s*(\d+)\s*\}\}');
     component.totalCardsNotifier = ValueNotifier<int>(component.cards?.length ?? 0);
@@ -598,6 +600,9 @@ class Component {
     if (codeExpirationMinutes != null) {
       data['code_expiration_minutes'] = codeExpirationMinutes;
     }
+    if (listObj != null) {
+      data['listObj'] = listObj!.toJson();
+    }
     return data;
   }
 
@@ -611,6 +616,7 @@ class Component {
     Object? cards = _undefined,
     Object? limitedTimeOffer = _undefined,
     Object? codeExpirationMinutes = _undefined,
+    Object? listObj = _undefined,
   }) {
     return Component(
       type: type ?? this.type,
@@ -622,6 +628,7 @@ class Component {
       cards: cards == _undefined ? this.cards : cards as List<CarouselCard>?,
       limitedTimeOffer: limitedTimeOffer == _undefined ? this.limitedTimeOffer : limitedTimeOffer as LimitedTimeOffer?,
       codeExpirationMinutes: codeExpirationMinutes == _undefined ? this.codeExpirationMinutes : codeExpirationMinutes as int?,
+      listObj: listObj == _undefined ? this.listObj : listObj as ListObj?,
     );
   }
 
@@ -766,14 +773,14 @@ class Component {
 
 /// Root model representing a WhatsApp message template object.
 class TemplateObj {
-  final List<Component>? components;
-  final String? name;
-  final String? language;
-  final String? id;
-  final String? category;
-  final String? status;
-  final int? messageSendTtlSeconds;
-  final String? parameterFormat;
+  List<Component>? components;
+  String? name;
+  String? language;
+  String? id;
+  String? category;
+  String? status;
+  int? messageSendTtlSeconds;
+  String? parameterFormat;
 
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
@@ -835,14 +842,14 @@ class TemplateObj {
   }
 
   TemplateObj({
-    required this.components,
-    required this.name,
-    required this.language,
-    required this.id,
-    required this.category,
-    required this.status,
-    required this.messageSendTtlSeconds,
-    required this.parameterFormat,
+    this.components,
+    this.name,
+    this.language, //
+    this.id, //
+    this.category,
+    this.status, //
+    this.messageSendTtlSeconds,
+    this.parameterFormat, //
   });
 
   String getHeaderPhJson() {
@@ -1019,4 +1026,68 @@ bool _deepListEquals(List<List<String>>? a, List<List<String>>? b) {
     if (!_listEquals(a[i], b[i])) return false;
   }
   return true;
+}
+
+class ListObj {
+  String? name;
+  List<Item>? items;
+
+  ListObj({
+    this.name,
+    this.items,
+  });
+
+  factory ListObj.fromJson(Map<String, dynamic> json) => ListObj(
+        name: json["name"],
+        items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+      };
+}
+
+class Item {
+  String? name;
+  List<RowObject>? rows;
+
+  Item({
+    this.name,
+    this.rows,
+  });
+
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
+        name: json["name"],
+        rows: json["rows"] == null ? [] : List<RowObject>.from(json["rows"]!.map((x) => RowObject.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "rows": rows == null ? [] : List<dynamic>.from(rows!.map((x) => x.toJson())),
+      };
+}
+
+class RowObject {
+  String? id;
+  String? name;
+  String? desc;
+
+  RowObject({
+    this.id,
+    this.name,
+    this.desc,
+  });
+
+  factory RowObject.fromJson(Map<String, dynamic> json) => RowObject(
+        id: json["id"],
+        name: json["name"],
+        desc: json["desc"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "desc": desc,
+      };
 }
