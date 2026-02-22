@@ -801,7 +801,7 @@ class TemplateObj {
     }
   }
 
-  void onBodyTextChanged() {
+  void onBodyTextChanged(String templateType) {
     //
     //
     Component? bodyComponent = components?.firstWhereOrNull((element) => element.type == 'BODY');
@@ -810,7 +810,7 @@ class TemplateObj {
       Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
         //
-        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL" && category == "AUTHENTICATION");
+        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL" && templateType == "AUTHENTICATION");
         if (urlButton != null) {
           //
           urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';

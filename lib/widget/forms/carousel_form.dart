@@ -184,10 +184,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                 return Row(
                   children: [
                     Expanded(child: tabBar),
-                    if (_cards.length < _maxCards) ...[
-                      const SizedBox(width: 5),
-                      ElevatedButton(onPressed: _addCard, child: Text(AppLocalizations.of(context)?.addCard ?? "Add Card"))
-                    ],
+                    if (_cards.length < _maxCards) ...[const SizedBox(width: 5), ElevatedButton(onPressed: _addCard, child: Text(AppLocalizations.of(context)?.addCard ?? "Add Card"))],
                   ],
                 );
               },
@@ -242,10 +239,9 @@ class _CarouselCardContent extends StatelessWidget {
     if (bodyComponent?.attributes.isNotEmpty ?? false) {
       Component? buttonComponent = card.components.firstWhereOrNull((element) => element.type == 'BUTTONS');
       if (buttonComponent != null) {
-        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL");
+        TemplateButton? urlButton = buttonComponent.buttons?.firstWhereOrNull((element) => element.type == "URL" && templateType == "AUTHENTICATION");
         if (urlButton != null) {
-          urlButton.buttonTextController.text =
-              bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
+          urlButton.buttonTextController.text = bodyComponent?.attributes.firstWhere((element) => element.selectedVariableValue.value != null).selectedVariableValue.value ?? '';
         }
       }
     }
@@ -297,9 +293,7 @@ class _CarouselCardContent extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
-          if (buttonsComponent != null) ...[
-            ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType, shortBaseUrl: shortBaseUrl)
-          ],
+          if (buttonsComponent != null) ...[ButtonsForm(buttonsComponent: buttonsComponent, backgroundColor: backgroundColor, templateType: templateType, shortBaseUrl: shortBaseUrl)],
         ],
       ),
     );

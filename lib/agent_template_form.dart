@@ -148,7 +148,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             templateType: widget.templateType,
             onTextChanged: () {
               //
-              widget.templateObj.onBodyTextChanged();
+              widget.templateObj.onBodyTextChanged(widget.templateType);
             },
           ),
           const SizedBox(height: 10),

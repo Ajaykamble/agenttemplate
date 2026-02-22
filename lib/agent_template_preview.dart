@@ -169,34 +169,33 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                             setState(() => _cardHeight = box.size.height);
                           }
                         });
+
                         return Stack(
                           children: [
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               controller: _carouselScrollController,
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: List.generate(carouselCards.length, (index) {
-                                    final components = carouselCards[index].components;
-                                    final buttonsComponent = components.firstWhereOrNull((e) => e.type == 'BUTTONS');
-                                    return SizedBox(
-                                      width: _cardWidth,
-                                      child: Column(
-                                        children: [
-                                          CardPreviewWidget(
-                                            key: index == currentPage ? _cardKey : null,
-                                            components: components,
-                                          ),
-                                          const SizedBox(height: 7),
-                                          if (buttonsComponent != null) ...[
-                                            ButtonPreviews(buttonsComponent: buttonsComponent),
-                                          ],
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(carouselCards.length, (index) {
+                                  final components = carouselCards[index].components;
+                                  final buttonsComponent = components.firstWhereOrNull((e) => e.type == 'BUTTONS');
+                                  return SizedBox(
+                                    width: _cardWidth,
+                                    child: Column(
+                                      children: [
+                                        CardPreviewWidget(
+                                          key: index == currentPage ? _cardKey : null,
+                                          components: components,
+                                        ),
+                                        const SizedBox(height: 7),
+                                        if (buttonsComponent != null) ...[
+                                          ButtonPreviews(buttonsComponent: buttonsComponent),
                                         ],
-                                      ),
-                                    );
-                                  }),
-                                ),
+                                      ],
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                             if (totalCards > 1) ...[

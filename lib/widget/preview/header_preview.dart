@@ -473,15 +473,18 @@ class _ImageHeaderPreview extends StatelessWidget {
         if (imageUrl.isEmpty) {
           return Icon(CupertinoIcons.photo, size: 50, color: Colors.white);
         }
-        return CachedNetworkImage(
-          cacheManager: _cacheManager,
-          imageUrl: imageUrl,
-          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-          fit: BoxFit.cover,
-          errorWidget: (context, url, error) => Icon(
-            CupertinoIcons.photo,
-            size: 50,
-            color: Colors.white,
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: CachedNetworkImage(
+            cacheManager: _cacheManager,
+            imageUrl: imageUrl,
+            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+            fit: BoxFit.cover,
+            errorWidget: (context, url, error) => Icon(
+              CupertinoIcons.photo,
+              size: 50,
+              color: Colors.white,
+            ),
           ),
         );
       },
