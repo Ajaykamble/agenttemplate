@@ -19,7 +19,17 @@ class HeaderForm extends StatefulWidget {
   final String? fileObject;
   final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   final VoidCallback onProductSelected;
-  const HeaderForm({super.key, required this.headerComponent, required this.backgroundColor, required this.predefinedAttributes, this.fileObject, this.onFileUpload, required this.onProductSelected});
+  final SendTemplateType sendTemplateType;
+  const HeaderForm({
+    super.key,
+    required this.headerComponent,
+    required this.backgroundColor,
+    required this.predefinedAttributes,
+    this.fileObject,
+    this.onFileUpload,
+    required this.onProductSelected,
+    required this.sendTemplateType,
+  });
 
   @override
   State<HeaderForm> createState() => _HeaderFormState();
@@ -52,7 +62,7 @@ class _HeaderFormState extends State<HeaderForm> {
                 return _HeaderTextForm(headerComponent: widget.headerComponent, predefinedAttributes: widget.predefinedAttributes);
               }
               if (widget.headerComponent.format == "IMAGE" || widget.headerComponent.format == "VIDEO" || widget.headerComponent.format == "DOCUMENT") {
-                return _HeaderMediaForm(headerComponent: widget.headerComponent, fileObject: widget.fileObject, onFileUpload: widget.onFileUpload);
+                return _HeaderMediaForm(headerComponent: widget.headerComponent, fileObject: widget.fileObject, onFileUpload: widget.onFileUpload, sendTemplateType: widget.sendTemplateType);
               }
 
               if (widget.headerComponent.format == "LOCATION") {
@@ -109,14 +119,15 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                     controller: attribute.textController,
                     decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.enterText ?? "Enter Text"),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
+                      if (attribute.selectedVariable.value == null) {
+                        if (value == null || value.isEmpty) {
+                          return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
+                        }
                       }
                       return null;
                     },
                     onChanged: (value) {
                       attribute.selectedVariable.value = null;
-
                       if (value.isNotEmpty) {
                         attribute.selectedVariableValue.value = value;
                       } else {
@@ -154,7 +165,7 @@ class _HeaderTextFormState extends State<_HeaderTextForm> {
                               dropdownStyleData: FormStyles.buildDropdownStyleData(context),
                               menuItemStyleData: FormStyles.buildMenuItemStyleData(context),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (attribute.selectedVariableValue.value?.isEmpty ?? true) {
                                   return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'This field is required';
                                 }
                                 return null;
@@ -183,7 +194,8 @@ class _HeaderMediaForm extends StatefulWidget {
   final Component headerComponent;
   final String? fileObject;
   final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
-  const _HeaderMediaForm({super.key, required this.headerComponent, this.fileObject, this.onFileUpload});
+  final SendTemplateType sendTemplateType;
+  const _HeaderMediaForm({super.key, required this.headerComponent, this.fileObject, this.onFileUpload, required this.sendTemplateType});
 
   @override
   State<_HeaderMediaForm> createState() => __HeaderMediaFormState();
@@ -251,84 +263,86 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // "Upload File" label
-            Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
-            const SizedBox(height: 8),
-            // File picker row: file name + Upload File button + Fetch button
-            Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.insert_drive_file_outlined, color: Colors.grey.shade600, size: 20),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  widget.headerComponent.headerFileNameController.text.isEmpty
-                                      ? (AppLocalizations.of(context)?.noFileSelected ?? "No file selected")
-                                      : widget.headerComponent.headerFileNameController.text,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
-                                  overflow: TextOverflow.ellipsis,
+            if (widget.sendTemplateType == SendTemplateType.normal) ...[
+              // "Upload File" label
+              Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blueGrey)),
+              const SizedBox(height: 8),
+              // File picker row: file name + Upload File button + Fetch button
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.insert_drive_file_outlined, color: Colors.grey.shade600, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    widget.headerComponent.headerFileNameController.text.isEmpty
+                                        ? (AppLocalizations.of(context)?.noFileSelected ?? "No file selected")
+                                        : widget.headerComponent.headerFileNameController.text,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Upload File button
-                      SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: onUploadClick,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF007BFF),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
+                              ],
                             ),
                           ),
-                          child: Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File"),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                if ((widget.fileObject ?? "").isNotEmpty) ...[
-                  const SizedBox(width: 10),
-                  // Fetch button
-                  SizedBox(
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: setDefaultFileObject,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF007BFF),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: Text(AppLocalizations.of(context)?.fetch ?? "Fetch"),
+                        // Upload File button
+                        SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: onUploadClick,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF007BFF),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
+                              ),
+                            ),
+                            child: Text(AppLocalizations.of(context)?.uploadFile ?? "Upload File"),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  if ((widget.fileObject ?? "").isNotEmpty) ...[
+                    const SizedBox(width: 10),
+                    // Fetch button
+                    SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: setDefaultFileObject,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF007BFF),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text(AppLocalizations.of(context)?.fetch ?? "Fetch"),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
-            ),
-            const SizedBox(height: 12),
-            // "Or" separator
-            Center(
-              child: Text(AppLocalizations.of(context)?.or ?? "Or", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 12),
+              ),
+              const SizedBox(height: 12),
+              // "Or" separator
+              Center(
+                child: Text(AppLocalizations.of(context)?.or ?? "Or", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 12),
+            ],
             // URL input field
             TextFormField(
               controller: widget.headerComponent.headerFileUrlController,
@@ -343,13 +357,15 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 6),
-            // Note about media type and size limit
-            Text(
-              AppLocalizations.of(context)?.mediaTypeNote(MediaHelper.maxFileSize(_mediaType), _mediaType) ??
-                  "Note : Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
-            ),
+            if (widget.sendTemplateType == SendTemplateType.normal) ...[
+              const SizedBox(height: 6),
+              // Note about media type and size limit
+              Text(
+                AppLocalizations.of(context)?.mediaTypeNote(MediaHelper.maxFileSize(_mediaType), _mediaType) ??
+                    "Note : Template selected media type $_mediaType, it accepts upto ${MediaHelper.maxFileSize(_mediaType)}.",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+              ),
+            ],
             if (_errorMessage != null) ...[const SizedBox(height: 6), Text(_errorMessage!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error))],
           ],
         );

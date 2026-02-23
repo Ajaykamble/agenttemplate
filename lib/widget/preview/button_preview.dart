@@ -50,7 +50,7 @@ class _ButtonPreviewsState extends State<ButtonPreviews> {
                   break;
               }
 
-              return _ButtonWidget(
+              return ButtonWidget(
                 title: buttons[index].text,
                 icon: icon,
                 onTap: () {
@@ -68,7 +68,7 @@ class _ButtonPreviewsState extends State<ButtonPreviews> {
           ),
           if (totalButtons > 2) ...[
             const SizedBox(height: 5),
-            _ButtonWidget(
+            ButtonWidget(
               title: AppLocalizations.of(context)?.seeAllOptions ?? "See all options",
               icon: CupertinoIcons.list_bullet,
               onTap: () {
@@ -82,11 +82,11 @@ class _ButtonPreviewsState extends State<ButtonPreviews> {
   }
 }
 
-class _ButtonWidget extends StatelessWidget {
+class ButtonWidget extends StatelessWidget {
   final String title;
   final IconData icon;
   final VoidCallback? onTap;
-  const _ButtonWidget({super.key, required this.title, required this.icon, this.onTap});
+  const ButtonWidget({super.key, required this.title, required this.icon, this.onTap});
 
   final Color buttonColor = Colors.blue;
 

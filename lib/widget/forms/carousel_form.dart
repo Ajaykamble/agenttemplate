@@ -18,7 +18,7 @@ class CarouselForm extends StatefulWidget {
   final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   final String templateType;
   final String shortBaseUrl;
-
+  final SendTemplateType sendTemplateType;
   final ValueNotifier<bool> isSmartUrlEnabled;
   const CarouselForm({
     super.key,
@@ -30,6 +30,7 @@ class CarouselForm extends StatefulWidget {
     required this.templateType,
     required this.isSmartUrlEnabled,
     required this.shortBaseUrl,
+    required this.sendTemplateType,
   });
 
   @override
@@ -203,6 +204,7 @@ class _CarouselFormState extends State<CarouselForm> with TickerProviderStateMix
                     templateType: widget.templateType,
                     isSmartUrlEnabled: widget.isSmartUrlEnabled,
                     shortBaseUrl: widget.shortBaseUrl,
+                    sendTemplateType: widget.sendTemplateType,
                   ),
                 ),
               );
@@ -223,6 +225,7 @@ class _CarouselCardContent extends StatelessWidget {
   final String templateType;
   final String shortBaseUrl;
   final ValueNotifier<bool> isSmartUrlEnabled;
+  final SendTemplateType sendTemplateType;
   const _CarouselCardContent({
     required this.card,
     required this.backgroundColor,
@@ -232,6 +235,7 @@ class _CarouselCardContent extends StatelessWidget {
     required this.templateType,
     required this.isSmartUrlEnabled,
     required this.shortBaseUrl,
+    required this.sendTemplateType,
   });
 
   void onBodyTextChanged() {
@@ -279,6 +283,7 @@ class _CarouselCardContent extends StatelessWidget {
               fileObject: fileObject,
               onFileUpload: onFileUpload,
               onProductSelected: onProductSelected,
+              sendTemplateType: sendTemplateType,
             ),
             const SizedBox(height: 10),
           ],

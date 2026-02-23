@@ -20,7 +20,6 @@ class _ButtonsFormState extends State<ButtonsForm> {
   @override
   Widget build(BuildContext context) {
     List<TemplateButton> quickReplyButtonList = (widget.buttonsComponent.buttons ?? []).where((button) => button.type == "QUICK_REPLY").toList();
-    log("---${quickReplyButtonList.length}");
     List<TemplateButton> otherButtons = (widget.buttonsComponent.buttons ?? []).where((button) => button.type != "QUICK_REPLY" && (button.example ?? []).isNotEmpty).toList();
 
     return Column(

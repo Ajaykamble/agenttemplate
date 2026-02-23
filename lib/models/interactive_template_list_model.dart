@@ -7,6 +7,7 @@ import 'dart:developer';
 
 import 'package:agenttemplate/models/flow_raw_info_response_model.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
+import 'package:collection/collection.dart';
 
 List<InteractiveTemplateListModel> interactiveTemplateListModelFromJson(String str) => List<InteractiveTemplateListModel>.from(json.decode(str).map((x) => InteractiveTemplateListModel.fromJson(x)));
 
@@ -30,6 +31,125 @@ class InteractiveTemplateListModel {
   TemplateObj? templateObj;
   FlowRawInfoResponse? flowRawInfoResponse;
 
+  //
+  Map<String, dynamic> interactMsg() {
+    if (templateType?.toLowerCase() == "Menu") {
+      String text = template?.body?.text ?? "";
+      if (template?.body != null) {
+        Component? bodyComponent = templateObj?.components?.firstWhereOrNull((element) => element.type == "BODY");
+
+        if (bodyComponent != null) {
+          for (int i = 0; i < bodyComponent.attributes.length; i++) {
+            final value = bodyComponent.attributes[i].selectedVariableValue.value;
+            if (value != null && value.isNotEmpty) {
+              text = text.replaceAll('{{${i + 1}}}', value);
+            }
+          }
+        }
+      }
+      return {"text": text, "link": null, "mediaId": null, "caption": null, "fileName": null, "longitude": null, "latitude": null, "name": null, "address": null, "others": {}};
+    }
+
+    Map<String, dynamic> addressMsgParams = {};
+
+    Map<String, dynamic>? bodyObj = null;
+
+    if (template?.body != null) {
+      String text = template?.body?.text ?? "";
+
+      Component? bodyComponent = templateObj?.components?.firstWhereOrNull((element) => element.type == "BODY");
+
+      if (bodyComponent != null) {
+        for (int i = 0; i < bodyComponent.attributes.length; i++) {
+          final value = bodyComponent.attributes[i].selectedVariableValue.value;
+          if (value != null && value.isNotEmpty) {
+            text = text.replaceAll('{{${i + 1}}}', value);
+          }
+        }
+      }
+      bodyObj = {"type": "text", "text": text};
+    }
+    Map<String, dynamic>? flowObj = null;
+
+    List<Map<String, dynamic>> buttonObjs = [];
+
+    if (template?.button != null) {
+      for (int i = 0; i < (template?.button?.length ?? 0); i++) {
+        //
+        Button? button = template?.button?[i];
+
+        if (button != null) {
+          //
+          TemplateButton? templateBtn = templateObj?.components?.firstWhereOrNull((element) => element.type == "BUTTONS")?.buttons?[i];
+
+          if (button.type == "FLOW") {
+            //
+            buttonObjs.add({"type": button.type, "index": null, "id": null, "text": null, "actionData": null});
+            Map<String, dynamic> flowData = {};
+            for (int j = 0; j < (templateBtn?.flowRawScreenData?.attributes.length ?? 0); j++) {
+              flowData[templateBtn?.flowRawScreenData?.attributes[j].header ?? ""] = templateBtn?.flowRawScreenData?.attributes[j].textController.text ?? "";
+            }
+
+            flowObj = {
+              "actionType": button.flowAction,
+              "flowCta": button.text ?? "",
+              "flowId": button.flowId ?? "",
+              "flowMessageVersion": "3",
+              "screen": button.navigateScreen ?? "",
+              "data": flowData,
+            };
+            //
+          } else {
+            if (templateType?.toLowerCase() == "address") {
+              //
+              addressMsgParams = {
+                "country": button.countryCode ?? ""
+                //
+              };
+            }
+            buttonObjs.add({"type": button.type, "index": null, "id": templateBtn?.buttonTextController.text ?? "", "text": button.text ?? "", "actionData": null});
+          }
+        }
+      }
+    }
+
+    Map<String, dynamic>? headerObj = null;
+
+    if (template?.headerObj != null) {
+      //
+      Component? headerComponent = templateObj?.components?.firstWhereOrNull((element) => element.type == "HEADER");
+      if (headerComponent != null) {
+        String text = template?.headerObj?.text ?? "";
+        //
+        for (int i = 0; i < headerComponent.attributes.length; i++) {
+          final value = headerComponent.attributes[i].selectedVariableValue.value;
+          if (value != null && value.isNotEmpty) {
+            text = text.replaceAll('{{${i + 1}}}', value);
+          }
+        }
+
+        headerObj = {
+          "type": template?.headerObj?.type,
+          "text": text,
+          "link": headerComponent.selectedFileObject.value?.filePath ?? "",
+          "mediaId": headerComponent.selectedFileObject.value?.mediaId ?? "",
+          "fileName": headerComponent.selectedFileObject.value?.fileName ?? ""
+        };
+      }
+    }
+
+    return {
+      "headerObj": headerObj,
+      "body": bodyObj,
+      "buttons": buttonObjs,
+      "footerText": template?.footerText ?? "",
+      "flow": flowObj,
+      "listObj": template?.listObj?.toJson(),
+      "ctaUrlInfo": null,
+      "addressMsgParams": addressMsgParams,
+    };
+  }
+
   TemplateObj toTemplateObj() {
     //
     TemplateObj obj = TemplateObj();
@@ -42,18 +162,18 @@ class InteractiveTemplateListModel {
     List<Component> components = [];
 
     if (template?.headerObj != null) {
-      Component headerComponent = Component(type: "HEADER", text: template?.headerObj?.text ?? "", format: template?.headerObj?.type ?? "");
+      Component headerComponent = Component.fromJson({"type": "HEADER", "text": template?.headerObj?.text ?? "", "format": template?.headerObj?.type ?? ""});
       components.add(headerComponent);
     }
 
     if (template?.body != null) {
-      Component bodyComponent = Component(type: "BODY", text: template?.body?.text ?? "");
+      Component bodyComponent = Component.fromJson({"type": "BODY", "text": template?.body?.text ?? ""});
       components.add(bodyComponent);
     }
     if (template?.button != null) {
-      Component bodyComponent = Component(
-        type: "BUTTONS",
-        buttons: template?.button
+      Component bodyComponent = Component.fromJson({
+        "type": "BUTTONS",
+        "buttons": template?.button
                 ?.map(
                   (e) => TemplateButton(
                     type: e.type ?? "",
@@ -65,21 +185,20 @@ class InteractiveTemplateListModel {
                     ttlMinutes: "",
                     phoneNumber: "",
                     example: [],
-                  ),
+                  ).toJson(),
                 )
                 .toList() ??
             [],
-      );
-      log("${bodyComponent.toJson()}");
+      });
       components.add(bodyComponent);
     }
 
     if (template?.listObj != null) {
-      Component listComponent = Component(type: "LIST", listObj: template?.listObj);
+      Component listComponent = Component.fromJson({"type": "LIST", "listObj": template?.listObj?.toJson()});
       components.add(listComponent);
     }
     if (template?.footerText != null) {
-      Component footerComponent = Component(type: "FOOTER", text: template?.footerText ?? "");
+      Component footerComponent = Component.fromJson({"type": "FOOTER", "text": template?.footerText ?? ""});
       components.add(footerComponent);
     }
 
@@ -218,6 +337,8 @@ class Button {
   String? navigateScreen;
   String? flowAction;
   String? url;
+  String? countryCode;
+  String? dialCode;
 
   Button({
     this.type,
@@ -226,6 +347,8 @@ class Button {
     this.navigateScreen,
     this.flowAction,
     this.url,
+    this.countryCode,
+    this.dialCode,
   });
 
   factory Button.fromJson(Map<String, dynamic> json) => Button(
@@ -235,6 +358,8 @@ class Button {
         navigateScreen: json["navigate_screen"],
         flowAction: json["flow_action"],
         url: json["url"],
+        countryCode: json["countryCode"],
+        dialCode: json["dialCode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -243,6 +368,8 @@ class Button {
         "flow_id": flowId,
         "navigate_screen": navigateScreen,
         "flow_action": flowAction,
+        "countryCode": countryCode,
+        "dialCode": dialCode,
       };
 }
 

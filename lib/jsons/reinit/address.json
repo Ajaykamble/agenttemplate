@@ -1,0 +1,60 @@
+{
+    "interactiveTemplateObj": {
+      "template_obj_json": null,
+      "wabaId": null,
+      "accessKey": null,
+      "phoneNumberId": "240621725795558",
+      "customerId": 1,
+      "mobileNumber": "919052055846",
+      "liveAgentId": null,
+      "liveAgentName": null,
+      "moduleType": null,
+      "campaignId": 0,
+      "botFlowId": 0,
+      "refId": "",
+      "msgId": "Jhk9jlT2d3",
+      "displayName": "Vectramind Saha 2024",
+      "template": null,
+      "transId": "271282475820",
+      "type": "OUT",
+      "contextMsgId": "",
+      "isFirstTimeMsg": false,
+      "sessinKey": "919052055846#240621725795558",
+      "transferAgentID": 0,
+      "transferByAgentId": 0,
+      "outTimeStamp": "",
+      "reInitMsg": "",
+      "sessionId": "919052055846#240621725795558",
+      "sessionTimeOutKey": "",
+      "interactiveTemplateId": 104,
+      "interactiveTemplateName": "test_address",
+      "channel": "WHATSAPP",
+      "reintiateId": 22730082,
+      "subType": "INTERACTIVE_ADDRESS_MESSAGE",
+      "msgType": "REINIT",
+      "interactMsg": {
+        "headerObj": null,
+        "body": {
+          "type": "text",
+          "text": "Hello name asd, this is to remind you of your upcoming TELEPHONE CONSULTATION appointment doc name with facility on day, date at time in the department. AGENT NAME :zxc, CHAT STRAT TIME :asd, CHAT END TIME :22."
+        },
+        "buttons": [
+          {
+            "type": "QUICK_REPLY",
+            "index": null,
+            "id": 1,
+            "text": "Provide Address",
+            "actionData": null
+          }
+        ],
+        "footerText": "",
+        "flow": null,
+        "listObj": null,
+        "ctaUrlInfo": null,
+        "addressMsgParams": {
+          "country": "IN"
+        }
+      }
+    },
+    "flowObj": null
+  }

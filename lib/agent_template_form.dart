@@ -2,6 +2,7 @@ import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
+import 'package:agenttemplate/utils/app_enums.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/forms/body_form.dart';
 import 'package:agenttemplate/widget/forms/buttons_form.dart';
@@ -31,6 +32,7 @@ class AgentTemplateForm extends StatefulWidget {
   final Future<DateTimeResponseModel?> Function() onGetDateTime;
   final String templateType;
   final String shortBaseUrl;
+  final SendTemplateType sendTemplateType;
   const AgentTemplateForm({
     super.key,
     required this.templateObj,
@@ -43,6 +45,7 @@ class AgentTemplateForm extends StatefulWidget {
     required this.templateType,
     required this.onGetDateTime,
     required this.shortBaseUrl,
+    required this.sendTemplateType,
   });
 
   @override
@@ -82,33 +85,34 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ValueListenableBuilder(
-          valueListenable: widget.templateObj.showSmartUrlCheckBox,
-          builder: (context, value, child) {
-            return value
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: widget.templateObj.isSmartUrlEnabled,
-                        builder: (context, value, child) {
-                          return TemplateCheckbox(
-                            text: AppLocalizations.of(context)?.smartUrlConversion ?? "Smart URL Conversion",
-                            defaultValue: value,
-                            onChanged: (value) {
-                              widget.templateObj.isSmartUrlEnabled.value = value;
-                              widget.templateObj.resetSmartUrlAttributes();
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  )
-                : SizedBox.shrink();
-          },
-        ),
+        if (widget.sendTemplateType == SendTemplateType.normal)
+          ValueListenableBuilder(
+            valueListenable: widget.templateObj.showSmartUrlCheckBox,
+            builder: (context, value, child) {
+              return value
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: widget.templateObj.isSmartUrlEnabled,
+                          builder: (context, value, child) {
+                            return TemplateCheckbox(
+                              text: AppLocalizations.of(context)?.smartUrlConversion ?? "Smart URL Conversion",
+                              defaultValue: value,
+                              onChanged: (value) {
+                                widget.templateObj.isSmartUrlEnabled.value = value;
+                                widget.templateObj.resetSmartUrlAttributes();
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    )
+                  : SizedBox.shrink();
+            },
+          ),
 
         if (widget.templateType == "CATALOG" && buttonsComponent != null) ...[
           CatalogForm(
@@ -118,7 +122,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
           const SizedBox(height: 10),
         ],
 
-        if (widget.templateType == "FLOW" && buttonsComponent != null) ...[FlowForm(component: buttonsComponent), const SizedBox(height: 10)],
+        if (buttonsComponent != null) ...[FlowForm(component: buttonsComponent), const SizedBox(height: 10)],
 
         if (widget.templateType == "MPM" && buttonsComponent != null) ...[
           MPMForm(buttonsComponent: buttonsComponent, backgroundColor: widget.backgroundColor, templateType: widget.templateType),
@@ -132,6 +136,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             predefinedAttributes: widget.predefinedAttributes,
             fileObject: widget.fileObject,
             onFileUpload: widget.onFileUpload,
+            sendTemplateType: widget.sendTemplateType,
             onProductSelected: () {
               //
               widget.templateObj.onProductSelected();
@@ -168,51 +173,53 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
             templateType: widget.templateType,
             isSmartUrlEnabled: widget.templateObj.isSmartUrlEnabled,
             shortBaseUrl: widget.shortBaseUrl,
+            sendTemplateType: widget.sendTemplateType,
           ),
           const SizedBox(height: 10),
         ],
         if (limitedTimeOffer != null) ...[LimitedTimeOfferForm(limitedTimeOfferComponent: limitedTimeOffer, backgroundColor: widget.backgroundColor), const SizedBox(height: 10)],
         //
-        Selector<AgentTemplateProvider, bool>(
-          selector: (_, provider) => provider.retryAttemptFailed,
-          builder: (context, value, child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TemplateCheckbox(
-                  text: AppLocalizations.of(context)?.retryAttemptFailedForTestTemplate ?? "Retry Attempt For Failed Template Test",
-                  defaultValue: value,
-                  onChanged: (value) {
-                    agentTemplateProvider.retryAttemptFailed = value;
-                  },
-                ),
-                if (value) ...[
-                  Text(AppLocalizations.of(context)?.retryCount ?? "Retry Count", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: agentTemplateProvider.retryAttemptController,
-                    decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.fieldRequired ?? "This field is required"),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.fieldRequired ?? 'This field is required';
-                      }
-                      return null;
+        if (widget.sendTemplateType == SendTemplateType.normal) ...[
+          Selector<AgentTemplateProvider, bool>(
+            selector: (_, provider) => provider.retryAttemptFailed,
+            builder: (context, value, child) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TemplateCheckbox(
+                    text: AppLocalizations.of(context)?.retryAttemptFailedForTestTemplate ?? "Retry Attempt For Failed Template Test",
+                    defaultValue: value,
+                    onChanged: (value) {
+                      agentTemplateProvider.retryAttemptFailed = value;
                     },
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
-                  const SizedBox(height: 10),
+                  if (value) ...[
+                    Text(AppLocalizations.of(context)?.retryCount ?? "Retry Count", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800)),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: agentTemplateProvider.retryAttemptController,
+                      decoration: FormStyles.buildInputDecoration(context, hintText: AppLocalizations.of(context)?.fieldRequired ?? "This field is required"),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppLocalizations.of(context)?.fieldRequired ?? 'This field is required';
+                        }
+                        return null;
+                      },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+
+                  //
                 ],
-
-                //
-              ],
-            );
-          },
-          //
-        ),
-
-        _buildAdditionalInfoSection(),
+              );
+            },
+            //
+          ),
+          _buildAdditionalInfoSection(),
+        ]
       ],
     );
   }

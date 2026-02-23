@@ -16,29 +16,31 @@ class FlowForm extends StatefulWidget {
 
 class _FlowFormState extends State<FlowForm> {
   late AgentTemplateProvider agentTemplateProvider;
+  TemplateButton? flowButton;
   @override
   void initState() {
     super.initState();
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
-    TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
-
+    flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
     if (flowButton != null) {
-      agentTemplateProvider.getFlowRawInfo(flowButton.flowId!);
+      agentTemplateProvider.getFlowRawInfo(flowButton!.flowId!);
     }
   }
 
   @override
   void didUpdateWidget(FlowForm oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
-    if (flowButton != null && flowButton.flowId != oldWidget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId) {
-      agentTemplateProvider.getFlowRawInfo(flowButton.flowId!);
+    flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
+    if (flowButton != null && flowButton?.flowId != oldWidget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId) {
+      agentTemplateProvider.getFlowRawInfo(flowButton!.flowId!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (flowButton == null) {
+      return SizedBox.shrink();
+    }
     return Selector<AgentTemplateProvider, Tuple2<ApiStatus, FlowRawInfoResponse?>>(
       selector: (_, provider) => Tuple2(provider.flowRawInfoStatus, provider.flowRawInfoResponse),
       builder: (context, value, child) {

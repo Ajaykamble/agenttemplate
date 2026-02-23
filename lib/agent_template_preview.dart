@@ -1,9 +1,11 @@
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/app_assets.dart';
+import 'package:agenttemplate/utils/app_enums.dart';
 import 'package:agenttemplate/utils/form_styles.dart';
 import 'package:agenttemplate/widget/preview/button_preview.dart';
 import 'package:agenttemplate/widget/preview/card_preview_widget.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -15,7 +17,9 @@ class AgentTemplatePreview extends StatefulWidget {
   final TemplateObj templateObj;
   final void Function(TemplateButton button)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
+  final void Function(ListObj listObj)? onListTap;
   final VoidCallback onBackPressed;
+  final SendTemplateType sendTemplateType;
   const AgentTemplatePreview({
     super.key,
     required this.templateObj,
@@ -23,8 +27,10 @@ class AgentTemplatePreview extends StatefulWidget {
     required this.accountImage,
     required this.accountPhone,
     required this.accountIsVerified,
+    required this.sendTemplateType,
     this.onButtonTap,
     this.onAllButtonsTap,
+    this.onListTap,
     required this.onBackPressed,
   });
 
@@ -84,6 +90,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
     List<Component> otherComponents = components.where((element) => element.type != 'CAROUSEL').toList();
     Component? carouselComponent = components.firstWhereOrNull((element) => element.type == 'CAROUSEL');
     Component? buttonsComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? listComponent = components.firstWhereOrNull((element) => element.type == 'LIST');
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -139,6 +146,23 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                     },
                   ),
                 ),
+              ],
+              if (listComponent != null) ...[
+                const SizedBox(height: 7),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  width: _cardWidth,
+                  child: ButtonWidget(
+                    icon: CupertinoIcons.list_bullet,
+                    title: listComponent.listObj?.name ?? "",
+                    onTap: () {
+                      //
+                      if (listComponent.listObj != null) {
+                        widget.onListTap?.call(listComponent.listObj!);
+                      }
+                    },
+                  ),
+                )
               ],
             ],
             if (carouselComponent != null) ...[

@@ -37,8 +37,6 @@ class MyApp extends StatelessWidget {
 // Template load type: normal (catalogue) vs interactive
 // ---------------------------------------------------------------------------
 
-enum _TemplateLoadType { normal, interactive }
-
 // ---------------------------------------------------------------------------
 // Wrapper model for a template entry from the JSON array (normal format)
 // ---------------------------------------------------------------------------
@@ -92,6 +90,8 @@ class _LoadedTemplateItem {
   final String? fileObject;
   final TemplateObj templateObj;
   final String templateType;
+  FlowRawInfoResponse? flowRawInfoResponse;
+  InteractiveTemplateListModel? interactiveTemplateListModel;
 
   _LoadedTemplateItem({
     required this.templateId,
@@ -102,6 +102,8 @@ class _LoadedTemplateItem {
     this.fileObject,
     required this.templateObj,
     required this.templateType,
+    this.flowRawInfoResponse,
+    this.interactiveTemplateListModel,
   });
 
   factory _LoadedTemplateItem.fromNormal(_TemplateListItem t) {
@@ -119,6 +121,7 @@ class _LoadedTemplateItem {
 
   factory _LoadedTemplateItem.fromInteractive(InteractiveTemplateListModel i) {
     final obj = i.toTemplateObj();
+    i.templateObj = obj;
     return _LoadedTemplateItem(
       templateId: i.customerInteractiveTemplateId ?? 0,
       templateName: i.templateName ?? '',
@@ -128,6 +131,8 @@ class _LoadedTemplateItem {
       fileObject: i.fileObject,
       templateObj: obj,
       templateType: i.templateType ?? '',
+      flowRawInfoResponse: i.flowRawInfoResponse,
+      interactiveTemplateListModel: i,
     );
   }
 }
@@ -149,7 +154,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
   bool _isLoading = false;
   String? _errorMessage;
   _LoadedTemplateItem? _selectedTemplate;
-  _TemplateLoadType? _templateLoadType;
+  SendTemplateType? _templateLoadType;
   final _showingPreview = ValueNotifier<bool>(false);
   final _formKey = GlobalKey<FormState>();
 
@@ -157,16 +162,16 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
   // Change this path to match your machine if needed.
   static const String _defaultJsonDir = '/Volumes/myspace/projects/agenttemplate/lib/jsons';
 
-  Future<_TemplateLoadType?> _showTemplateTypeDialog(BuildContext context) async {
-    return showDialog<_TemplateLoadType>(
+  Future<SendTemplateType?> _showTemplateTypeDialog(BuildContext context) async {
+    return showDialog<SendTemplateType>(
       context: context,
       builder: (ctx) {
         return AlertDialog(
           title: const Text('Template type'),
           content: const Text('Which type of template are you loading?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, _TemplateLoadType.normal), child: const Text('Normal')),
-            TextButton(onPressed: () => Navigator.pop(ctx, _TemplateLoadType.interactive), child: const Text('Interactive')),
+            TextButton(onPressed: () => Navigator.pop(ctx, SendTemplateType.normal), child: const Text('Normal')),
+            TextButton(onPressed: () => Navigator.pop(ctx, SendTemplateType.interactive), child: const Text('Interactive')),
           ],
         );
       },
@@ -207,7 +212,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
 
       final templates = <_LoadedTemplateItem>[];
 
-      if (_templateLoadType == _TemplateLoadType.normal) {
+      if (_templateLoadType == SendTemplateType.normal) {
         final decoded = jsonDecode(jsonString);
         final List<dynamic> jsonList = decoded is List ? decoded : (throw FormatException('Expected a JSON array at the root of the file.'));
         for (final item in jsonList) {
@@ -439,20 +444,27 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                     child: AgentTemplateForm(
                       shortBaseUrl: "",
                       key: ValueKey(_selectedTemplate!.templateId),
-                      templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                      templateObj: _selectedTemplate!.templateObj,
                       templateType: _selectedTemplate!.templateType,
                       backgroundColor: Colors.blue.shade300,
                       predefinedAttributes: {"name": "John Doe"},
                       fileObject: _selectedTemplate!.fileObject,
+                      sendTemplateType: _templateLoadType!,
                       onGetDateTime: () async {
+                        log("callef date");
                         await Future.delayed(const Duration(seconds: 1));
                         return DateTimeResponseModel.fromJson({"dateTime": "2026-02-18 16:28:58", "date": "2026-02-18", "time": "13:28:58", "hours": "13", "seconds": "58", "minutes": "28"});
                       },
                       onGetCatalogue: () async {
+                        log("called onget catalogue");
                         await Future.delayed(const Duration(seconds: 1));
                         return CatalogueResponseModel.fromJson(catalogueResponse);
                       },
                       onGetFlowRawInfo: (flowId) async {
+                        log("called onget flow raw info");
+                        if (_templateLoadType == SendTemplateType.interactive) {
+                          return _selectedTemplate?.flowRawInfoResponse;
+                        }
                         try {
                           final response = await http.post(
                             Uri.parse('https://qa.me.synapselive.com/vm-whatsapp/flowcontroller/503/flow/fetchrawinfo'),
@@ -471,6 +483,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                         return null;
                       },
                       onFileUpload: (file) async {
+                        log("called onfile upload");
                         final response = FileUploadResponse.fromJson({
                           "status": true,
                           "statusCode": 0,
@@ -502,14 +515,16 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                       SizedBox(
                         width: 400,
                         child: AgentTemplatePreview(
-                          templateObj: context.read<AgentTemplateProvider>().templateObj!,
+                          templateObj: _selectedTemplate!.templateObj,
                           onButtonTap: (button) => _showButtonProductSheet(context, button),
                           onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
+                          onListTap: (listObj) => _showListOptionsSheet(context, listObj),
                           accountImage: "https://t4.ftcdn.net/jpg/01/43/42/83/360_F_143428338_gcxw3Jcd0tJpkvvb53pfEztwtU9sxsgT.jpg",
                           accountIsVerified: true,
                           accountName: "John Doe",
                           accountPhone: "XXXXXXXXXX",
                           onBackPressed: () => _showingPreview.value = false,
+                          sendTemplateType: _templateLoadType! ?? SendTemplateType.normal,
                         ),
                       ),
                     ],
@@ -531,6 +546,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                           ),
                           Expanded(
                             child: AgentTemplatePreview(
+                              sendTemplateType: _templateLoadType! ?? SendTemplateType.normal,
                               templateObj: context.read<AgentTemplateProvider>().templateObj!,
                               onButtonTap: (button) => _showButtonProductSheet(context, button),
                               onAllButtonsTap: (buttonsComponent) => _showAllButtonsSheet(context, buttonsComponent),
@@ -569,6 +585,8 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   //
+                  ///
+                  log("${jsonEncode(_selectedTemplate?.interactiveTemplateListModel?.interactMsg())}");
                 }
               },
               child: const Text('Submit'),
@@ -786,6 +804,119 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
               ),
             ],
           ),
+        );
+
+        if (Platform.isAndroid || Platform.isIOS) {
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, _) {
+              if (!didPop) Navigator.of(sheetContext).pop();
+            },
+            child: content,
+          );
+        }
+        return content;
+      },
+    );
+  }
+
+  void _showListOptionsSheet(BuildContext context, ListObj listObj) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (sheetContext) {
+        Widget content = DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(width: 24),
+
+                      Text("", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.of(context).maybePop();
+                        },
+                      ),
+                    ],
+                  ),
+                  SingleChildScrollView(
+                    controller: scrollController,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        //
+                        return Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(8), //
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8), //
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(color: Colors.grey.shade200),
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    listObj.items?[index].name ?? '',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black45,
+                                      //
+                                    ),
+                                  ),
+                                ),
+                                Container(width: double.infinity, height: 1, color: Colors.grey.shade400),
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, subindex) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(listObj.items?[index].rows?[subindex].name ?? '', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                                          Text(listObj.items?[index].rows?[subindex].desc ?? '', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700)),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) => const Divider(height: 1),
+                                  itemCount: listObj.items?[index].rows?.length ?? 0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      itemCount: listObj.items?.length ?? 0,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
 
         if (Platform.isAndroid || Platform.isIOS) {

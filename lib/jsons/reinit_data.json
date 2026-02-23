@@ -1,0 +1,343 @@
+[
+{
+    "template_obj_json": null,
+    "wabaId": null,
+    "accessKey": null,
+    "phoneNumberId": "240621725795558",
+    "customerId": 1,
+    "mobileNumber": "917702120827",
+    "liveAgentId": null,
+    "liveAgentName": null,
+    "moduleType": null,
+    "campaignId": 0,
+    "botFlowId": 0,
+    "refId": "",
+    "msgId": "TU3YFWKYw3",
+    "displayName": "Vectramind Saha 2024",
+    "template": null,
+    "transId": "178489728881",
+    "type": "OUT",
+    "contextMsgId": "",
+    "isFirstTimeMsg": false,
+    "sessinKey": "917702120827#240621725795558",
+    "transferAgentID": 0,
+    "transferByAgentId": 0,
+    "outTimeStamp": "",
+    "reInitMsg": "",
+    "sessionId": "917702120827#240621725795558",
+    "sessionTimeOutKey": "",
+    "interactiveTemplateId": 81,
+    "interactiveTemplateName": "flowall",
+    "channel": "WHATSAPP",
+    "reintiateId": 22730079,
+    "subType": "INTERACTIVE_MSG_FLOW",
+    "msgType": "REINIT",
+    "interactMsg": {
+      "headerObj": null,
+      "body": {
+        "type": "text",
+        "text": "asdf flow all asdf asdf"
+      },
+      "buttons": [
+        {
+          "type": "FLOW",
+          "index": null,
+          "id": "",
+          "text": "",
+          "actionData": null
+        }
+      ],
+      "footerText": "",
+      "flow": {
+        "actionType": "navigate",
+        "data": {
+          "delivername": "adsf",
+          "mail": "ad",
+          "password": "asdf",
+          "detailspacel": "asdf",
+          "type": "asfd",
+          "drop": "fadsfw",
+          "datated": "f",
+          "raitn": "sad"
+        },
+        "flowCta": "all",
+        "flowId": "1831503290730639",
+        "flowMessageVersion": "3",
+        "screen": "screena"
+      },
+      "listObj": null,
+      "ctaUrlInfo": null,
+      "addressMsgParams": {}
+    }
+  }
+,
+  {
+    "template_obj_json": null,
+    "wabaId": null,
+    "accessKey": null,
+    "phoneNumberId": "240621725795558",
+    "customerId": 1,
+    "mobileNumber": "917259580344",
+    "liveAgentId": null,
+    "liveAgentName": null,
+    "moduleType": null,
+    "campaignId": 0,
+    "botFlowId": 0,
+    "refId": "",
+    "msgId": "s3mtxb3r7T",
+    "displayName": "Vectramind Saha 2024",
+    "template": null,
+    "transId": "511838614803",
+    "type": "OUT",
+    "contextMsgId": "",
+    "isFirstTimeMsg": false,
+    "sessinKey": "917259580344#240621725795558",
+    "transferAgentID": 0,
+    "transferByAgentId": 0,
+    "outTimeStamp": "",
+    "reInitMsg": "",
+    "sessionId": "917259580344#240621725795558",
+    "sessionTimeOutKey": "",
+    "interactiveTemplateId": 114,
+    "interactiveTemplateName": "simpletempbot",
+    "channel": "WHATSAPP",
+    "reintiateId": 22730077,
+    "subType": "INTERACTIVE_MSG_LIST",
+    "msgType": "REINIT",
+    "interactMsg": {
+      "headerObj": {
+        "type": "TEXT",
+        "text": "This is Head of the Department hasd",
+        "link": "",
+        "mediaId": "",
+        "fileName": ""
+      },
+      "body": {
+        "type": "text",
+        "text": "Hello adsf,  this is to remind you of your upcoming TELEPHONE CONSULTATION appointment doc name with facility on day, date at time in the department."
+      },
+      "buttons": null,
+      "footerText": "",
+      "flow": null,
+      "listObj": {
+        "name": "Click Here",
+        "items": [
+          {
+            "name": "Tiffin",
+            "rows": [
+              {
+                "id": "A)",
+                "name": "Idly",
+                "desc": "sambar idly"
+              },
+              {
+                "id": "B)",
+                "name": "Dosa",
+                "desc": "egg dosa"
+              }
+            ]
+          }
+        ]
+      },
+      "ctaUrlInfo": null,
+      "addressMsgParams": {}
+    }
+  },
+  {
+    "template_obj_json": null,
+    "wabaId": null,
+    "accessKey": null,
+    "phoneNumberId": "240621725795558",
+    "customerId": 1,
+    "mobileNumber": "917865989471",
+    "liveAgentId": null,
+    "liveAgentName": null,
+    "moduleType": null,
+    "campaignId": 0,
+    "botFlowId": 0,
+    "refId": "",
+    "msgId": "wUtFVXXnlR",
+    "displayName": "Vectramind Saha 2024",
+    "template": null,
+    "transId": "614484521341",
+    "type": "OUT",
+    "contextMsgId": "",
+    "isFirstTimeMsg": false,
+    "sessinKey": "917865989471#240621725795558",
+    "transferAgentID": 0,
+    "transferByAgentId": 0,
+    "outTimeStamp": "",
+    "reInitMsg": "",
+    "sessionId": "917865989471#240621725795558",
+    "sessionTimeOutKey": "",
+    "interactiveTemplateId": 89,
+    "interactiveTemplateName": "simpletemp",
+    "channel": "WHATSAPP",
+    "reintiateId": 22730078,
+    "subType": "INTERACTIVE_MSG_BTN",
+    "msgType": "REINIT",
+    "interactMsg": {
+      "headerObj": {
+        "type": "TEXT",
+        "text": "HI HELLO ",
+        "link": "",
+        "mediaId": "",
+        "fileName": ""
+      },
+      "body": {
+        "type": "text",
+        "text": "GOOD Morning"
+      },
+      "buttons": [
+        {
+          "type": "QUICK_REPLY",
+          "index": null,
+          "id": 1,
+          "text": "CLICK",
+          "actionData": null
+        }
+      ],
+      "footerText": "",
+      "flow": null,
+      "listObj": null,
+      "ctaUrlInfo": null,
+      "addressMsgParams": {}
+    }
+  },
+  {
+    "template_obj_json": null,
+    "wabaId": null,
+    "accessKey": null,
+    "phoneNumberId": "240621725795558",
+    "customerId": 1,
+    "mobileNumber": "918374539799",
+    "liveAgentId": null,
+    "liveAgentName": null,
+    "moduleType": null,
+    "campaignId": 0,
+    "botFlowId": 0,
+    "refId": "",
+    "msgId": "yBromeMjyW",
+    "displayName": "Vectramind Saha 2024",
+    "template": null,
+    "transId": "981054869251",
+    "type": "OUT",
+    "contextMsgId": "",
+    "isFirstTimeMsg": false,
+    "sessinKey": "918374539799#240621725795558",
+    "transferAgentID": 0,
+    "transferByAgentId": 0,
+    "outTimeStamp": "",
+    "reInitMsg": "",
+    "sessionId": "918374539799#240621725795558",
+    "sessionTimeOutKey": "",
+    "interactiveTemplateId": 8,
+    "interactiveTemplateName": "session_template_button",
+    "channel": "WHATSAPP",
+    "reintiateId": 22730109,
+    "subType": "INTERACTIVE_MSG_BTN",
+    "msgType": "REINIT",
+    "interactMsg": {
+      "headerObj": {
+        "type": "VIDEO",
+        "text": "",
+        "link": "https://qa.me.synapselive.com/images/784423_InShot_20240402_135236749.mp4",
+        "mediaId": "",
+        "fileName": "InShot_20240402_135236749.mp4"
+      },
+      "body": {
+        "type": "text",
+        "text": "Hi session asdf Doc *template* eewr"
+      },
+      "buttons": [
+        {
+          "type": "QUICK_REPLY",
+          "index": null,
+          "id": "contin",
+          "text": "continue",
+          "actionData": null
+        },
+        {
+          "type": "QUICK_REPLY",
+          "index": null,
+          "id": 2,
+          "text": "no interest",
+          "actionData": null
+        },
+        {
+          "type": "QUICK_REPLY",
+          "index": null,
+          "id": 3,
+          "text": "thanks",
+          "actionData": null
+        }
+      ],
+      "footerText": "Thanks for choosing",
+      "flow": null,
+      "listObj": null,
+      "ctaUrlInfo": null,
+      "addressMsgParams": {}
+    }
+  },
+  {
+    "template_obj_json": null,
+    "wabaId": null,
+    "accessKey": null,
+    "phoneNumberId": "240621725795558",
+    "customerId": 1,
+    "mobileNumber": "919908508446",
+    "liveAgentId": null,
+    "liveAgentName": null,
+    "moduleType": null,
+    "campaignId": 0,
+    "botFlowId": 0,
+    "refId": "",
+    "msgId": "TstWSMzZOq",
+    "displayName": "Vectramind Saha 2024",
+    "template": null,
+    "transId": "530969298996",
+    "type": "OUT",
+    "contextMsgId": "",
+    "isFirstTimeMsg": false,
+    "sessinKey": "919908508446#240621725795558",
+    "transferAgentID": 0,
+    "transferByAgentId": 0,
+    "outTimeStamp": "",
+    "reInitMsg": "",
+    "sessionId": "919908508446#240621725795558",
+    "sessionTimeOutKey": "",
+    "interactiveTemplateId": 106,
+    "interactiveTemplateName": "test_button_decoument",
+    "channel": "WHATSAPP",
+    "reintiateId": 22730081,
+    "subType": "INTERACTIVE_MSG_BTN",
+    "msgType": "REINIT",
+    "interactMsg": {
+      "headerObj": {
+        "type": "IMAGE",
+        "text": "",
+        "link": "https://qa.me.synapselive.com/images/1/stemplate/416486842308.png",
+        "mediaId": "",
+        "fileName": "p75.png"
+      },
+      "body": {
+        "type": "text",
+        "text": "Hello  asdf, this is to remind you of your upcoming TELEPHONE CONSULTATION appointment doc name with facility on dayasdf, date at time in the departmentasd. this start time :  xand char end time "
+      },
+      "buttons": [
+        {
+          "type": "QUICK_REPLY",
+          "index": null,
+          "id": 1,
+          "text": "Click",
+          "actionData": null
+        }
+      ],
+      "footerText": "",
+      "flow": null,
+      "listObj": null,
+      "ctaUrlInfo": null,
+      "addressMsgParams": {}
+    }
+  }
+]

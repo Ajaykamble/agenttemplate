@@ -1,0 +1,58 @@
+{
+    "interactiveTemplateObj": {
+      "template_obj_json": null,
+      "wabaId": null,
+      "accessKey": null,
+      "phoneNumberId": "240621725795558",
+      "customerId": 1,
+      "mobileNumber": "919052055846",
+      "liveAgentId": null,
+      "liveAgentName": null,
+      "moduleType": null,
+      "campaignId": 0,
+      "botFlowId": 0,
+      "refId": "",
+      "msgId": "XzfP024r0n",
+      "displayName": "Vectramind Saha 2024",
+      "template": null,
+      "transId": "271282475820",
+      "type": "OUT",
+      "contextMsgId": "",
+      "isFirstTimeMsg": false,
+      "sessinKey": "919052055846#240621725795558",
+      "transferAgentID": 0,
+      "transferByAgentId": 0,
+      "outTimeStamp": "",
+      "reInitMsg": "",
+      "sessionId": "919052055846#240621725795558",
+      "sessionTimeOutKey": "",
+      "interactiveTemplateId": 103,
+      "interactiveTemplateName": "test_location_request",
+      "channel": "WHATSAPP",
+      "reintiateId": 22730082,
+      "subType": "INTERACTIVE_LOCATION_REQUEST",
+      "msgType": "REINIT",
+      "interactMsg": {
+        "headerObj": null,
+        "body": {
+          "type": "text",
+          "text": "asdf Send a WhatsApp broadcast to the full audience. d With a single click, you can send event invitations, discount vouchers, promotional messages, and customer feedback surveys. sxd "
+        },
+        "buttons": [
+          {
+            "type": "QUICK_REPLY",
+            "index": null,
+            "id": 1,
+            "text": "Send location",
+            "actionData": null
+          }
+        ],
+        "footerText": "",
+        "flow": null,
+        "listObj": null,
+        "ctaUrlInfo": null,
+        "addressMsgParams": {}
+      }
+    },
+    "flowObj": null
+  }

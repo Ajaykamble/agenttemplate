@@ -1,0 +1,4 @@
+enum SendTemplateType {
+  normal,
+  interactive,
+}
