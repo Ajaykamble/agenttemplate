@@ -31,6 +31,34 @@ class InteractiveTemplateListModel {
   TemplateObj? templateObj;
   FlowRawInfoResponse? flowRawInfoResponse;
 
+  Map<String, dynamic>? toFlowObj() {
+    if (template?.button != null) {
+      for (int i = 0; i < (template?.button?.length ?? 0); i++) {
+        //
+        Button? button = template?.button?[i];
+
+        if (button != null) {
+          TemplateButton? templateBtn = templateObj?.components?.firstWhereOrNull((element) => element.type == "BUTTONS")?.buttons?[i];
+          if (button.type == "FLOW") {
+            Map<String, dynamic> flowData = {};
+            for (int j = 0; j < (templateBtn?.flowRawScreenData?.attributes.length ?? 0); j++) {
+              flowData[templateBtn?.flowRawScreenData?.attributes[j].header ?? ""] = templateBtn?.flowRawScreenData?.attributes[j].textController.text ?? "";
+            }
+            return {
+              "actionType": button.flowAction,
+              "flowCta": button.text ?? "",
+              "flowId": button.flowId ?? "",
+              "flowMessageVersion": "3",
+              "screen": button.navigateScreen ?? "",
+              "data": flowData,
+            };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   //
   Map<String, dynamic> interactMsg() {
     if (templateType?.toLowerCase() == "Menu") {
@@ -224,16 +252,25 @@ class InteractiveTemplateListModel {
   });
 
   factory InteractiveTemplateListModel.fromJson(Map<String, dynamic> json) {
+    log("255 ${jsonEncode(json)}");
     var obj = InteractiveTemplateListModel(
       customerInteractiveTemplateId: json["customerInteractiveTemplateId"],
       templateName: json["templateName"],
       language: json["language"],
       waAccountId: json["waAccountId"],
       customerId: json["customerId"],
-      template: json["template"] != null ? InteractiveParaseTemplate.fromJson(json["template"]) : null,
+      template: json["template"] != null
+          ? json["template"].runtimeType == String
+              ? interactiveParaseTemplateFromJson(json["template"])
+              : InteractiveParaseTemplate.fromJson(json["template"])
+          : null,
       status: json["status"],
       templateRefId: json["templateRefId"],
-      fileObject: json["fileObject"] == null ? null : jsonEncode(json["fileObject"]),
+      fileObject: json["fileObject"] == null
+          ? null
+          : json["fileObject"].runtimeType == String
+              ? json["fileObject"]
+              : jsonEncode(json["fileObject"]),
       templateType: json["templateType"],
       createdBy: json["createdBy"],
       updatedBy: json["updatedBy"],
