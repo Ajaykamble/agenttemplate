@@ -31,6 +31,19 @@ class InteractiveTemplateListModel {
   TemplateObj? templateObj;
   FlowRawInfoResponse? flowRawInfoResponse;
 
+  String subType() {
+    switch (templateType) {
+      case "Menu":
+        return "TEXT_MSG";
+      case "Button":
+        return "INTERACTIVE_MSG_BTN";
+      case "List":
+        return "INTERACTIVE_MSG_LIST";
+      default:
+        return "";
+    }
+  }
+
   Map<String, dynamic>? toFlowObj() {
     if (template?.button != null) {
       for (int i = 0; i < (template?.button?.length ?? 0); i++) {
@@ -75,7 +88,9 @@ class InteractiveTemplateListModel {
           }
         }
       }
-      return {"text": text, "link": null, "mediaId": null, "caption": null, "fileName": null, "longitude": null, "latitude": null, "name": null, "address": null, "others": {}};
+      return {
+        "msg": {"text": text, "link": null, "mediaId": null, "caption": null, "fileName": null, "longitude": null, "latitude": null, "name": null, "address": null, "others": {}}
+      };
     }
 
     Map<String, dynamic> addressMsgParams = {};
@@ -167,14 +182,16 @@ class InteractiveTemplateListModel {
     }
 
     return {
-      "headerObj": headerObj,
-      "body": bodyObj,
-      "buttons": buttonObjs,
-      "footerText": template?.footerText ?? "",
-      "flow": flowObj,
-      "listObj": template?.listObj?.toJson(),
-      "ctaUrlInfo": null,
-      "addressMsgParams": addressMsgParams,
+      "interactMsg": {
+        "headerObj": headerObj,
+        "body": bodyObj,
+        "buttons": buttonObjs,
+        "footerText": template?.footerText ?? "",
+        "flow": flowObj,
+        "listObj": template?.listObj?.toJson(),
+        "ctaUrlInfo": null,
+        "addressMsgParams": addressMsgParams,
+      }
     };
   }
 
