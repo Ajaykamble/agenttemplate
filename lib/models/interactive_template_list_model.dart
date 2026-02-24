@@ -36,9 +36,10 @@ class InteractiveTemplateListModel {
       case "Menu":
         return "TEXT_MSG";
       case "Button":
-        return "INTERACTIVE_MSG_BTN";
+        return template?.button?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId != null ? "INTERACTIVE_MSG_FLOW" : "INTERACTIVE_MSG_BTN";
       case "List":
         return "INTERACTIVE_MSG_LIST";
+
       default:
         return "";
     }
