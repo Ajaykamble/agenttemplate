@@ -7,6 +7,7 @@ import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/interactive_template_list_model.dart';
 import 'package:agenttemplate/provider/agent_template_provider.dart';
+import 'package:example/abc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -330,6 +331,24 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
             children: [
               Icon(Icons.description_outlined, size: 72, color: colorScheme.primary.withValues(alpha: 0.5)),
               const SizedBox(height: 24),
+              IconButton(
+                onPressed: () {
+                  //
+                  Map<String, dynamic>? extraJson = extraData;
+                  if (extraJson != null) {
+                    List<dynamic>? flowRawInfo = extraJson['flowRawInfo'];
+                    if (flowRawInfo != null) {
+                      //
+                      Map<String, dynamic> json = {
+                        "status": true,
+                        "rawInfo": jsonEncode({"version": "1.0.0", "screens": flowRawInfo}),
+                      };
+                      FlowRawInfoResponse.fromJson(json);
+                    }
+                  }
+                },
+                icon: Icon(Icons.add),
+              ),
               Text('Pick a Template JSON File', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               Text(

@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:agenttemplate/utils/app_enums.dart';
 import 'package:flutter/material.dart';
 
 FlowRawInfoResponse flowRawInfoResponseFromJson(String str) => FlowRawInfoResponse.fromJson(json.decode(str));
@@ -95,42 +96,8 @@ class RawInfoModel {
       version: json["version"],
       screens: List<FlowRawScreen>.from(json["screens"].map((x) => FlowRawScreen.fromJson(x))),
     );
-    model._filterAttributesByInitValues();
 
     return model;
-  }
-
-  /// Scans all screens' form init-values for ${data.xxx} references,
-  /// then removes attributes that are never used in any init-values
-  /// (i.e. only passed through in footer payloads).
-  void _filterAttributesByInitValues() {
-    Set<String> referencedKeys = {};
-    for (final screen in screens) {
-      _collectInitValueDataKeys(screen.layout, referencedKeys);
-    }
-    for (final screen in screens) {
-      screen.attributes = screen.attributes.where((attr) => referencedKeys.contains(attr.header)).toList();
-    }
-  }
-
-  static void _collectInitValueDataKeys(Map<String, dynamic>? node, Set<String> keys) {
-    if (node == null) return;
-    if (node.containsKey("init-values") && node["init-values"] is Map<String, dynamic>) {
-      (node["init-values"] as Map<String, dynamic>).forEach((_, value) {
-        if (value is String) {
-          for (final match in RegExp(r'\$\{data\.(\w+)\}').allMatches(value)) {
-            keys.add(match.group(1)!);
-          }
-        }
-      });
-    }
-    if (node.containsKey("children") && node["children"] is List) {
-      for (final child in node["children"]) {
-        if (child is Map<String, dynamic>) {
-          _collectInitValueDataKeys(child, keys);
-        }
-      }
-    }
   }
 
   Map<String, dynamic> toJson() => {"version": version, "screens": List<dynamic>.from(screens.map((x) => x.toJson()))};
@@ -143,21 +110,38 @@ class FlowRawScreen {
   Map<String, dynamic>? layout;
   bool? terminal;
 
-  List<FlawRawScreenAttributes> attributes = [];
-
   FlowRawScreen({required this.id, required this.title, this.data, this.layout, this.terminal});
 
-  factory FlowRawScreen.fromJson(Map<String, dynamic> json) {
+  List<FlawRawScreenAttributes> getFlowScreenAttributes(SendTemplateType type) {
     List<FlawRawScreenAttributes> at = [];
+    List<dynamic> children = layout?["children"] ?? [];
+
+    for (Map<String, dynamic> child in children) {
+      //
+      Map<String, dynamic>? initValues = child["init-values"];
+      if (initValues != null) {
+        //
+        initValues.forEach((key, value) {
+          // If the value starts with "${data.", extract the key using a RegExp.
+          RegExp reg = RegExp(r'^\$\{data\.([^\}]+)\}$');
+          if (value is String) {
+            final match = reg.firstMatch(value);
+            if (match != null) {
+              String dataKey = match.group(1)!;
+              // You can process or store `dataKey` as needed, e.g.:
+              at.add(FlawRawScreenAttributes(header: type == SendTemplateType.normal ? dataKey : key));
+            }
+          }
+        });
+      }
+    }
+    return at;
+  }
+
+  factory FlowRawScreen.fromJson(Map<String, dynamic> json) {
     FlowRawScreen screen = FlowRawScreen(id: json["id"], title: json["title"], data: json["data"], layout: json["layout"], terminal: json["terminal"]);
 
-    screen.data?.forEach((key, value) {
-      if (value is Map<String, dynamic>) {
-        at.add(FlawRawScreenAttributes(header: key, type: value["type"]));
-      }
-    });
-
-    screen.attributes = at;
+    //screen.attributes = at;
     return screen;
   }
 
@@ -168,9 +152,9 @@ class FlawRawScreenAttributes {
   //
   //
   String? header;
-  String? type;
+  //String? type;
 
   TextEditingController textController = TextEditingController();
 
-  FlawRawScreenAttributes({this.header, this.type});
+  FlawRawScreenAttributes({this.header});
 }

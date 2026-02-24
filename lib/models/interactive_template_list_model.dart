@@ -55,8 +55,8 @@ class InteractiveTemplateListModel {
           TemplateButton? templateBtn = templateObj?.components?.firstWhereOrNull((element) => element.type == "BUTTONS")?.buttons?[i];
           if (button.type == "FLOW") {
             Map<String, dynamic> flowData = {};
-            for (int j = 0; j < (templateBtn?.flowRawScreenData?.attributes.length ?? 0); j++) {
-              flowData[templateBtn?.flowRawScreenData?.attributes[j].header ?? ""] = templateBtn?.flowRawScreenData?.attributes[j].textController.text ?? "";
+            for (int j = 0; j < (templateBtn?.flowRawAttributes.length ?? 0); j++) {
+              flowData[templateBtn?.flowRawAttributes[j].header ?? ""] = templateBtn?.flowRawAttributes[j].textController.text ?? "";
             }
             return {
               "actionType": button.flowAction,
@@ -130,8 +130,8 @@ class InteractiveTemplateListModel {
             //
             buttonObjs.add({"type": button.type, "index": null, "id": null, "text": null, "actionData": null});
             Map<String, dynamic> flowData = {};
-            for (int j = 0; j < (templateBtn?.flowRawScreenData?.attributes.length ?? 0); j++) {
-              flowData[templateBtn?.flowRawScreenData?.attributes[j].header ?? ""] = templateBtn?.flowRawScreenData?.attributes[j].textController.text ?? "";
+            for (int j = 0; j < (templateBtn?.flowRawAttributes.length ?? 0); j++) {
+              flowData[templateBtn?.flowRawAttributes[j].header ?? ""] = templateBtn?.flowRawAttributes[j].textController.text ?? "";
             }
 
             flowObj = {

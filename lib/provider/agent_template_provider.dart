@@ -16,6 +16,8 @@ class AgentTemplateProvider extends ChangeNotifier {
     return _instance;
   }
 
+  SendTemplateType? sendTemplateType;
+
   Future<CatalogueResponseModel?> Function()? onGetCatalogue;
   Future<FlowRawInfoResponse?> Function(String flowId)? onGetFlowRawInfo;
   Future<DateTimeResponseModel?> Function()? onGetDateTime;
@@ -154,6 +156,15 @@ class AgentTemplateProvider extends ChangeNotifier {
           if (flowButton != null) {
             FlowRawScreen? screenData = flowRawInfoResponse?.rawInfo?.screens.firstWhereOrNull((element) => element.id == flowButton.navigateScreen);
             flowButton.flowRawScreenData = screenData;
+            if (sendTemplateType == SendTemplateType.normal) {
+              flowButton.flowRawAttributes = screenData?.getFlowScreenAttributes(sendTemplateType!) ?? [];
+            } else {
+              List<FlawRawScreenAttributes> list = [];
+              for (FlowRawScreen screen in (flowRawInfoResponse?.rawInfo?.screens ?? [])) {
+                list.addAll(screen.getFlowScreenAttributes(sendTemplateType!));
+              }
+              flowButton.flowRawAttributes = list;
+            }
           }
         }
       }

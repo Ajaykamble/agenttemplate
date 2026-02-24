@@ -50,7 +50,7 @@ class _FlowFormState extends State<FlowForm> {
           case ApiStatus.success:
             TemplateButton? flowButton = widget.component.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
 
-            if (flowButton?.flowRawScreenData?.attributes.isNotEmpty ?? false) {
+            if (flowButton?.flowRawAttributes.isNotEmpty ?? false) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +65,9 @@ class _FlowFormState extends State<FlowForm> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(flowButton?.flowRawScreenData?.attributes[index].header ?? "", style: Theme.of(context).textTheme.bodyMedium),
+                          Text(flowButton?.flowRawAttributes[index].header ?? "", style: Theme.of(context).textTheme.bodyMedium),
                           TextFormField(
-                            controller: flowButton?.flowRawScreenData?.attributes[index].textController,
+                            controller: flowButton?.flowRawAttributes[index].textController,
                             decoration: InputDecoration(hintText: "Enter value"),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -82,7 +82,7 @@ class _FlowFormState extends State<FlowForm> {
                     },
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: flowButton?.flowRawScreenData?.attributes.length ?? 0,
+                    itemCount: flowButton?.flowRawAttributes.length ?? 0,
                   ),
                 ],
               );

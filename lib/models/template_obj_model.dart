@@ -144,6 +144,8 @@ class TemplateButton {
   final String? navigateScreen;
   final String? ttlMinutes;
 
+  List<FlawRawScreenAttributes> flowRawAttributes = [];
+
   FlowRawScreen? flowRawScreenData;
   ValueNotifier<ProductDetailsDatum?> selectedProduct = ValueNotifier<ProductDetailsDatum?>(null);
 
@@ -194,11 +196,8 @@ class TemplateButton {
         break;
       case "FLOW":
         List<Map<String, dynamic>> flowActionData = [];
-        FlowRawScreen? flowRawScreen = flowRawScreenData;
-        if (flowRawScreen != null) {
-          for (final action in flowRawScreen.attributes) {
-            flowActionData.add({"key": action.header, "value": action.textController.text, "actionType": "static"});
-          }
+        for (final action in flowRawAttributes) {
+          flowActionData.add({"key": action.header, "value": action.textController.text, "actionType": "static"});
         }
         return {
           "type": "FLOW",

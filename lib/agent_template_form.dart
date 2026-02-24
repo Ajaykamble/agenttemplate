@@ -60,6 +60,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
     super.initState();
     agentTemplateProvider = Provider.of<AgentTemplateProvider>(context, listen: false);
     agentTemplateProvider.onGetCatalogue = widget.onGetCatalogue;
+    agentTemplateProvider.sendTemplateType = widget.sendTemplateType;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
     agentTemplateProvider.onGetDateTime = widget.onGetDateTime;
     WidgetsBinding.instance.addPostFrameCallback((_) {
