@@ -39,7 +39,10 @@ class InteractiveTemplateListModel {
         return template?.button?.firstWhereOrNull((element) => element.type == "FLOW")?.flowId != null ? "INTERACTIVE_MSG_FLOW" : "INTERACTIVE_MSG_BTN";
       case "List":
         return "INTERACTIVE_MSG_LIST";
-
+      case "Address":
+        return "INTERACTIVE_ADDRESS_MESSAGE";
+      case "LocationRequest":
+        return "INTERACTIVE_LOCATION_REQUEST";
       default:
         return "";
     }
@@ -75,7 +78,8 @@ class InteractiveTemplateListModel {
 
   //
   Map<String, dynamic> interactMsg() {
-    if (templateType?.toLowerCase() == "Menu") {
+    log("${templateType}", name: "NEW_TEST_TEMPLATE_PROVIDER");
+    if (templateType?.toLowerCase() == "menu") {
       String text = template?.body?.text ?? "";
       if (template?.body != null) {
         Component? bodyComponent = templateObj?.components?.firstWhereOrNull((element) => element.type == "BODY");
