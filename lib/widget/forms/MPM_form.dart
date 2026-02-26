@@ -160,6 +160,12 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                       child: TextFormField(
                         controller: widget.attr.categoryController,
                         decoration: InputDecoration(hintText: AppLocalizations.of(context)?.categoryName ?? 'Category Name'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return AppLocalizations.of(context)?.thisFieldIsRequired ?? 'Category name is required';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     if (widget.onRemove != null)

@@ -130,7 +130,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
             if (otherComponents.isNotEmpty) ...[
               SizedBox(
                 width: _cardWidth,
-                child: CardPreviewWidget(components: otherComponents),
+                child: CardPreviewWidget(components: otherComponents, accountName: widget.accountName),
               ),
               if (buttonsComponent != null) ...[
                 const SizedBox(height: 7),
@@ -211,6 +211,7 @@ class _AgentTemplatePreviewState extends State<AgentTemplatePreview> {
                                         CardPreviewWidget(
                                           key: index == currentPage ? _cardKey : null,
                                           components: components,
+                                          accountName: widget.accountName,
                                         ),
                                         const SizedBox(height: 7),
                                         if (buttonsComponent != null) ...[

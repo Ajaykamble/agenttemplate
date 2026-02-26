@@ -167,6 +167,7 @@ class TemplateButton {
   }
 
   Map<String, dynamic> toServerJson({required Component? HEADER_COMPONENT, required int index}) {
+    log("${type}", name: "NEW_TEST_TEMPLATE_PROVIDER");
     switch (type) {
       case "QUICK_REPLY":
         return {
@@ -231,22 +232,19 @@ class TemplateButton {
         break;
       case "CATALOG":
         //
-        if (HEADER_COMPONENT != null) {
-          ProductDetailsDatum? selectedProduct = HEADER_COMPONENT.selectedProduct.value;
-          if (selectedProduct != null) {
-            Map<String, dynamic> json = {
-              "type": "CATALOG",
-              "index": index,
-              "text": "",
-              "valueType": "static",
-              "sectionObjs": [
-                {"title": "", "productRetailerIds": []},
-              ],
-              "thumbnailRetailerId": selectedProduct.retailerId ?? "",
-              "flowActionData": [],
-            };
-            return json;
-          }
+        if (selectedProduct.value != null) {
+          Map<String, dynamic> json = {
+            "type": "CATALOG",
+            "index": index,
+            "text": "",
+            "valueType": "static",
+            "sectionObjs": [
+              {"title": "", "productRetailerIds": []},
+            ],
+            "thumbnailRetailerId": selectedProduct.value?.retailerId ?? "",
+            "flowActionData": [],
+          };
+          return json;
         }
         break;
       case "MPM":
@@ -890,6 +888,7 @@ class TemplateObj {
   }
 
   String getButtonPhJson() {
+    log("getButtonPhJson", name: "NEW_TEST_TEMPLATE_PROVIDER");
     List<Map<String, dynamic>> buttonJson = [];
     Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
     if (buttonComponent != null) {
