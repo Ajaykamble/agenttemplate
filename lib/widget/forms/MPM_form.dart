@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
@@ -73,8 +75,9 @@ class _MPMFormState extends State<MPMForm> {
                         attr: attr,
                         index: index,
                         products: products,
-                        onRemove: mpmButton!.mpmAttributes.length > 1 ? () => mpmButton!.removeMPMAttributes(index) : null,
+                        onRemove: attr.isExternallyAdded ? () => mpmButton!.removeMPMAttributes(index) : null,
                         backgroundColor: widget.backgroundColor,
+                        mpmButton: mpmButton!,
                       );
                     },
                     separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -97,7 +100,8 @@ class _MPMCategoryCard extends StatefulWidget {
   final List<ProductDetailsDatum> products;
   final VoidCallback? onRemove;
   final Color backgroundColor;
-  const _MPMCategoryCard({required this.attr, required this.index, required this.products, this.onRemove, required this.backgroundColor});
+  final TemplateButton mpmButton;
+  const _MPMCategoryCard({required this.attr, required this.index, required this.products, this.onRemove, required this.backgroundColor, required this.mpmButton});
   @override
   State<_MPMCategoryCard> createState() => _MPMCategoryCardState();
 }
@@ -198,8 +202,22 @@ class _MPMCategoryCardState extends State<_MPMCategoryCard> {
                               child: ValueListenableBuilder<List<ProductDetailsDatum>>(
                                 valueListenable: widget.attr.selectedProductsNotifier,
                                 builder: (context, value, child) {
+                                  //
+
+                                  List<MultiSelectItem<String>> items = widget.products.map((p) => MultiSelectItem(value: p.id ?? '', label: p.name ?? p.id ?? '')).toList();
+                                  //
+                                  for (int i = 0; i < widget.mpmButton.mpmAttributes.length; i++) {
+                                    if (i != widget.index) {
+                                      //
+                                      MPMAttributes attr = widget.mpmButton.mpmAttributes[i];
+                                      List<String?> idList = attr.selectedProductsNotifier.value.map((e) => e.id).toList();
+
+                                      items.removeWhere((item) => idList.contains(item.value));
+                                    }
+                                  }
+
                                   return MultiSelectDropdown<String>(
-                                    items: widget.products.map((p) => MultiSelectItem(value: p.id ?? '', label: p.name ?? p.id ?? '')).toList(),
+                                    items: items,
                                     initialValues: widget.attr.selectedProductsNotifier.value.map((p) => p.id ?? '').toList(),
                                     hintText: AppLocalizations.of(context)?.selectProduct ?? 'Select Product',
                                     isSearchEnabled: true,

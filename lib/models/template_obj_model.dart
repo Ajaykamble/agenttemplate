@@ -114,9 +114,11 @@ class ComponentExample {
 }
 
 class MPMAttributes {
-  //
+  final bool isExternallyAdded;
   TextEditingController categoryController = TextEditingController();
   ValueNotifier<List<ProductDetailsDatum>> selectedProductsNotifier = ValueNotifier<List<ProductDetailsDatum>>([]);
+
+  MPMAttributes({this.isExternallyAdded = false});
 }
 // ---------------------------------------------------------------------------
 // TemplateButton
@@ -155,7 +157,7 @@ class TemplateButton {
   ValueNotifier<int> mpmAttributesNotifier = ValueNotifier<int>(1);
 
   void addMPMAttributes() {
-    mpmAttributes.add(MPMAttributes());
+    mpmAttributes.add(MPMAttributes(isExternallyAdded: true));
     mpmAttributesNotifier.value = mpmAttributes.length;
   }
 
