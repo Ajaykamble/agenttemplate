@@ -190,7 +190,7 @@ class InteractiveTemplateListModel {
       "interactMsg": {
         "headerObj": headerObj,
         "body": bodyObj,
-        "buttons": buttonObjs,
+        "buttons": buttonObjs.isEmpty ? null : buttonObjs,
         "footerText": template?.footerText ?? "",
         "flow": flowObj,
         "listObj": template?.listObj?.toJson(),

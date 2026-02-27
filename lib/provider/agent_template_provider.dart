@@ -17,6 +17,7 @@ class AgentTemplateProvider extends ChangeNotifier {
   }
 
   SendTemplateType? sendTemplateType;
+  String? shortBaseUrl;
 
   Future<CatalogueResponseModel?> Function()? onGetCatalogue;
   Future<FlowRawInfoResponse?> Function(String flowId)? onGetFlowRawInfo;

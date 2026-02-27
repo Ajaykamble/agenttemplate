@@ -63,6 +63,7 @@ class _AgentTemplateFormState extends State<AgentTemplateForm> {
     agentTemplateProvider.sendTemplateType = widget.sendTemplateType;
     agentTemplateProvider.onGetFlowRawInfo = widget.onGetFlowRawInfo;
     agentTemplateProvider.onGetDateTime = widget.onGetDateTime;
+    agentTemplateProvider.shortBaseUrl = widget.shortBaseUrl;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       agentTemplateProvider.templateObj = widget.templateObj;
     });

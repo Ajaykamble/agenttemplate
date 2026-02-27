@@ -784,6 +784,28 @@ class TemplateObj {
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
 
+  ////
+  ///
+  ///
+  bool hasShortBaseUrl(String shortBaseUrl) {
+    //
+
+    for (final component in components ?? []) {
+      //
+      if (component.type == 'BUTTONS') {
+        //
+        for (final button in component.buttons ?? []) {
+          //
+          if (button.type == "URL" && (button.url ?? "").startsWith(shortBaseUrl)) {
+            //
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   resetSmartUrlAttributes() {
     //
     for (final component in components ?? []) {
