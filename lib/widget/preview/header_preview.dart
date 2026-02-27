@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:agenttemplate/l10n/app_localizations.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/file_downloader.dart';
@@ -9,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class HeaderPreview extends StatefulWidget {
   final Component headerComponent;
@@ -250,31 +249,12 @@ class _LocationHeaderPreview extends StatelessWidget {
   final Component headerComponent;
   const _LocationHeaderPreview({super.key, required this.headerComponent});
 
-  static const int _zoom = 15;
-  static const int _tileSize = 256;
+  /// Embed map using Google Maps. The output=embed format works without an API key.
 
-  /// Converts lat/lng to the OSM tile (x, y) and the pixel offset within that
-  /// tile so we can position the marker precisely.
-  static ({int tileX, int tileY, double offsetX, double offsetY}) _latLngToTile(
-    double lat,
-    double lng,
-  ) {
-    final n = math.pow(2, _zoom).toDouble();
-    final latRad = lat * math.pi / 180;
+  static const int _zoom = 14;
 
-    final exactX = (lng + 180) / 360 * n;
-    final exactY = (1 - math.log(math.tan(latRad) + 1 / math.cos(latRad)) / math.pi) / 2 * n;
-
-    return (
-      tileX: exactX.floor(),
-      tileY: exactY.floor(),
-      offsetX: (exactX - exactX.floor()) * _tileSize,
-      offsetY: (exactY - exactY.floor()) * _tileSize,
-    );
-  }
-
-  static String _tileUrl(int x, int y) {
-    return 'https://tile.openstreetmap.org/$_zoom/$x/$y.png';
+  static String _embedMapUrl(double lat, double lng) {
+    return 'https://www.google.com/maps?q=$lat,$lng&z=$_zoom&output=embed';
   }
 
   @override
@@ -297,51 +277,14 @@ class _LocationHeaderPreview extends StatelessWidget {
               );
             }
 
-            final tile = _latLngToTile(lat, lng);
+            final mapUrl = _embedMapUrl(lat, lng);
 
             return InkWell(
-              onTap: () => launchUrl(
-                Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng'),
-                mode: LaunchMode.externalApplication,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final w = constraints.maxWidth;
-                    final h = constraints.maxHeight;
-
-                    // Shift the 3x3 tile grid so the pin coordinate is centred.
-                    final gridLeft = w / 2 - tile.offsetX - _tileSize;
-                    final gridTop = h / 2 - tile.offsetY - _tileSize;
-
-                    return Stack(
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        // 3x3 tile grid for full coverage
-                        for (int dy = -1; dy <= 1; dy++)
-                          for (int dx = -1; dx <= 1; dx++)
-                            Positioned(
-                              left: gridLeft + (dx + 1) * _tileSize,
-                              top: gridTop + (dy + 1) * _tileSize,
-                              width: _tileSize.toDouble(),
-                              height: _tileSize.toDouble(),
-                              child: CachedNetworkImage(
-                                imageUrl: _tileUrl(tile.tileX + dx, tile.tileY + dy),
-                                fit: BoxFit.cover,
-                                placeholder: (_, __) => ColoredBox(color: Colors.grey.shade300),
-                                errorWidget: (_, __, ___) => ColoredBox(color: Colors.grey.shade300),
-                              ),
-                            ),
-                        // Red pin centred on the coordinate
-                        Positioned(
-                          left: w / 2 - 16,
-                          top: h / 2 - 32,
-                          child: Icon(Icons.location_on, size: 32, color: Colors.red),
-                        ),
-                      ],
-                    );
-                  },
+              onTap: () => launchUrl(Uri.parse(mapUrl), mode: LaunchMode.externalApplication),
+              child: IgnorePointer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: _EmbedMapView(embedUrl: mapUrl),
                 ),
               ),
             );
@@ -349,6 +292,82 @@ class _LocationHeaderPreview extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _EmbedMapView extends StatefulWidget {
+  final String embedUrl;
+
+  const _EmbedMapView({required this.embedUrl});
+
+  @override
+  State<_EmbedMapView> createState() => _EmbedMapViewState();
+}
+
+class _EmbedMapViewState extends State<_EmbedMapView> {
+  late final WebViewController _controller;
+
+  static String _iframeHtml(String embedUrl) {
+    final escaped = embedUrl.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    return '''
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; }
+    html, body, iframe { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <iframe
+    src="$escaped"
+    width="100%"
+    height="100%"
+    style="border:0"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</body>
+</html>''';
+  }
+
+  void _loadMap() {
+    _controller.loadHtmlString(
+      _iframeHtml(widget.embedUrl),
+      baseUrl: 'https://www.google.com/',
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            if (request.url.startsWith('https://www.google.com/')) {
+              return NavigationDecision.navigate;
+            }
+            return NavigationDecision.prevent;
+          },
+        ),
+      );
+    _loadMap();
+  }
+
+  @override
+  void didUpdateWidget(covariant _EmbedMapView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.embedUrl != widget.embedUrl) {
+      _loadMap();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WebViewWidget(controller: _controller);
   }
 }
 
