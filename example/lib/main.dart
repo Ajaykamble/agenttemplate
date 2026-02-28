@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:agenttemplate/agent_template_form.dart';
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/interactive_template_list_model.dart';
@@ -335,18 +334,16 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                 onPressed: () {
                   //
                   Map<String, dynamic>? extraJson = extraData;
-                  if (extraJson != null) {
-                    List<dynamic>? flowRawInfo = extraJson['flowRawInfo'];
-                    if (flowRawInfo != null) {
-                      //
-                      Map<String, dynamic> json = {
-                        "status": true,
-                        "rawInfo": jsonEncode({"version": "1.0.0", "screens": flowRawInfo}),
-                      };
-                      FlowRawInfoResponse.fromJson(json);
-                    }
+                  List<dynamic>? flowRawInfo = extraJson['flowRawInfo'];
+                  if (flowRawInfo != null) {
+                    //
+                    Map<String, dynamic> json = {
+                      "status": true,
+                      "rawInfo": jsonEncode({"version": "1.0.0", "screens": flowRawInfo}),
+                    };
+                    FlowRawInfoResponse.fromJson(json);
                   }
-                },
+                                },
                 icon: Icon(Icons.add),
               ),
               Text('Pick a Template JSON File', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600)),
@@ -543,7 +540,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                           accountName: "John Doe",
                           accountPhone: "XXXXXXXXXX",
                           onBackPressed: () => _showingPreview.value = false,
-                          sendTemplateType: _templateLoadType! ?? SendTemplateType.normal,
+                          sendTemplateType: _templateLoadType ?? SendTemplateType.normal,
                         ),
                       ),
                     ],
@@ -605,7 +602,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                 if (_formKey.currentState!.validate()) {
                   //
                   ///
-                  log("${jsonEncode(_selectedTemplate?.interactiveTemplateListModel?.interactMsg())}");
+                  log(jsonEncode(_selectedTemplate?.interactiveTemplateListModel?.interactMsg()));
                 }
               },
               child: const Text('Submit'),
@@ -713,7 +710,7 @@ class _FilePickerHomePageState extends State<FilePickerHomePage> {
                     width: 140,
                     height: 140,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(width: 140, height: 140, color: Colors.grey.shade200, child: const Icon(Icons.image, size: 40)),
+                    errorBuilder: (_, __, ___) => Container(width: 140, height: 140, color: Colors.grey.shade200, child: const Icon(Icons.image, size: 40)),  
                   )
                 : Container(width: 140, height: 140, color: Colors.grey.shade200, child: const Icon(Icons.image, size: 40)),
           ),

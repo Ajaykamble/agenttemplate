@@ -1,7 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:agenttemplate/models/template_obj_model.dart';
+import 'package:agenttemplate/utils/template_preview_styles.dart';
 import 'package:agenttemplate/widget/preview/body_preview.dart';
 import 'package:agenttemplate/widget/preview/footer_preview.dart';
 import 'package:agenttemplate/widget/preview/header_preview.dart';
@@ -81,7 +80,7 @@ class CatalogPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 height: cardHeight,
                 width: double.infinity,
                 child: ClipRRect(
@@ -108,7 +107,7 @@ class CatalogPreview extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "View ${accountName}'s Catalog on WhatsApp",
+                      "View $accountName's Catalog on WhatsApp",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 3),
@@ -131,17 +130,17 @@ class CardComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 15),
+      margin: EdgeInsets.symmetric(horizontal: TemplatePreviewStyles.cardHorizontalMargin),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(TemplatePreviewStyles.cardBorderRadius),
       ),
-      color: Colors.white,
+      color: TemplatePreviewStyles.cardBackgroundColor,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(TemplatePreviewStyles.cardBorderRadius),
         ),
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(TemplatePreviewStyles.cardPadding),
         child: child,
       ),
     );

@@ -81,7 +81,7 @@ class _HeaderFormState extends State<HeaderForm> {
 class _HeaderTextForm extends StatefulWidget {
   final Component headerComponent;
   final Map<String, dynamic> predefinedAttributes;
-  const _HeaderTextForm({super.key, required this.headerComponent, required this.predefinedAttributes});
+  const _HeaderTextForm({required this.headerComponent, required this.predefinedAttributes});
 
   @override
   State<_HeaderTextForm> createState() => _HeaderTextFormState();
@@ -195,7 +195,7 @@ class _HeaderMediaForm extends StatefulWidget {
   final String? fileObject;
   final Future<FileUploadResponse?> Function(XFile file)? onFileUpload;
   final SendTemplateType sendTemplateType;
-  const _HeaderMediaForm({super.key, required this.headerComponent, this.fileObject, this.onFileUpload, required this.sendTemplateType});
+  const _HeaderMediaForm({required this.headerComponent, this.fileObject, this.onFileUpload, required this.sendTemplateType});
 
   @override
   State<_HeaderMediaForm> createState() => __HeaderMediaFormState();
@@ -376,7 +376,7 @@ class __HeaderMediaFormState extends State<_HeaderMediaForm> {
 
 class _HeaderLocationForm extends StatefulWidget {
   final Component headerComponent;
-  const _HeaderLocationForm({super.key, required this.headerComponent});
+  const _HeaderLocationForm({required this.headerComponent});
 
   @override
   State<_HeaderLocationForm> createState() => __HeaderLocationFormState();
@@ -471,7 +471,7 @@ class __HeaderLocationFormState extends State<_HeaderLocationForm> {
 class _HeaderProductForm extends StatefulWidget {
   final Component headerComponent;
   final VoidCallback onProductSelected;
-  const _HeaderProductForm({super.key, required this.headerComponent, required this.onProductSelected});
+  const _HeaderProductForm({required this.headerComponent, required this.onProductSelected});
 
   @override
   State<_HeaderProductForm> createState() => __HeaderProductFormState();

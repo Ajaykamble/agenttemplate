@@ -150,10 +150,10 @@ class AgentTemplateProvider extends ChangeNotifier {
 
       if (flowRawInfoResponse != null) {
         //
-        Component? BUTTONS_COMPONENT = templateObj?.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
-        if (BUTTONS_COMPONENT != null) {
+        Component? buttonsComponent = templateObj?.components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
+        if (buttonsComponent != null) {
           //
-          TemplateButton? flowButton = BUTTONS_COMPONENT.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
+          TemplateButton? flowButton = buttonsComponent.buttons?.firstWhereOrNull((element) => element.type == "FLOW");
           if (flowButton != null) {
             FlowRawScreen? screenData = flowRawInfoResponse?.rawInfo?.screens.firstWhereOrNull((element) => element.id == flowButton.navigateScreen);
             flowButton.flowRawScreenData = screenData;

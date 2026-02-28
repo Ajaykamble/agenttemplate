@@ -169,7 +169,7 @@ class TemplateButton {
   }
 
   Map<String, dynamic> toServerJson({required Component? HEADER_COMPONENT, required int index}) {
-    log("${type}", name: "NEW_TEST_TEMPLATE_PROVIDER");
+    log(type, name: "NEW_TEST_TEMPLATE_PROVIDER");
     switch (type) {
       case "QUICK_REPLY":
         return {
@@ -183,7 +183,7 @@ class TemplateButton {
           "thumbnailRetailerId": "",
           "flowActionData": [],
         };
-        break;
+     
       case "COPY_CODE":
         return {
           "type": "COPY_CODE",
@@ -196,7 +196,7 @@ class TemplateButton {
           "thumbnailRetailerId": "",
           "flowActionData": [],
         };
-        break;
+       
       case "FLOW":
         List<Map<String, dynamic>> flowActionData = [];
         for (final action in flowRawAttributes) {
@@ -380,29 +380,29 @@ class CarouselCard {
     List<Map<String, dynamic>> buttonObjs = [];
     List<Map<String, dynamic>> bodyObjs = [];
 
-    Component? BUTTONS_COMPONENT = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
-    Component? HEADER_COMPONENT = components.firstWhereOrNull((element) => element.type == 'HEADER');
-    Component? BODY_COMPONENT = components.firstWhereOrNull((element) => element.type == 'BODY');
+    Component? buttonsComponent = components.firstWhereOrNull((element) => element.type == 'BUTTONS');
+    Component? headerComponent = components.firstWhereOrNull((element) => element.type == 'HEADER');
+    Component? bodyComponent = components.firstWhereOrNull((element) => element.type == 'BODY');
 
-    if (BUTTONS_COMPONENT != null) {
+    if (buttonsComponent != null) {
       //
-      for (int i = 0; i < BUTTONS_COMPONENT.buttons!.length; i++) {
-        TemplateButton button = BUTTONS_COMPONENT.buttons![i];
-        Map<String, dynamic> json = button.toServerJson(HEADER_COMPONENT: HEADER_COMPONENT, index: i);
+      for (int i = 0; i < buttonsComponent.buttons!.length; i++) {
+        TemplateButton button = buttonsComponent.buttons![i];
+        Map<String, dynamic> json = button.toServerJson(HEADER_COMPONENT: headerComponent, index: i);
         if (json.isNotEmpty) {
           buttonObjs.add(json);
         }
       }
     }
-    if (HEADER_COMPONENT != null) {
-      Map<String, dynamic> json = HEADER_COMPONENT.toServerHeaderJson();
+    if (headerComponent != null) {
+      Map<String, dynamic> json = headerComponent.toServerHeaderJson();
       if (json.isNotEmpty) {
         headerObj = json;
       }
     }
 
-    if (BODY_COMPONENT != null) {
-      List<Map<String, dynamic>> json = BODY_COMPONENT.toServerBodyJson();
+    if (bodyComponent != null) {
+      List<Map<String, dynamic>> json = bodyComponent.toServerBodyJson();
       if (json.isNotEmpty) {
         bodyObjs = json;
       }
@@ -570,7 +570,7 @@ class Component {
       int index = 1;
       for (TemplateButton button in component.buttons ?? []) {
         if (button.type == "QUICK_REPLY") {
-          button.buttonTextController = TextEditingController(text: fromCarouselCard ? "${button.text}" : "$index");
+          button.buttonTextController = TextEditingController(text: fromCarouselCard ? button.text : "$index");
           index++;
         }
       }
@@ -806,7 +806,7 @@ class TemplateObj {
     return false;
   }
 
-  resetSmartUrlAttributes() {
+  void resetSmartUrlAttributes() {
     //
     for (final component in components ?? []) {
       if (component.type == 'BODY') {

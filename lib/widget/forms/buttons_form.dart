@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:agenttemplate/agenttemplate.dart';
 import 'package:agenttemplate/l10n/app_localizations.dart';

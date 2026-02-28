@@ -70,7 +70,7 @@ class _HeaderPreviewState extends State<HeaderPreview> {
 class _CommonCard extends StatelessWidget {
   final Widget child;
   final double cardHeight;
-  const _CommonCard({super.key, required this.child, required this.cardHeight});
+  const _CommonCard({required this.child, required this.cardHeight});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class _CommonCard extends StatelessWidget {
 
 class _VideoHeaderPreview extends StatefulWidget {
   final Component headerComponent;
-  const _VideoHeaderPreview({super.key, required this.headerComponent});
+  const _VideoHeaderPreview({required this.headerComponent});
 
   @override
   State<_VideoHeaderPreview> createState() => _VideoHeaderPreviewState();
@@ -167,7 +167,7 @@ class _VideoHeaderPreviewState extends State<_VideoHeaderPreview> {
 
 class _DocumentHeaderPreview extends StatefulWidget {
   final Component headerComponent;
-  const _DocumentHeaderPreview({super.key, required this.headerComponent});
+  const _DocumentHeaderPreview({required this.headerComponent});
 
   @override
   State<_DocumentHeaderPreview> createState() => _DocumentHeaderPreviewState();
@@ -247,7 +247,7 @@ class _DocumentHeaderPreviewState extends State<_DocumentHeaderPreview> {
 
 class _LocationHeaderPreview extends StatelessWidget {
   final Component headerComponent;
-  const _LocationHeaderPreview({super.key, required this.headerComponent});
+  const _LocationHeaderPreview({required this.headerComponent});
 
   /// Embed map using Google Maps. The output=embed format works without an API key.
 
@@ -373,7 +373,7 @@ class _EmbedMapViewState extends State<_EmbedMapView> {
 
 class _ProductHeaderPreview extends StatelessWidget {
   final Component headerComponent;
-  const _ProductHeaderPreview({super.key, required this.headerComponent});
+  const _ProductHeaderPreview({required this.headerComponent});
 
   @override
   Widget build(BuildContext context) {
@@ -400,7 +400,7 @@ class _ProductHeaderPreview extends StatelessWidget {
 
 class _TextHeaderPreview extends StatefulWidget {
   final Component headerComponent;
-  const _TextHeaderPreview({super.key, required this.headerComponent});
+  const _TextHeaderPreview({required this.headerComponent});
 
   @override
   State<_TextHeaderPreview> createState() => _TextHeaderPreviewState();
@@ -471,7 +471,6 @@ class _TextHeaderPreviewState extends State<_TextHeaderPreview> {
 class _ImageHeaderPreview extends StatelessWidget {
   final Component headerComponent;
   const _ImageHeaderPreview({
-    super.key,
     required this.headerComponent,
   });
 

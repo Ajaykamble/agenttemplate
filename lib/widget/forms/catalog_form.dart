@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:agenttemplate/models/catalogue_response_model.dart';
 import 'package:agenttemplate/models/template_obj_model.dart';

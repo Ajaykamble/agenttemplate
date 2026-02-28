@@ -78,7 +78,7 @@ class InteractiveTemplateListModel {
 
   //
   Map<String, dynamic> interactMsg() {
-    log("${templateType}", name: "NEW_TEST_TEMPLATE_PROVIDER");
+    log("$templateType", name: "NEW_TEST_TEMPLATE_PROVIDER");
     if (templateType?.toLowerCase() == "menu") {
       String text = template?.body?.text ?? "";
       if (template?.body != null) {
@@ -100,7 +100,7 @@ class InteractiveTemplateListModel {
 
     Map<String, dynamic> addressMsgParams = {};
 
-    Map<String, dynamic>? bodyObj = null;
+    Map<String, dynamic>? bodyObj;
 
     if (template?.body != null) {
       String text = template?.body?.text ?? "";
@@ -117,7 +117,7 @@ class InteractiveTemplateListModel {
       }
       bodyObj = {"type": "text", "text": text};
     }
-    Map<String, dynamic>? flowObj = null;
+    Map<String, dynamic>? flowObj;
 
     List<Map<String, dynamic>> buttonObjs = [];
 
@@ -161,7 +161,7 @@ class InteractiveTemplateListModel {
       }
     }
 
-    Map<String, dynamic>? headerObj = null;
+    Map<String, dynamic>? headerObj;
 
     if (template?.headerObj != null) {
       //
