@@ -39,4 +39,17 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
   end
+
+  # Fix "bad interpreter: Operation not permitted" - remove quarantine and set execute bit
+  # on CocoaPods scripts (common when project was transferred via cloud/WhatsApp)
+  pods_root = installer.sandbox.root
+  Dir.glob("#{pods_root}/Target Support Files/**/*.sh").each do |script|
+    begin
+      File.chmod(0755, script)
+      system('xattr', '-d', 'com.apple.quarantine', script, out: File::NULL, err: File::NULL)
+      system('xattr', '-d', 'com.apple.provenance', script, out: File::NULL, err: File::NULL)
+    rescue => e
+      puts "Warning: Could not fix permissions for #{script}: #{e.message}"
+    end
+  end
 end

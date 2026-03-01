@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
 class FooterPreview extends StatelessWidget {
   final Component? footerComponent;
-  const FooterPreview({super.key, this.footerComponent});
+  final bool displayTime;
+  const FooterPreview({super.key, this.footerComponent, required this.displayTime});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +20,12 @@ class FooterPreview extends StatelessWidget {
                   style: style,
                 ),
         ),
-        Text(
-          DateFormat("HH:mm").format(DateTime.now()),
-          style: style,
-        ),
+        if (displayTime) ...[
+          Text(
+            DateFormat("HH:mm").format(DateTime.now()),
+            style: style,
+          ),
+        ],
       ],
     );
   }

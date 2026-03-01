@@ -274,7 +274,6 @@ class InteractiveTemplateListModel {
   });
 
   factory InteractiveTemplateListModel.fromJson(Map<String, dynamic> json) {
-    log("255 ${jsonEncode(json)}");
     var obj = InteractiveTemplateListModel(
       customerInteractiveTemplateId: json["customerInteractiveTemplateId"],
       templateName: json["templateName"],

@@ -183,7 +183,7 @@ class TemplateButton {
           "thumbnailRetailerId": "",
           "flowActionData": [],
         };
-     
+
       case "COPY_CODE":
         return {
           "type": "COPY_CODE",
@@ -196,7 +196,7 @@ class TemplateButton {
           "thumbnailRetailerId": "",
           "flowActionData": [],
         };
-       
+
       case "FLOW":
         List<Map<String, dynamic>> flowActionData = [];
         for (final action in flowRawAttributes) {
@@ -784,6 +784,112 @@ class TemplateObj {
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
 
+  void prePopulateValues(String? templatePrams, {Future<CatalogueResponseModel?> Function()? catalogueResponseFuture}) async {
+    //
+    if (templatePrams != null) {
+      Map<String, dynamic> params = jsonDecode(templatePrams);
+
+      String headerText = params['header'] ?? '{}';
+      try {
+        Map<String, dynamic> headerObj = jsonDecode(headerText);
+        if (headerObj.isNotEmpty) {
+          //
+          Component? headerComponent = components?.firstWhereOrNull((element) => element.type == 'HEADER');
+          switch (headerComponent?.format) {
+            case "IMAGE":
+            case "VIDEO":
+            case "DOCUMENT":
+              String link = headerObj['link'] ?? '';
+              log("link: $link", name: "PRE_POPULATE_VALUES");
+              if (link.isNotEmpty) {
+                //
+                headerComponent?.headerFileUrlController.text = link;
+              }
+              //
+              break;
+            case "LOCATION":
+              headerComponent?.latitudeController.text = headerObj['latitude'] ?? '';
+              headerComponent?.longitudeController.text = headerObj['longitude'] ?? '';
+              log("called location");
+              break;
+            case "PRODUCT":
+              log("called product");
+              break;
+            case "TEXT":
+              //
+              if (headerComponent?.attributes.isNotEmpty ?? false) {
+                headerComponent?.attributes.first.selectedVariableValue.value = headerObj['text'] ?? '';
+              }
+              break;
+
+            default:
+              break;
+          }
+        }
+      } catch (_) {}
+      //
+      String bodyText = params['body'] ?? '[]';
+      try {
+        List<dynamic> bodyObj = jsonDecode(bodyText);
+        if (bodyObj.isNotEmpty) {
+          //
+          Component? bodyComponent = components?.firstWhereOrNull((element) => element.type == 'BODY');
+          if (bodyComponent != null) {
+            //
+            for (int i = 0; i < bodyComponent.attributes.length; i++) {
+              AttributeClass attribute = bodyComponent.attributes[i];
+              String text = (i < bodyObj.length && bodyObj[i]['text'] != null) ? bodyObj[i]['text'] : '';
+
+              attribute.selectedVariableValue.value = text;
+            }
+          }
+        }
+      } catch (_) {}
+
+      String ltoPhJsonText = params['ltoPhJson'] ?? '{}';
+      try {
+        //
+        Map<String, dynamic> ltoObj = jsonDecode(ltoPhJsonText);
+        if (ltoObj.isNotEmpty) {
+          //
+          Component? limitedTimeOffer = components?.firstWhereOrNull((element) => element.type == 'limited_time_offer');
+          if (limitedTimeOffer != null) {
+            int expirationTimeMs = ltoObj['expirationTimeMs'] ?? 0;
+            limitedTimeOffer.selectedOfferExpiryDateTime.value = DateTime.fromMillisecondsSinceEpoch(expirationTimeMs);
+          }
+        }
+      } catch (e, s) {}
+
+      String buttonText = params['button'] ?? '[]';
+      try {
+        List<dynamic> buttonObj = jsonDecode(buttonText);
+        if (buttonObj.isNotEmpty) {
+          //
+          Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
+          if (buttonComponent != null) {
+            //
+            for (int i = 0; i < (buttonComponent.buttons?.length ?? 0); i++) {
+              TemplateButton? button = buttonComponent.buttons?[i];
+              Map<String, dynamic> singleButtonObj = buttonObj[i];
+              String thumbnailRetailerId = singleButtonObj['thumbnailRetailerId'] ?? '';
+              //
+              log("${thumbnailRetailerId}");
+              CatalogueResponseModel? catalogueResponse = await catalogueResponseFuture?.call();
+              if (catalogueResponse != null) {
+                //
+                ProductDetailsDatum? product = catalogueResponse.productDetails?.data?.firstWhereOrNull((element) => element.retailerId == thumbnailRetailerId);
+                if (product != null) {
+                  //
+                  button?.selectedProduct.value = product;
+                }
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+  }
+
   ////
   ///
   ///
@@ -912,7 +1018,6 @@ class TemplateObj {
   }
 
   String getButtonPhJson() {
-    log("getButtonPhJson", name: "NEW_TEST_TEMPLATE_PROVIDER");
     List<Map<String, dynamic>> buttonJson = [];
     Component? buttonComponent = components?.firstWhereOrNull((element) => element.type == 'BUTTONS');
     if (buttonComponent != null) {

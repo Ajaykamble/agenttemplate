@@ -1,4 +1,3 @@
-
 import 'package:agenttemplate/models/template_obj_model.dart';
 import 'package:agenttemplate/utils/template_preview_styles.dart';
 import 'package:agenttemplate/widget/preview/body_preview.dart';
@@ -13,7 +12,8 @@ import 'package:flutter/material.dart';
 class CardPreviewWidget extends StatefulWidget {
   final List<Component> components;
   final String accountName;
-  const CardPreviewWidget({super.key, required this.components, required this.accountName});
+  final bool displayTime;
+  const CardPreviewWidget({super.key, required this.components, required this.accountName, required this.displayTime});
 
   @override
   State<CardPreviewWidget> createState() => _CardPreviewWidgetState();
@@ -49,7 +49,7 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
             BodyPreview(bodyComponent: bodyComponent),
           ],
           const SizedBox(height: 5),
-          FooterPreview(footerComponent: footerComponent)
+          FooterPreview(footerComponent: footerComponent, displayTime: widget.displayTime)
         ],
       ),
     );
