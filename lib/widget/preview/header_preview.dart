@@ -250,7 +250,6 @@ class _LocationHeaderPreview extends StatelessWidget {
   const _LocationHeaderPreview({required this.headerComponent});
 
   /// Embed map using Google Maps. The output=embed format works without an API key.
-
   static const int _zoom = 14;
 
   static String _embedMapUrl(double lat, double lng) {
