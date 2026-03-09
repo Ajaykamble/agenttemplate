@@ -212,7 +212,7 @@ class InteractiveTemplateListModel {
     List<Component> components = [];
 
     if (template?.headerObj != null) {
-      Component headerComponent = Component.fromJson({"type": "HEADER", "text": template?.headerObj?.text ?? "", "format": template?.headerObj?.type ?? ""});
+      Component headerComponent = Component.fromJson({"type": "HEADER", "text": template?.headerObj?.text ?? "", "format": template?.headerObj?.type?.toUpperCase() ?? ""});
       components.add(headerComponent);
     }
 
@@ -364,14 +364,15 @@ class InteractiveParaseTemplate {
   });
 
   factory InteractiveParaseTemplate.fromJson(Map<String, dynamic> json) {
+    dynamic buttonJson = json["button"] ?? json["buttons"];
     return InteractiveParaseTemplate(
       headerObj: json["headerObj"] == null ? null : HeaderObj.fromJson(json["headerObj"]),
       body: json["body"] == null ? null : Body.fromJson(json["body"]),
-      button: json["button"] == null
+      button: buttonJson == null
           ? []
-          : json["button"].runtimeType == List
-              ? List<Button>.from(json["button"]!.map((x) => Button.fromJson(x)))
-              : [Button.fromJson(json["button"])],
+          : buttonJson.runtimeType == List
+              ? List<Button>.from(buttonJson!.map((x) => Button.fromJson(x)))
+              : [Button.fromJson(buttonJson)],
       listObj: json["listObj"] == null ? null : ListObj.fromJson(json["listObj"]),
       footerText: json["footerText"],
       extras: json["extras"],

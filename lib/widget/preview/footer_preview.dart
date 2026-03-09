@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 
 class FooterPreview extends StatelessWidget {
   final Component? footerComponent;
-  final bool displayTime;
-  const FooterPreview({super.key, this.footerComponent, required this.displayTime});
+  final bool isFromChat;
+  const FooterPreview({super.key, this.footerComponent, required this.isFromChat});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class FooterPreview extends StatelessWidget {
                   style: style,
                 ),
         ),
-        if (displayTime) ...[
+        if (isFromChat) ...[
           Text(
             DateFormat("HH:mm").format(DateTime.now()),
             style: style,

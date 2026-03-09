@@ -784,6 +784,47 @@ class TemplateObj {
   ValueNotifier<bool> showSmartUrlCheckBox = ValueNotifier(false);
   ValueNotifier<bool> isSmartUrlEnabled = ValueNotifier(false);
 
+  void _prePopulateHeaderComponent(Component? headerComponent, Map<String, dynamic> headerObj) {
+    switch (headerComponent?.format) {
+      case "IMAGE":
+      case "VIDEO":
+      case "DOCUMENT":
+        String link = headerObj['link'] ?? '';
+        if (link.isNotEmpty) {
+          headerComponent?.headerFileUrlController.text = link;
+        }
+        //
+        break;
+      case "LOCATION":
+        headerComponent?.latitudeController.text = headerObj['latitude'] ?? '';
+        headerComponent?.longitudeController.text = headerObj['longitude'] ?? '';
+
+        break;
+      case "PRODUCT":
+        break;
+      case "TEXT":
+        //
+        if (headerComponent?.attributes.isNotEmpty ?? false) {
+          headerComponent?.attributes.first.selectedVariableValue.value = headerObj['text'] ?? '';
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  void _prePopulateBodyComponent(Component? bodyComponent, List<dynamic> bodyObj) {
+    if (bodyComponent != null) {
+      for (int i = 0; i < bodyComponent.attributes.length; i++) {
+        AttributeClass attribute = bodyComponent.attributes[i];
+        String text = (i < bodyObj.length && bodyObj[i]['text'] != null) ? bodyObj[i]['text'] : '';
+
+        attribute.selectedVariableValue.value = text;
+      }
+    }
+  }
+
   void prePopulateValues(String? templatePrams, {Future<CatalogueResponseModel?> Function()? catalogueResponseFuture}) async {
     //
     if (templatePrams != null) {
@@ -795,36 +836,7 @@ class TemplateObj {
         if (headerObj.isNotEmpty) {
           //
           Component? headerComponent = components?.firstWhereOrNull((element) => element.type == 'HEADER');
-          switch (headerComponent?.format) {
-            case "IMAGE":
-            case "VIDEO":
-            case "DOCUMENT":
-              String link = headerObj['link'] ?? '';
-              log("link: $link", name: "PRE_POPULATE_VALUES");
-              if (link.isNotEmpty) {
-                //
-                headerComponent?.headerFileUrlController.text = link;
-              }
-              //
-              break;
-            case "LOCATION":
-              headerComponent?.latitudeController.text = headerObj['latitude'] ?? '';
-              headerComponent?.longitudeController.text = headerObj['longitude'] ?? '';
-              log("called location");
-              break;
-            case "PRODUCT":
-              log("called product");
-              break;
-            case "TEXT":
-              //
-              if (headerComponent?.attributes.isNotEmpty ?? false) {
-                headerComponent?.attributes.first.selectedVariableValue.value = headerObj['text'] ?? '';
-              }
-              break;
-
-            default:
-              break;
-          }
+          _prePopulateHeaderComponent(headerComponent, headerObj);
         }
       } catch (_) {}
       //
@@ -834,15 +846,7 @@ class TemplateObj {
         if (bodyObj.isNotEmpty) {
           //
           Component? bodyComponent = components?.firstWhereOrNull((element) => element.type == 'BODY');
-          if (bodyComponent != null) {
-            //
-            for (int i = 0; i < bodyComponent.attributes.length; i++) {
-              AttributeClass attribute = bodyComponent.attributes[i];
-              String text = (i < bodyObj.length && bodyObj[i]['text'] != null) ? bodyObj[i]['text'] : '';
-
-              attribute.selectedVariableValue.value = text;
-            }
-          }
+          _prePopulateBodyComponent(bodyComponent, bodyObj);
         }
       } catch (_) {}
 
@@ -882,6 +886,52 @@ class TemplateObj {
                   //
                   button?.selectedProduct.value = product;
                 }
+              }
+            }
+          }
+        }
+      } catch (_) {}
+
+      String cardText = params['cards'] ?? '[]';
+      try {
+        List<dynamic> cardObjList = jsonDecode(cardText);
+        if (cardObjList.isNotEmpty) {
+          //
+          Component? cardComponent = components?.firstWhereOrNull((element) => element.type == 'CAROUSEL');
+
+          for (int i = 0; i < cardObjList.length; i++) {
+            //
+            CarouselCard? card = (cardComponent?.cards != null && cardComponent!.cards!.length > i) ? cardComponent.cards![i] : null;
+
+            if (card != null) {
+              Map<String, dynamic> cardObj = cardObjList[i];
+
+              try {
+                Map<String, dynamic> headerObj = cardObj['headerObj'] ?? '{}';
+                if (headerObj.isNotEmpty) {
+                  Component? headerComponent = card.components.firstWhereOrNull((element) => element.type == 'HEADER');
+                  _prePopulateHeaderComponent(headerComponent, headerObj);
+                }
+              } catch (_) {
+                log("error pre populating header component");
+              }
+              //
+
+              //
+              try {
+                log(">>${cardObj['body'].runtimeType} ${cardObj["body"]}", name: "PRE_POPULATE_VALUES");
+                if (cardObj['body'].runtimeType == List<dynamic>) {
+                  List<dynamic> bodyObj = cardObj['body'] ?? '[]';
+                  //
+                  if (bodyObj.isNotEmpty) {
+                    //
+                    Component? bodyComponent = card.components.firstWhereOrNull((element) => element.type == 'BODY');
+                    _prePopulateBodyComponent(bodyComponent, bodyObj);
+                  }
+                }
+              } catch (e) {
+                log("error pre populating body component: $e", name: "PRE_POPULATE_VALUES");
+                //
               }
             }
           }

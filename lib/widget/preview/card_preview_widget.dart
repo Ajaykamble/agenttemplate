@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 class CardPreviewWidget extends StatefulWidget {
   final List<Component> components;
   final String accountName;
-  final bool displayTime;
-  const CardPreviewWidget({super.key, required this.components, required this.accountName, required this.displayTime});
+  final bool isFromChat;
+  const CardPreviewWidget({super.key, required this.components, required this.accountName, required this.isFromChat});
 
   @override
   State<CardPreviewWidget> createState() => _CardPreviewWidgetState();
@@ -37,7 +37,7 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (catalogButton != null) ...[
-            CatalogPreview(catalogButton: catalogButton, accountName: widget.accountName),
+            CatalogPreview(catalogButton: catalogButton, accountName: widget.accountName, isFromChat: widget.isFromChat),
           ],
           if (headerComponent != null) ...[
             HeaderPreview(headerComponent: headerComponent),
@@ -49,7 +49,7 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
             BodyPreview(bodyComponent: bodyComponent),
           ],
           const SizedBox(height: 5),
-          FooterPreview(footerComponent: footerComponent, displayTime: widget.displayTime)
+          FooterPreview(footerComponent: footerComponent, isFromChat: widget.isFromChat)
         ],
       ),
     );
@@ -59,7 +59,8 @@ class _CardPreviewWidgetState extends State<CardPreviewWidget> {
 class CatalogPreview extends StatelessWidget {
   final TemplateButton catalogButton;
   final String accountName;
-  const CatalogPreview({super.key, required this.catalogButton, required this.accountName});
+  final bool isFromChat;
+  const CatalogPreview({super.key, required this.catalogButton, required this.accountName, required this.isFromChat});
   final double cardHeight = 150;
   @override
   Widget build(BuildContext context) {
@@ -99,22 +100,24 @@ class CatalogPreview extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 3),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "View $accountName's Catalog on WhatsApp",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 3),
-                    Text("Browse pictures and details of their offerings.", style: Theme.of(context).textTheme.bodySmall)
-                  ],
+              if (isFromChat) ...[
+                const SizedBox(height: 3),
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "View $accountName's Catalog on WhatsApp",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 3),
+                      Text("Browse pictures and details of their offerings.", style: Theme.of(context).textTheme.bodySmall)
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         );

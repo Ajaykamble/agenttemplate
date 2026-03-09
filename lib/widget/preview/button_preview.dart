@@ -8,7 +8,8 @@ class ButtonPreviews extends StatefulWidget {
   final Component? buttonsComponent;
   final void Function(TemplateButton component)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
-  const ButtonPreviews({super.key, required this.buttonsComponent, this.onButtonTap, this.onAllButtonsTap});
+  final bool isFromChat;
+  const ButtonPreviews({super.key, required this.buttonsComponent, this.onButtonTap, this.onAllButtonsTap, required this.isFromChat});
 
   @override
   State<ButtonPreviews> createState() => _ButtonPreviewsState();

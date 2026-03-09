@@ -11,8 +11,8 @@ class CardPreview extends StatefulWidget {
   final void Function(TemplateButton button)? onButtonTap;
   final void Function(Component buttonsComponent)? onAllButtonsTap;
   final void Function(ListObj listObj)? onListTap;
-  final bool displayTime;
-  const CardPreview({super.key, required this.templateObj, required this.accountName, this.onButtonTap, this.onAllButtonsTap, this.onListTap, this.displayTime = true});
+  final bool isFromChat;
+  const CardPreview({super.key, required this.templateObj, required this.accountName, this.onButtonTap, this.onAllButtonsTap, this.onListTap, this.isFromChat = false});
 
   @override
   State<CardPreview> createState() => _CardPreviewState();
@@ -111,7 +111,7 @@ class _CardPreviewState extends State<CardPreview> {
             if (otherComponents.isNotEmpty) ...[
               SizedBox(
                 width: _cardWidth,
-                child: CardPreviewWidget(components: otherComponents, accountName: widget.accountName, displayTime: widget.displayTime),
+                child: CardPreviewWidget(components: otherComponents, accountName: widget.accountName, isFromChat: widget.isFromChat),
               ),
               if (buttonsComponent != null) ...[
                 const SizedBox(height: 7),
@@ -119,6 +119,7 @@ class _CardPreviewState extends State<CardPreview> {
                   width: _cardWidth,
                   child: ButtonPreviews(
                     buttonsComponent: buttonsComponent,
+                    isFromChat: widget.isFromChat,
                     onButtonTap: (component) {
                       widget.onButtonTap?.call(component);
                     },
@@ -193,11 +194,11 @@ class _CardPreviewState extends State<CardPreview> {
                                           key: index == currentPage ? _cardKey : null,
                                           components: components,
                                           accountName: widget.accountName,
-                                          displayTime: widget.displayTime,
+                                          isFromChat: widget.isFromChat,
                                         ),
                                         const SizedBox(height: 7),
                                         if (buttonsComponent != null) ...[
-                                          ButtonPreviews(buttonsComponent: buttonsComponent),
+                                          ButtonPreviews(buttonsComponent: buttonsComponent, isFromChat: widget.isFromChat),
                                         ],
                                       ],
                                     ),
